@@ -1,0 +1,209 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 40 20% 98%;
+    --foreground: 200 25% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 200 25% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 200 25% 15%;
+
+    --primary: 168 45% 25%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 40 15% 94%;
+    --secondary-foreground: 200 25% 20%;
+
+    --muted: 40 10% 93%;
+    --muted-foreground: 200 10% 45%;
+
+    --accent: 38 80% 55%;
+    --accent-foreground: 200 25% 12%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 40 15% 89%;
+    --input: 40 15% 89%;
+    --ring: 168 45% 25%;
+
+    --radius: 0.75rem;
+
+    --warm: 15 70% 60%;
+    --warm-foreground: 0 0% 100%;
+
+    --gold: 38 80% 55%;
+    --gold-foreground: 200 25% 12%;
+
+    --surface: 40 20% 96%;
+    --surface-elevated: 0 0% 100%;
+
+    --font-display: 'Playfair Display', serif;
+    --font-body: 'DM Sans', sans-serif;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 200 25% 8%;
+    --foreground: 40 20% 95%;
+    --card: 200 20% 12%;
+    --card-foreground: 40 20% 95%;
+    --popover: 200 20% 12%;
+    --popover-foreground: 40 20% 95%;
+    --primary: 168 45% 40%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 200 15% 18%;
+    --secondary-foreground: 40 20% 90%;
+    --muted: 200 15% 18%;
+    --muted-foreground: 40 10% 60%;
+    --accent: 38 70% 50%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 200 15% 20%;
+    --input: 200 15% 20%;
+    --ring: 168 45% 40%;
+    --surface: 200 20% 10%;
+    --surface-elevated: 200 20% 14%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+
+  h1, h2, h3, h4, h5 {
+    font-family: var(--font-display);
+  }
+}
+
+@layer components {
+  .section-padding {
+    @apply px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24;
+  }
+
+  .container-narrow {
+    @apply max-w-5xl mx-auto;
+  }
+
+  .container-wide {
+    @apply max-w-7xl mx-auto;
+  }
+
+  .text-gradient-primary {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+  }
+
+  .card-elevated {
+    @apply bg-card rounded-xl border shadow-sm transition-all duration-300 relative overflow-hidden;
+  }
+  .card-elevated::before {
+    content: "";
+    @apply absolute inset-0 opacity-0 transition-opacity duration-300 pointer-events-none;
+    background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), hsl(var(--primary) / 0.06), transparent 40%);
+  }
+  .card-elevated:hover {
+    @apply shadow-xl;
+    border-color: hsl(var(--primary) / 0.25);
+    box-shadow: 0 0 0 1px hsl(var(--primary) / 0.1), 0 20px 40px -12px hsl(var(--primary) / 0.12), 0 8px 20px -8px hsl(var(--accent) / 0.08);
+  }
+  .card-elevated:hover::before {
+    @apply opacity-100;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-primary-foreground px-6 py-3 rounded-lg font-medium transition-all duration-200;
+    box-shadow: 0 4px 14px hsl(var(--primary) / 0.3);
+  }
+  .btn-primary:hover {
+    @apply bg-primary/90;
+    box-shadow: 0 6px 20px hsl(var(--primary) / 0.4), 0 0 0 1px hsl(var(--primary) / 0.2);
+    transform: translateY(-1px);
+  }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-accent {
+    @apply bg-accent text-accent-foreground px-6 py-3 rounded-lg font-medium transition-all duration-200;
+    box-shadow: 0 4px 14px hsl(var(--accent) / 0.3);
+  }
+  .btn-accent:hover {
+    @apply bg-accent/90;
+    box-shadow: 0 6px 20px hsl(var(--accent) / 0.4);
+    transform: translateY(-1px);
+  }
+  .btn-accent:active { transform: translateY(0); }
+
+  .btn-outline-primary {
+    @apply border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground px-6 py-3 rounded-lg font-medium transition-all duration-200;
+  }
+  .btn-outline-primary:hover { transform: translateY(-1px); }
+}
+
+@layer utilities {
+  .animate-orb-1 {
+    animation: orb-float-1 9s ease-in-out infinite;
+  }
+  .animate-orb-2 {
+    animation: orb-float-2 13s ease-in-out infinite;
+  }
+  .animate-orb-3 {
+    animation: orb-float-3 11s ease-in-out infinite;
+  }
+  .animate-shimmer {
+    animation: shimmer 2.5s linear infinite;
+  }
+  .animate-pulse-glow {
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+}
+
+@keyframes orb-float-1 {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  25%       { transform: translate(30px, -45px) scale(1.06); }
+  50%       { transform: translate(-20px, 20px) scale(0.96); }
+  75%       { transform: translate(15px, 35px) scale(1.03); }
+}
+@keyframes orb-float-2 {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  33%       { transform: translate(-40px, 30px) scale(1.08); }
+  66%       { transform: translate(25px, -25px) scale(0.93); }
+}
+@keyframes orb-float-3 {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  50%       { transform: translate(20px, 40px) scale(1.07); }
+}
+@keyframes shimmer {
+  0%   { transform: translateX(-100%) skewX(-15deg); }
+  100% { transform: translateX(200%) skewX(-15deg); }
+}
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50%       { opacity: 0.7; transform: scale(1.12); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-12px); }
+}

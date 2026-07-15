@@ -1,0 +1,7 @@
+project_id = "diyama-solutions"
+
+[functions.chat]
+verify_jwt = false
+
+[functions.business-fit]
+verify_jwt = false
