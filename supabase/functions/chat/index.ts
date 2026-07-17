@@ -46,22 +46,33 @@ Deno.serve(async (req: Request) => {
       parts: [{ text: m.content }],
     }));
 
-    const geminiResp = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse&key=${apiKey}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
-          contents,
-          generationConfig: { maxOutputTokens: 1024 },
-        }),
+    // Fallback chain: free-tier models can return 503 under load
+    const MODELS = ["gemini-3.5-flash", "gemini-3.1-flash-lite", "gemini-3-flash-preview"];
+    let geminiResp: Response | null = null;
+    let lastError = "Gemini API error";
+    for (const model of MODELS) {
+      const resp = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${apiKey}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+            contents,
+            generationConfig: { maxOutputTokens: 1024 },
+          }),
+        }
+      );
+      if (resp.ok) {
+        geminiResp = resp;
+        break;
       }
-    );
+      const err = await resp.json().catch(() => ({}));
+      lastError = err.error?.message || `Gemini API error (${model}: ${resp.status})`;
+    }
 
-    if (!geminiResp.ok) {
-      const err = await geminiResp.json().catch(() => ({}));
-      return new Response(JSON.stringify({ error: err.error?.message || "Gemini API error" }), {
+    if (!geminiResp) {
+      return new Response(JSON.stringify({ error: lastError }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });

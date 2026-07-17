@@ -75,9 +75,12 @@ All routes render inside `Layout` (Navbar + Footer + FloatingCTA) with `AnimateP
 
 ### Edge functions (`supabase/functions/`)
 
-- `chat` — streams Gemini (`gemini-2.5-flash`) responses reshaped to OpenAI-style SSE deltas;
-  needs `GEMINI_API_KEY` secret.
+- `chat` — streams Gemini responses reshaped to OpenAI-style SSE deltas; needs
+  `GEMINI_API_KEY` secret.
 - `business-fit` — Gemini JSON report + stores submission via service role.
+- Both use a model fallback chain (`gemini-3.5-flash` → `gemini-3.1-flash-lite` →
+  `gemini-3-flash-preview`) because free-tier models can 503 under load, and
+  `gemini-2.5-flash` is retired for new API keys.
 
 Backend provisioning steps: see `BACKEND-SETUP.md`.
 

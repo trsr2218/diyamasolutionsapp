@@ -46,25 +46,36 @@ Return a JSON object with exactly these fields:
 
 Be specific, warm, and practical. Reference their actual business type and challenge. Do not be generic.`;
 
-    const geminiResp = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ role: "user", parts: [{ text: prompt }] }],
-          generationConfig: {
-            responseMimeType: "application/json",
-            maxOutputTokens: 1024,
-            temperature: 0.7,
-          },
-        }),
+    // Fallback chain: free-tier models can return 503 under load
+    const MODELS = ["gemini-3.5-flash", "gemini-3.1-flash-lite", "gemini-3-flash-preview"];
+    let geminiResp: Response | null = null;
+    let lastError = "Gemini API error";
+    for (const model of MODELS) {
+      const resp = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ role: "user", parts: [{ text: prompt }] }],
+            generationConfig: {
+              responseMimeType: "application/json",
+              maxOutputTokens: 1024,
+              temperature: 0.7,
+            },
+          }),
+        }
+      );
+      if (resp.ok) {
+        geminiResp = resp;
+        break;
       }
-    );
+      const err = await resp.json().catch(() => ({}));
+      lastError = err.error?.message || `Gemini API error (${model}: ${resp.status})`;
+    }
 
-    if (!geminiResp.ok) {
-      const err = await geminiResp.json().catch(() => ({}));
-      return new Response(JSON.stringify({ error: err.error?.message || "Gemini API error" }), {
+    if (!geminiResp) {
+      return new Response(JSON.stringify({ error: lastError }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
