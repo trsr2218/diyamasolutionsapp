@@ -4,8 +4,10 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Sparkles, Mail, Gift, PartyPopper } from "lucide-react";
 import PageTransition from "@/components/PageTransition";
 import DiyamaAvatar from "@/components/DiyamaAvatar";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
 const stages = ["Idea stage", "Just started", "Growing", "Established", "Scaling"];
 const businessTypes = [
@@ -87,33 +89,46 @@ const BusinessFit = () => {
   const handleGenerate = async () => {
     setLoading(true);
 
-    // Join the mailing list first; a duplicate email just means they
-    // already subscribed, which is fine.
-    const { error: mlError } = await supabase.from("mailing_list").insert({
-      email: email.trim().toLowerCase(),
-      name: form.businessName || null,
-      source: "business-fit",
-    });
-    if (mlError && mlError.code !== "23505") {
-      toast({ title: "Error", description: "Could not save your email. Please try again.", variant: "destructive" });
-      setLoading(false);
-      return;
+    // Join the mailing list. A 409 means they already subscribed, which is
+    // fine; any other failure must never block the kit itself.
+    try {
+      await fetch(`${SUPABASE_URL}/rest/v1/mailing_list`, {
+        method: "POST",
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+          "Content-Type": "application/json",
+          Prefer: "return=minimal",
+        },
+        body: JSON.stringify({
+          email: email.trim().toLowerCase(),
+          name: form.businessName || null,
+          source: "business-fit",
+        }),
+      });
+    } catch {
+      // Non-blocking: the kit still gets generated.
     }
 
     try {
-      const { data, error } = await supabase.functions.invoke("business-fit", {
-        body: {
+      const resp = await fetch(`${SUPABASE_URL}/functions/v1/business-fit`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
           businessName: form.businessName,
           businessType: form.businessType,
           stage: form.stage,
           targetCustomers: form.targetCustomers,
           currentChallenge: form.challenge,
           currentGoal: form.goal,
-        },
+        }),
       });
 
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok || data?.error) throw new Error(data?.error || "Could not generate report. Please try again.");
 
       setResult(data.result);
     } catch (e) {
