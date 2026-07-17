@@ -5,9 +5,7 @@ import { ArrowRight, Sparkles, Mail, Gift, PartyPopper } from "lucide-react";
 import PageTransition from "@/components/PageTransition";
 import DiyamaAvatar from "@/components/DiyamaAvatar";
 import { toast } from "@/hooks/use-toast";
-
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY as SUPABASE_KEY } from "@/lib/supabaseEnv";
 
 const stages = ["Idea stage", "Just started", "Growing", "Established", "Scaling"];
 const businessTypes = [
