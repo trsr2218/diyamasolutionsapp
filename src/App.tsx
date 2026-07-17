@@ -9,6 +9,8 @@ import ScrollToTop from "./components/ScrollToTop";
 import Index from "./pages/Index";
 import Services from "./pages/Services";
 import Clients from "./pages/Clients";
+import Apps from "./pages/Apps";
+import Partners from "./pages/Partners";
 import DiyamaAI from "./pages/DiyamaAI";
 import BusinessFit from "./pages/BusinessFit";
 import Consultations from "./pages/Consultations";
@@ -31,6 +33,8 @@ const AnimatedRoutes = () => {
         <Route path="/" element={<Index />} />
         <Route path="/services" element={<Services />} />
         <Route path="/clients" element={<Clients />} />
+        <Route path="/apps" element={<Apps />} />
+        <Route path="/partners" element={<Partners />} />
         <Route path="/ai" element={<DiyamaAI />} />
         <Route path="/business-fit" element={<BusinessFit />} />
         <Route path="/consultations" element={<Consultations />} />

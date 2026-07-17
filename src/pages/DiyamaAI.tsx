@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Send, RotateCcw, Clock, Sparkles } from "lucide-react";
+import { Send, RotateCcw, Sparkles } from "lucide-react";
 import ReactMarkdown from "react-markdown";
-import diyamaLogo from "@/assets/logo.jpg";
 import PageTransition from "@/components/PageTransition";
+import DiyamaAvatar from "@/components/DiyamaAvatar";
 import { toast } from "@/hooks/use-toast";
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
@@ -135,13 +135,22 @@ const DiyamaAI = () => {
             <div className="absolute bottom-0 left-20 w-64 h-64 rounded-full bg-primary blur-3xl" />
           </div>
           <div className="container-narrow mx-auto text-center relative z-10">
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
-              <motion.img src={diyamaLogo} alt="Diyama AI" className="h-8 sm:h-10 w-auto" initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.2 }} />
-              <div>
-                <div className="inline-flex items-center gap-1.5 text-sm font-medium opacity-90">
-                  <Sparkles size={12} /> Diyama AI Advisor
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-row items-center justify-center gap-3 sm:gap-4">
+              <DiyamaAvatar
+                size={44}
+                mood={isLoading ? (messages[messages.length - 1]?.role === "assistant" ? "speaking" : "thinking") : "idle"}
+              />
+              <div className="text-left">
+                <div className="inline-flex items-center gap-1.5 text-sm font-semibold">
+                  Diyama <Sparkles size={12} className="text-accent" />
                 </div>
-                <p className="text-xs opacity-60 hidden sm:block">Your business clarity starts here</p>
+                <p className="text-xs opacity-70">
+                  {isLoading
+                    ? messages[messages.length - 1]?.role === "assistant"
+                      ? "Typing..."
+                      : "Thinking..."
+                    : "Online, ready to help"}
+                </p>
               </div>
             </motion.div>
           </div>
@@ -150,6 +159,20 @@ const DiyamaAI = () => {
         <div className="flex-1 container-narrow mx-auto px-4 w-full bg-gradient-to-b from-surface to-background">
           {messages.length === 0 ? (
             <div className="py-12">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                className="flex flex-col items-center text-center mb-8"
+              >
+                <DiyamaAvatar size={88} mood="idle" className="mb-5" />
+                <h2 className="font-display text-2xl sm:text-3xl font-bold mb-2">
+                  Hi, I'm <span className="text-gradient-primary">Diyama</span>.
+                </h2>
+                <p className="text-muted-foreground text-sm max-w-md">
+                  Your always-on business advisor. Bring me any challenge: marketing, pricing, growth, or a brand new idea.
+                </p>
+              </motion.div>
               <p className="text-center text-muted-foreground mb-6 text-sm">Try one of these to get started:</p>
               <div className="flex flex-wrap justify-center gap-2 max-w-xl mx-auto">
                 {suggestedPrompts.map((p) => (
@@ -163,6 +186,13 @@ const DiyamaAI = () => {
             <div className="space-y-4 py-4 flex-1 overflow-y-auto">
               {messages.map((msg, i) => (
                 <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                  {msg.role === "assistant" && (
+                    <DiyamaAvatar
+                      size={30}
+                      mood={isLoading && i === messages.length - 1 ? "speaking" : "idle"}
+                      className="mr-2 mt-1 shrink-0"
+                    />
+                  )}
                   <div className={`max-w-[80%] rounded-2xl px-5 py-3 text-sm leading-relaxed ${msg.role === "user" ? "bg-primary text-primary-foreground rounded-br-sm" : "bg-card border rounded-bl-sm shadow-sm"}`}>
                     {msg.role === "assistant" ? (
                       <div className="prose prose-sm max-w-none">
@@ -173,7 +203,8 @@ const DiyamaAI = () => {
                 </motion.div>
               ))}
               {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
-                <div className="flex justify-start">
+                <div className="flex justify-start items-start">
+                  <DiyamaAvatar size={30} mood="thinking" className="mr-2 mt-1 shrink-0" />
                   <div className="bg-card border rounded-2xl rounded-bl-sm px-5 py-3 shadow-sm">
                     <div className="flex gap-1">
                       <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-bounce" />

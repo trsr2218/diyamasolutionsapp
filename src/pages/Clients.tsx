@@ -4,6 +4,7 @@ import { ExternalLink } from "lucide-react";
 import { clients } from "@/data/clients";
 import aboutImg from "@/assets/about-team.jpg";
 import PageTransition from "@/components/PageTransition";
+import SitePreview from "@/components/SitePreview";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -56,7 +57,10 @@ const Clients = () => {
             {filtered.map((client) => (
               <motion.div key={client.id} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
                 <motion.div whileHover={{ y: -3 }} transition={{ type: "spring", stiffness: 300 }}>
-                  <div className="card-elevated p-6 h-full flex flex-col">
+                  <div className="card-elevated p-6 h-full flex flex-col group">
+                    {client.image && (
+                      <SitePreview image={client.image} domain={client.domain ?? null} alt={`${client.name} website screenshot`} />
+                    )}
                     <div className="flex items-start justify-between mb-3">
                       <h3 className="font-display font-semibold text-lg">{client.name}</h3>
                       <span className={`text-xs font-medium px-2 py-1 rounded-full shrink-0 ml-2 ${client.status === "active" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>

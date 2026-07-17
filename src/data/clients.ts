@@ -1,3 +1,5 @@
+import hypeFmShot from "@/assets/apps/hype-fm.jpg";
+
 export interface Client {
   id: string;
   name: string;
@@ -8,6 +10,10 @@ export interface Client {
   testimonial: string;
   publicLink: string | null;
   linkStatus: "verified" | "pending";
+  /** Optional screenshot of the client's public site, shown in the card. */
+  image?: string;
+  /** Domain shown in the preview's browser bar. */
+  domain?: string;
   tags: string[];
   featured: boolean;
   reviewStatus: "sample" | "confirmed";
@@ -124,6 +130,8 @@ export const clients: Client[] = [
     testimonial: "Diyama brought a fresh perspective to our digital strategy. Creative, reliable, and easy to work with. – Hype FM",
     publicLink: "https://hypefmzambia.com/",
     linkStatus: "verified",
+    image: hypeFmShot,
+    domain: "hypefmzambia.com",
     tags: ["Media", "Social Media", "Content"],
     featured: false,
     reviewStatus: "sample",

@@ -5,8 +5,14 @@ import { ArrowRight, Sparkles, Users, BookOpen, MessageSquare, TrendingUp, Light
 import { services } from "@/data/services";
 import { clients } from "@/data/clients";
 import heroImg from "@/assets/hero-consultant.jpg";
+import strategyImg from "@/assets/services-strategy.jpg";
+import teamImg from "@/assets/about-team.jpg";
+import workspaceImg from "@/assets/learn-workspace.jpg";
+import advisorImg from "@/assets/contact-advisor.jpg";
+import meetingImg from "@/assets/consultation-meeting.jpg";
 import PageTransition from "@/components/PageTransition";
 import AnimatedBg from "@/components/AnimatedBg";
+import DiyamaAvatar from "@/components/DiyamaAvatar";
 
 const stagger: Variants = {
   hidden: {},
@@ -117,34 +123,41 @@ const Index = () => {
         <div className="container-narrow mx-auto text-center relative z-10">
           <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }}>
             <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-display font-bold mb-4">
-              What are you trying to move right now?
+              What are you trying to <span className="text-gradient-primary">move</span> right now?
             </motion.h2>
             <motion.p variants={fadeUp} className="text-muted-foreground mb-10 max-w-xl mx-auto">
               Pick what resonates, and we'll point you in the right direction.
             </motion.p>
-            <motion.div variants={stagger} className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-w-2xl mx-auto">
+            <motion.div variants={stagger} className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 max-w-3xl mx-auto">
               {[
-                { label: "Get more customers", icon: TrendingUp, path: "/services" },
-                { label: "Build my brand", icon: Sparkles, path: "/services" },
-                { label: "Launch something new", icon: Lightbulb, path: "/business-fit" },
-                { label: "Grow online visibility", icon: Users, path: "/services" },
-                { label: "Talk to an advisor", icon: MessageSquare, path: "/ai" },
-                { label: "Learn something useful", icon: BookOpen, path: "/learn" },
+                { label: "Get more customers", icon: TrendingUp, path: "/services", img: strategyImg },
+                { label: "Build my brand", icon: Sparkles, path: "/services", img: teamImg },
+                { label: "Launch something new", icon: Lightbulb, path: "/business-fit", img: heroImg },
+                { label: "Grow online visibility", icon: Users, path: "/services", img: workspaceImg },
+                { label: "Talk to an advisor", icon: MessageSquare, path: "/ai", img: advisorImg },
+                { label: "Learn something useful", icon: BookOpen, path: "/learn", img: meetingImg },
               ].map((item) => (
                 <motion.div key={item.label} variants={fadeIn}>
-                  <Link
-                    to={item.path}
-                    className="card-elevated p-4 sm:p-5 flex flex-col items-center gap-3 text-center hover:border-primary/30 group block"
-                  >
-                    <motion.div
-                      whileHover={{ scale: 1.15, rotate: 6 }}
-                      transition={{ type: "spring", stiffness: 350, damping: 15 }}
-                      className="w-10 h-10 rounded-xl bg-primary/8 flex items-center justify-center group-hover:bg-primary/15 transition-colors"
+                  <motion.div whileHover={{ y: -5 }} transition={{ type: "spring", stiffness: 300, damping: 18 }}>
+                    <Link
+                      to={item.path}
+                      className="relative block rounded-xl overflow-hidden group h-36 sm:h-44 shadow-sm hover:shadow-xl transition-shadow duration-300"
                     >
-                      <item.icon size={20} className="text-primary group-hover:text-accent transition-colors" />
-                    </motion.div>
-                    <span className="text-sm font-medium text-foreground">{item.label}</span>
-                  </Link>
+                      <img
+                        src={item.img}
+                        alt=""
+                        loading="lazy"
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-foreground/85 via-foreground/35 to-foreground/10 group-hover:from-primary/85 transition-colors duration-300" />
+                      <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4 flex items-center gap-2.5 text-left">
+                        <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-white/15 backdrop-blur-sm border border-white/20 flex items-center justify-center shrink-0 group-hover:bg-accent group-hover:border-accent transition-colors duration-300">
+                          <item.icon size={16} className="text-white" />
+                        </span>
+                        <span className="text-xs sm:text-sm font-semibold text-white leading-tight">{item.label}</span>
+                      </div>
+                    </Link>
+                  </motion.div>
                 </motion.div>
               ))}
             </motion.div>
@@ -165,7 +178,7 @@ const Index = () => {
             >
               <div className="flex items-end justify-between mb-10">
                 <motion.div variants={fadeUp}>
-                  <h2 className="text-3xl sm:text-4xl font-display font-bold">What we help with</h2>
+                  <h2 className="text-3xl sm:text-4xl font-display font-bold">What we <span className="text-gradient-primary">help with</span></h2>
                   <p className="text-muted-foreground mt-2">Practical services that move your business forward.</p>
                 </motion.div>
                 <motion.div variants={fadeUp}>
@@ -183,8 +196,8 @@ const Index = () => {
                     >
                       <div className="card-elevated p-6 h-full flex flex-col">
                         <motion.span
-                          className="text-2xl mb-3 inline-block"
-                          whileHover={{ scale: 1.2, rotate: -5 }}
+                          className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/10 to-accent/15 border border-primary/10 flex items-center justify-center text-2xl mb-4"
+                          whileHover={{ scale: 1.15, rotate: -6 }}
                           transition={{ type: "spring", stiffness: 300 }}
                         >
                           {s.icon}
@@ -213,22 +226,22 @@ const Index = () => {
         <div className="container-wide mx-auto text-center relative z-10">
           <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }}>
             <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-display font-bold mb-3">
-              Trusted by real businesses
+              Trusted by <span className="text-gradient-primary">real businesses</span>
             </motion.h2>
             <motion.p variants={fadeUp} className="text-muted-foreground mb-10 max-w-lg mx-auto">
               From food brands to DAOs, transport companies to music artists. We've helped businesses across industries.
             </motion.p>
-            <motion.div variants={stagger} className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto">
-              {featuredClients.map((c) => (
-                <motion.div key={c.id} variants={fadeIn}>
-                  <motion.div whileHover={{ scale: 1.05, y: -4 }} transition={{ type: "spring", stiffness: 300 }}>
-                    <div className="card-elevated p-4 text-center">
-                      <p className="font-semibold text-sm text-foreground">{c.name}</p>
-                      <p className="text-xs text-muted-foreground mt-1">{c.category}</p>
-                    </div>
-                  </motion.div>
-                </motion.div>
-              ))}
+            <motion.div variants={fadeIn} className="relative overflow-hidden">
+              <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+              <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+              <div className="flex gap-4 w-max animate-marquee">
+                {[...clients, ...clients].map((c, i) => (
+                  <div key={`${c.id}-${i}`} className="card-elevated px-6 py-4 text-center shrink-0 min-w-[180px]">
+                    <p className="font-semibold text-sm text-foreground whitespace-nowrap">{c.name}</p>
+                    <p className="text-xs text-muted-foreground mt-1 whitespace-nowrap">{c.category}</p>
+                  </div>
+                ))}
+              </div>
             </motion.div>
             <motion.div variants={fadeUp}>
               <Link to="/clients" className="mt-8 inline-flex items-center gap-1 text-primary font-medium text-sm hover:underline">
@@ -273,14 +286,15 @@ const Index = () => {
         <AnimatedBg variant="subtle" />
         <div className="container-narrow mx-auto text-center relative z-10">
           <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }}>
-            <motion.div variants={fadeIn} className="mb-6">
+            <motion.div variants={fadeIn} className="mb-6 flex flex-col items-center gap-4">
+              <DiyamaAvatar size={72} mood="idle" />
               <div className="inline-flex items-center gap-2 text-xs font-semibold bg-primary/8 text-primary border border-primary/15 rounded-full px-4 py-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                 Available 24/7, no signup needed
               </div>
             </motion.div>
             <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-display font-bold mb-4">
-              Meet Diyama AI
+              Meet <span className="text-gradient-primary">Diyama AI</span>
             </motion.h2>
             <motion.p variants={fadeUp} className="text-muted-foreground mb-8 max-w-xl mx-auto">
               A warm, practical AI business advisor. Ask anything about marketing, growth, operations, or pricing.
@@ -312,16 +326,27 @@ const Index = () => {
             </div>
             <motion.div variants={stagger} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {[
-                { title: "How to Get Your First 100 Customers", time: "7 min", cat: "Customer Growth", slug: "first-100-customers" },
-                { title: "Google Maps Optimization Guide", time: "8 min", cat: "Local Marketing", slug: "google-maps-guide" },
-                { title: "The Restaurant Growth Playbook", time: "6 min", cat: "Restaurant Growth", slug: "restaurant-growth-playbook" },
+                { title: "How to Get Your First 100 Customers", time: "7 min", cat: "Customer Growth", slug: "first-100-customers", img: strategyImg },
+                { title: "Google Maps Optimization Guide", time: "8 min", cat: "Local Marketing", slug: "google-maps-guide", img: workspaceImg },
+                { title: "The Restaurant Growth Playbook", time: "6 min", cat: "Restaurant Growth", slug: "restaurant-growth-playbook", img: meetingImg },
               ].map((a) => (
                 <motion.div key={a.title} variants={fadeIn}>
                   <motion.div whileHover={{ y: -5 }} transition={{ type: "spring", stiffness: 280 }}>
-                    <Link to={`/learn/${a.slug}`} className="card-elevated p-6 block hover:border-primary/30">
-                      <span className="text-xs font-semibold text-accent uppercase tracking-wider">{a.cat}</span>
-                      <h3 className="font-display text-lg font-semibold mt-2 mb-2">{a.title}</h3>
-                      <p className="text-xs text-muted-foreground">{a.time} read</p>
+                    <Link to={`/learn/${a.slug}`} className="card-elevated block hover:border-primary/30 group overflow-hidden">
+                      <div className="relative h-36 overflow-hidden">
+                        <img
+                          src={a.img}
+                          alt=""
+                          loading="lazy"
+                          className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-foreground/40 to-transparent" />
+                        <span className="absolute bottom-3 left-4 text-xs font-semibold text-white uppercase tracking-wider drop-shadow">{a.cat}</span>
+                      </div>
+                      <div className="p-5">
+                        <h3 className="font-display text-lg font-semibold mb-2">{a.title}</h3>
+                        <p className="text-xs text-muted-foreground">{a.time} read</p>
+                      </div>
                     </Link>
                   </motion.div>
                 </motion.div>

@@ -55,8 +55,12 @@ All routes render inside `Layout` (Navbar + Footer + FloatingCTA) with `AnimateP
 - `/` — Index (hero, prompt grid, services/clients/learn previews, teasers)
 - `/services` — 21 services from `src/data/services.ts`, category filter
 - `/clients` — client portfolio from `src/data/clients.ts`
-- `/ai` — Diyama AI streaming chat (calls the `chat` edge function via fetch + SSE)
-- `/business-fit` — multi-step quiz → `business-fit` edge function → AI report
+- `/apps` — Diyama-built apps showcase from `src/data/apps.ts` (try free / subscribe CTAs via WhatsApp)
+- `/partners` — brands Diyama advertises for, from `src/data/partners.ts`
+- `/ai` — Diyama AI streaming chat (calls the `chat` edge function via fetch + SSE);
+  `DiyamaAvatar` component gives Diyama an animated persona (idle/thinking/speaking moods)
+- `/business-fit` — multi-step quiz → email gate (inserts `mailing_list`) → `business-fit`
+  edge function → animated "Business Kit" report reveal
 - `/consultations` — booking form → inserts `consultation_requests`
 - `/learn` — article grid; `/learn/:slug` — full article (`src/pages/Article.tsx`, react-markdown)
 - `/affiliate` — program info + signup form → inserts `affiliate_signups`
@@ -69,7 +73,8 @@ All routes render inside `Layout` (Navbar + Footer + FloatingCTA) with `AnimateP
 - Supabase client: `src/integrations/supabase/client.ts` (generated, do not edit) with
   generated types in `types.ts`. Tables: `contact_submissions`, `consultation_requests`,
   `affiliate_signups`, `affiliate_referrals`, `business_fit_submissions`, `ai_conversations`,
-  `ai_messages`, `reviews`.
+  `ai_messages`, `reviews`, `mailing_list` (insert-only; Business Fit gates the free
+  "Business Kit" report behind a mailing-list email signup).
 - Schema source of truth: `supabase/migrations/20260714100000_diyama_solutions_schema.sql`
   (RLS: public forms are insert-only; nothing publicly readable except approved reviews).
 

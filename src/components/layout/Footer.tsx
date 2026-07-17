@@ -18,6 +18,7 @@ const footerLinks = [
     links: [
       { label: "About", path: "/about" },
       { label: "Clients", path: "/clients" },
+      { label: "Partners", path: "/partners" },
       { label: "Learn", path: "/learn" },
       { label: "Affiliate Program", path: "/affiliate" },
       { label: "Contact", path: "/contact" },
@@ -26,6 +27,7 @@ const footerLinks = [
   {
     title: "Tools",
     links: [
+      { label: "Our Apps", path: "/apps" },
       { label: "Diyama AI", path: "/ai" },
       { label: "Business Fit Generator", path: "/business-fit" },
       { label: "Book Consultation", path: "/consultations" },
