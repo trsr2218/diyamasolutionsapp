@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 :root{
   --teal:#1f5c4d; --teal-dark:#16453a; --teal-soft:#e7f0ed;
@@ -135,7 +135,7 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--teal);bo
   display:flex;align-items:center;justify-content:center;
   padding:26px;min-height:300px;position:relative;overflow:hidden;
 }
-.qr-stage canvas{border-radius:8px;box-shadow:0 12px 30px -14px rgba(31,92,77,.4);background:#fff;max-width:100%;height:auto!important}
+.qr-stage canvas,.qr-stage img{border-radius:8px;box-shadow:0 12px 30px -14px rgba(31,92,77,.4);background:#fff;max-width:100%;height:auto!important}
 .empty{text-align:center;color:var(--muted);padding:20px}
 .empty .icon{font-size:40px;margin-bottom:10px}
 .empty h3{font-size:18px;color:var(--ink);margin:0 0 6px}
@@ -245,7 +245,7 @@ footer.site{border-top:1px solid var(--border);margin-top:10px}
           <h3>Nothing to scan yet</h3>
           <p>Start typing on the left and your QR code will appear here instantly.</p>
         </div>
-        <canvas id="qrCanvas" style="display:none"></canvas>
+        <div id="qrCanvas" style="display:none"></div>
       </div>
       <div class="preview-actions">
         <button class="btn btn-accent" id="downloadBtn" disabled>&#8681;&nbsp; Download PNG</button>
@@ -339,7 +339,7 @@ footer.site{border-top:1px solid var(--border);margin-top:10px}
   /* ---------- Elements ---------- */
   var $segments = document.getElementById('segments');
   var $form = document.getElementById('qrForm');
-  var $canvas = document.getElementById('qrCanvas');
+  var $container = document.getElementById('qrCanvas');
   var $empty = document.getElementById('emptyState');
   var $downloadBtn = document.getElementById('downloadBtn');
   var $copyBtn = document.getElementById('copyBtn');
@@ -439,27 +439,34 @@ footer.site{border-top:1px solid var(--border);margin-top:10px}
     var payload = buildPayload();
     currentEncoded = payload;
     if(!payload){
-      $canvas.style.display = 'none';
+      $container.innerHTML = '';
+      $container.style.display = 'none';
       $empty.style.display = 'block';
       $encodedBox.style.display = 'none';
       $downloadBtn.disabled = true;
       $copyBtn.disabled = true;
       return;
     }
-    QRCode.toCanvas($canvas, payload, {
-      width: state.size,
-      margin: 2,
-      color:{ dark: state.fg, light:'#ffffff' },
-      errorCorrectionLevel:'M'
-    }, function(err){
-      if(err){ showToast('Could not draw that QR code.'); return; }
-      $canvas.style.display = 'block';
-      $empty.style.display = 'none';
-      $encodedBox.style.display = 'block';
-      $encodedText.textContent = payload;
-      $downloadBtn.disabled = false;
-      $copyBtn.disabled = false;
-    });
+    try{
+      $container.innerHTML = '';
+      new QRCode($container, {
+        text: payload,
+        width: state.size,
+        height: state.size,
+        colorDark: state.fg,
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    }catch(err){
+      showToast('Could not draw that QR code.');
+      return;
+    }
+    $container.style.display = 'block';
+    $empty.style.display = 'none';
+    $encodedBox.style.display = 'block';
+    $encodedText.textContent = payload;
+    $downloadBtn.disabled = false;
+    $copyBtn.disabled = false;
     scheduleSave();
   }
 
@@ -640,25 +647,35 @@ footer.site{border-top:1px solid var(--border);margin-top:10px}
   }
   $downloadBtn.addEventListener('click', function(){
     if($downloadBtn.disabled) return;
-    // render on a padded white canvas for a clean export
-    var pad = Math.round(state.size*0.06);
-    var out = document.createElement('canvas');
-    out.width = $canvas.width + pad*2; out.height = $canvas.height + pad*2;
-    var ctx = out.getContext('2d');
-    ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,out.width,out.height);
-    ctx.drawImage($canvas, pad, pad);
+    var srcCanvas = $container.querySelector('canvas');
+    var dataUrl;
+    if(srcCanvas){
+      // render on a padded white canvas for a clean export
+      var pad = Math.round(state.size*0.06);
+      var out = document.createElement('canvas');
+      out.width = srcCanvas.width + pad*2; out.height = srcCanvas.height + pad*2;
+      var ctx = out.getContext('2d');
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,out.width,out.height);
+      ctx.drawImage(srcCanvas, pad, pad);
+      dataUrl = out.toDataURL('image/png');
+    } else {
+      var img = $container.querySelector('img');
+      if(!img || !img.src){ showToast('Nothing to download yet.'); return; }
+      dataUrl = img.src;
+    }
     var a = document.createElement('a');
-    a.href = out.toDataURL('image/png'); a.download = safeName();
+    a.href = dataUrl; a.download = safeName();
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     commitHistory();
     showToast('Saved ' + safeName());
   });
   $copyBtn.addEventListener('click', function(){
     if($copyBtn.disabled) return;
-    if(!$canvas.toBlob || !navigator.clipboard || !window.ClipboardItem){
+    var srcCanvas = $container.querySelector('canvas');
+    if(!srcCanvas || !srcCanvas.toBlob || !navigator.clipboard || !window.ClipboardItem){
       showToast('Copy is not supported here. Use Download instead.'); return;
     }
-    $canvas.toBlob(function(blob){
+    srcCanvas.toBlob(function(blob){
       try{
         navigator.clipboard.write([new ClipboardItem({'image/png':blob})]).then(function(){
           showToast('QR image copied to clipboard.');

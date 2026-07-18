@@ -6,6 +6,8 @@ import learnImg from "@/assets/learn-workspace.jpg";
 import PageTransition from "@/components/PageTransition";
 import AnimatedBg from "@/components/AnimatedBg";
 import SitePreview from "@/components/SitePreview";
+import Seo from "@/components/Seo";
+import { pageSeo } from "@/seo/pageSeo";
 
 const stagger: Variants = {
   hidden: {},
@@ -25,6 +27,7 @@ const fadeIn: Variants = {
 const Partners = () => {
   return (
     <PageTransition>
+      <Seo {...pageSeo["/partners"]} path="/partners" />
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img src={learnImg} alt="" className="w-full h-full object-cover" />

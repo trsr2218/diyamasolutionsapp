@@ -5,6 +5,8 @@ import { ArrowRight } from "lucide-react";
 import { services, serviceCategories } from "@/data/services";
 import servicesImg from "@/assets/services-strategy.jpg";
 import PageTransition from "@/components/PageTransition";
+import Seo from "@/components/Seo";
+import { pageSeo } from "@/seo/pageSeo";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -19,6 +21,7 @@ const Services = () => {
 
   return (
     <PageTransition>
+      <Seo {...pageSeo["/services"]} path="/services" />
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 z-0">

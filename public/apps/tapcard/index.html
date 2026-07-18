@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 :root{
   --teal:#1f5c4d; --teal-dark:#16453a; --teal-soft:#e7f0ed;
@@ -406,11 +406,18 @@ function renderQR(mountId,s){
   mount.innerHTML="";
   if(typeof QRCode==="undefined"){mount.innerHTML='<div class="emptycard">QR unavailable</div>';return;}
   var data=vcardFor(s);
-  var canvas=document.createElement("canvas");
-  mount.appendChild(canvas);
-  QRCode.toCanvas(canvas,data,{width:220,margin:1,color:{dark:"#1e2b30",light:"#ffffff"},errorCorrectionLevel:"M"},function(err){
-    if(err){mount.innerHTML='<div class="emptycard">QR error</div>';}
-  });
+  try{
+    new QRCode(mount,{
+      text:data,
+      width:200,
+      height:200,
+      colorDark:"#1f5c4d",
+      colorLight:"#ffffff",
+      correctLevel:QRCode.CorrectLevel.M
+    });
+  }catch(e){
+    mount.innerHTML='<div class="emptycard">QR error</div>';
+  }
 }
 
 /* ---------- card markup ---------- */

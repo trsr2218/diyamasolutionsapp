@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { Users, Send as SendIcon, DollarSign, Shield, CheckCircle, Loader2 } from "lucide-react";
 import aboutImg from "@/assets/about-team.jpg";
 import PageTransition from "@/components/PageTransition";
+import Seo from "@/components/Seo";
+import { pageSeo } from "@/seo/pageSeo";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
@@ -51,6 +53,7 @@ const Affiliate = () => {
 
   return (
     <PageTransition>
+      <Seo {...pageSeo["/affiliate"]} path="/affiliate" />
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img src={aboutImg} alt="" className="w-full h-full object-cover" />

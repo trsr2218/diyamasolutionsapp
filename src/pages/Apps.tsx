@@ -15,6 +15,31 @@ import servicesImg from "@/assets/services-strategy.jpg";
 import PageTransition from "@/components/PageTransition";
 import AnimatedBg from "@/components/AnimatedBg";
 import SitePreview from "@/components/SitePreview";
+import Seo from "@/components/Seo";
+import { pageSeo } from "@/seo/pageSeo";
+
+const ORIGIN = "https://www.diyama.online";
+
+const appsJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "Diyama Business Apps",
+  itemListElement: apps
+    .filter((app) => app.url)
+    .map((app, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "SoftwareApplication",
+        name: app.name,
+        description: app.description,
+        url: app.url!.startsWith("http") ? app.url! : `${ORIGIN}${app.url}`,
+        applicationCategory: "BusinessApplication",
+        operatingSystem: "Web",
+        offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      },
+    })),
+};
 
 const stagger: Variants = {
   hidden: {},
@@ -55,6 +80,7 @@ const greeting = () => {
 const Apps = () => {
   return (
     <PageTransition>
+      <Seo {...pageSeo["/apps"]} path="/apps" jsonLd={appsJsonLd} />
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img src={servicesImg} alt="" className="w-full h-full object-cover" />

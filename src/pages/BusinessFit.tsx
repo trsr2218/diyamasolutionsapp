@@ -4,8 +4,22 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Sparkles, Mail, Gift, PartyPopper } from "lucide-react";
 import PageTransition from "@/components/PageTransition";
 import DiyamaAvatar from "@/components/DiyamaAvatar";
+import Seo from "@/components/Seo";
+import { pageSeo } from "@/seo/pageSeo";
 import { toast } from "@/hooks/use-toast";
 import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY as SUPABASE_KEY } from "@/lib/supabaseEnv";
+
+const fitJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "Diyama Business Fit",
+  description: pageSeo["/business-fit"].description,
+  url: "https://www.diyama.online/business-fit",
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Web",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  provider: { "@type": "Organization", name: "Diyama Solutions" },
+};
 
 const stages = ["Idea stage", "Just started", "Growing", "Established", "Scaling"];
 const businessTypes = [
@@ -276,6 +290,7 @@ const BusinessFit = () => {
   // ---------- Question + email flow ----------
   return (
     <PageTransition>
+      <Seo {...pageSeo["/business-fit"]} path="/business-fit" jsonLd={fitJsonLd} />
       <div className="section-padding bg-gradient-to-b from-surface via-background to-surface min-h-[80vh] flex items-center">
         <div className="container-narrow mx-auto w-full">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">

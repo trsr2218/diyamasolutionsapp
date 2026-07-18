@@ -1,6 +1,10 @@
+import Seo from "@/components/Seo";
+import { pageSeo } from "@/seo/pageSeo";
+
 const Terms = () => {
   return (
     <div className="section-padding">
+      <Seo {...pageSeo["/terms"]} path="/terms" />
       <div className="container-narrow mx-auto">
         <h1 className="text-4xl font-display font-bold mb-8">Terms of Service</h1>
         <div className="prose prose-sm max-w-none text-muted-foreground space-y-6">

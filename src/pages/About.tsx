@@ -4,6 +4,8 @@ import { Heart, Target, Lightbulb, Users } from "lucide-react";
 import aboutImg from "@/assets/about-team.jpg";
 import heroImg from "@/assets/hero-consultant.jpg";
 import PageTransition from "@/components/PageTransition";
+import Seo from "@/components/Seo";
+import { pageSeo } from "@/seo/pageSeo";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -16,6 +18,7 @@ const fadeUp = {
 const About = () => {
   return (
     <PageTransition>
+      <Seo {...pageSeo["/about"]} path="/about" />
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 z-0">

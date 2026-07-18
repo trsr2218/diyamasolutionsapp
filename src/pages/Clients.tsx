@@ -5,6 +5,8 @@ import { clients } from "@/data/clients";
 import aboutImg from "@/assets/about-team.jpg";
 import PageTransition from "@/components/PageTransition";
 import SitePreview from "@/components/SitePreview";
+import Seo from "@/components/Seo";
+import { pageSeo } from "@/seo/pageSeo";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -20,6 +22,7 @@ const Clients = () => {
 
   return (
     <PageTransition>
+      <Seo {...pageSeo["/clients"]} path="/clients" />
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img src={aboutImg} alt="" className="w-full h-full object-cover" />

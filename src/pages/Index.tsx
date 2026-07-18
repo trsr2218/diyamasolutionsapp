@@ -13,6 +13,8 @@ import meetingImg from "@/assets/consultation-meeting.jpg";
 import PageTransition from "@/components/PageTransition";
 import AnimatedBg from "@/components/AnimatedBg";
 import DiyamaAvatar from "@/components/DiyamaAvatar";
+import Seo from "@/components/Seo";
+import { pageSeo } from "@/seo/pageSeo";
 
 const stagger: Variants = {
   hidden: {},
@@ -40,6 +42,7 @@ const Index = () => {
 
   return (
     <PageTransition>
+      <Seo {...pageSeo["/"]} path="/" />
       {/* Hero — parallax */}
       <section ref={heroRef} className="relative overflow-hidden min-h-[90vh] flex items-center">
         <motion.div className="absolute inset-0 z-0" style={{ y: heroY }}>

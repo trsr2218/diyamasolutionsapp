@@ -3,21 +3,85 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Diyama Solutions</title>
-    <meta name="description" content="Diyama Solutions is your business growth partner based in Zambia. Marketing, strategy, branding, and consulting for businesses across Africa." />
+    <!-- Per-page title, description, canonical, Open Graph and Twitter tags are
+         managed by react-helmet-async (see src/components/Seo.tsx). The title
+         below is only a fallback for routes that render no Seo component. -->
+    <title>Diyama Solutions | Business Growth, Marketing & Free Business Apps in Zambia</title>
     <meta name="author" content="Diyama Solutions" />
+    <meta name="twitter:site" content="@diyamasolutions" />
+    <meta property="og:locale" content="en_US" />
 
     <link rel="icon" type="image/jpeg" href="/logo.jpg" />
     <link rel="apple-touch-icon" href="/logo.jpg" />
 
-    <meta property="og:title" content="Diyama Solutions" />
-    <meta property="og:description" content="Bring the challenge. We'll help you move. Business growth consulting for African businesses." />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="/logo.jpg" />
-
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@diyamasolutions" />
-    <meta name="twitter:image" content="/logo.jpg" />
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://www.diyama.online/#organization",
+          "name": "Diyama Solutions",
+          "url": "https://www.diyama.online/",
+          "logo": "https://www.diyama.online/logo.jpg",
+          "image": "https://www.diyama.online/logo.jpg",
+          "slogan": "Clarity in Action.",
+          "description": "Business growth consultancy in Lusaka, Zambia offering marketing, strategy, branding, web development, and a suite of free business apps for African businesses.",
+          "email": "getitdonerapid@gmail.com",
+          "telephone": "+260966138238",
+          "foundingLocation": { "@type": "Place", "name": "Lusaka, Zambia" },
+          "areaServed": [
+            { "@type": "Country", "name": "Zambia" },
+            { "@type": "Continent", "name": "Africa" }
+          ],
+          "sameAs": [
+            "https://www.facebook.com/feyscreations/",
+            "https://x.com/diyamasolutions"
+          ]
+        },
+        {
+          "@type": "ProfessionalService",
+          "@id": "https://www.diyama.online/#business",
+          "name": "Diyama Solutions",
+          "image": "https://www.diyama.online/logo.jpg",
+          "url": "https://www.diyama.online/",
+          "email": "getitdonerapid@gmail.com",
+          "telephone": "+260966138238",
+          "priceRange": "$$",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Lusaka",
+            "addressCountry": "ZM"
+          },
+          "areaServed": { "@type": "Continent", "name": "Africa" },
+          "knowsAbout": [
+            "Digital Marketing", "Social Media Management", "Growth Strategy", "Branding",
+            "Web Development", "Search Engine Optimization", "Content Marketing",
+            "Tourism Marketing", "Restaurant Marketing", "Creator Economy", "Web3"
+          ],
+          "makesOffer": {
+            "@type": "OfferCatalog",
+            "name": "Business growth services",
+            "itemListElement": [
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Digital Marketing" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Social Media Management" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Growth Strategy" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Branding" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Web Development" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Business Consulting" } }
+            ]
+          }
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://www.diyama.online/#website",
+          "url": "https://www.diyama.online/",
+          "name": "Diyama Solutions",
+          "publisher": { "@id": "https://www.diyama.online/#organization" }
+        }
+      ]
+    }
+    </script>
   </head>
 
   <body>

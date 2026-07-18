@@ -4,6 +4,8 @@ import { Mail, Phone, MapPin, Send, CheckCircle, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import contactImg from "@/assets/contact-advisor.jpg";
 import PageTransition from "@/components/PageTransition";
+import Seo from "@/components/Seo";
+import { pageSeo } from "@/seo/pageSeo";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
@@ -33,6 +35,7 @@ const Contact = () => {
 
   return (
     <PageTransition>
+      <Seo {...pageSeo["/contact"]} path="/contact" />
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 z-0">

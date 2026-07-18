@@ -4,6 +4,9 @@ import ReactMarkdown from "react-markdown";
 import { ArrowLeft, ArrowRight, BookOpen, Clock } from "lucide-react";
 import { articles } from "@/data/articles";
 import PageTransition from "@/components/PageTransition";
+import Seo from "@/components/Seo";
+
+const ORIGIN = "https://www.diyama.online";
 
 const Article = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -14,8 +17,33 @@ const Article = () => {
   const related = articles.filter((a) => a.id !== article.id && a.category === article.category);
   const suggestions = related.length > 0 ? related : articles.filter((a) => a.id !== article.id).slice(0, 2);
 
+  const canonicalUrl = `${ORIGIN}/learn/${article.id}`;
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: article.title,
+    description: article.excerpt,
+    articleSection: article.category,
+    keywords: article.tags.join(", "),
+    image: `${ORIGIN}/logo.jpg`,
+    author: { "@type": "Organization", name: "Diyama Solutions" },
+    publisher: {
+      "@type": "Organization",
+      name: "Diyama Solutions",
+      logo: { "@type": "ImageObject", url: `${ORIGIN}/logo.jpg` },
+    },
+    mainEntityOfPage: { "@type": "WebPage", "@id": canonicalUrl },
+  };
+
   return (
     <PageTransition>
+      <Seo
+        title={`${article.title} | Diyama Learn`}
+        description={article.excerpt}
+        path={`/learn/${article.id}`}
+        type="article"
+        jsonLd={articleJsonLd}
+      />
       <div className="section-padding bg-gradient-to-b from-surface to-background">
         <div className="container-narrow mx-auto max-w-3xl">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>

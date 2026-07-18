@@ -5,6 +5,33 @@ import { BookOpen, Clock } from "lucide-react";
 import { articles } from "@/data/articles";
 import learnImg from "@/assets/learn-workspace.jpg";
 import PageTransition from "@/components/PageTransition";
+import Seo from "@/components/Seo";
+import { pageSeo } from "@/seo/pageSeo";
+
+const ORIGIN = "https://www.diyama.online";
+
+const learnJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: "Learn with Diyama",
+  description: pageSeo["/learn"].description,
+  url: `${ORIGIN}/learn`,
+  isPartOf: { "@type": "WebSite", name: "Diyama Solutions", url: `${ORIGIN}/` },
+  hasPart: articles.map((a) => ({
+    "@type": "BlogPosting",
+    headline: a.title,
+    description: a.excerpt,
+    articleSection: a.category,
+    keywords: a.tags.join(", "),
+    url: `${ORIGIN}/learn/${a.id}`,
+    author: { "@type": "Organization", name: "Diyama Solutions" },
+    publisher: {
+      "@type": "Organization",
+      name: "Diyama Solutions",
+      logo: { "@type": "ImageObject", url: `${ORIGIN}/logo.jpg` },
+    },
+  })),
+};
 
 const categories = ["All", ...Array.from(new Set(articles.map((a) => a.category)))];
 
@@ -23,6 +50,7 @@ const Learn = () => {
 
   return (
     <PageTransition>
+      <Seo {...pageSeo["/learn"]} path="/learn" jsonLd={learnJsonLd} />
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 z-0">

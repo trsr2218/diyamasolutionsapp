@@ -4,10 +4,24 @@ import { Send, RotateCcw, Sparkles } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import PageTransition from "@/components/PageTransition";
 import DiyamaAvatar from "@/components/DiyamaAvatar";
+import Seo from "@/components/Seo";
+import { pageSeo } from "@/seo/pageSeo";
 import { toast } from "@/hooks/use-toast";
 import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from "@/lib/supabaseEnv";
 
 const CHAT_URL = `${SUPABASE_URL}/functions/v1/chat`;
+
+const aiJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "Diyama AI",
+  description: pageSeo["/ai"].description,
+  url: "https://www.diyama.online/ai",
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Web",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  provider: { "@type": "Organization", name: "Diyama Solutions" },
+};
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -129,6 +143,7 @@ const DiyamaAI = () => {
 
   return (
     <PageTransition>
+      <Seo {...pageSeo["/ai"]} path="/ai" jsonLd={aiJsonLd} />
       <div className="min-h-[calc(100vh-4rem)] flex flex-col">
         <div className="px-4 py-3 sm:py-4 bg-gradient-to-b from-foreground to-foreground/95 text-primary-foreground relative overflow-hidden">
           <div className="absolute inset-0 opacity-10">
