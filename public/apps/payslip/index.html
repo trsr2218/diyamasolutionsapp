@@ -1,0 +1,653 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Diyama PaySlip · Zambian Payroll & Payslip Calculator</title>
+<meta name="description" content="Diyama PaySlip is a fast, trustworthy Zambian payroll and payslip calculator. Compute PAYE, NAPSA and NHIMA, then generate and download a branded PDF payslip." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f5c4d'/%3E%3Ctext x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='%23fff' text-anchor='middle'%3ED%3C/text%3E%3Ccircle cx='24.5' cy='22' r='2.3' fill='%23e8a838'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --teal:#1f5c4d; --teal-dark:#16453a; --teal-soft:#e7f0ed;
+    --gold:#e8a838; --gold-soft:#fbf1dd;
+    --ink:#1e2b30; --muted:#6b7674; --surface:#faf8f4; --card:#ffffff;
+    --border:#e8e4dc; --danger:#d64545; --ok:#2e9e6b;
+    --shadow:0 10px 30px -12px rgba(31,92,77,.15);
+    --shadow-lg:0 18px 44px -14px rgba(31,92,77,.28);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'DM Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    color:var(--ink); background:var(--surface); font-size:16px; line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(700px 380px at 100% -8%, rgba(232,168,56,.10), transparent 60%),
+      radial-gradient(640px 420px at -6% 108%, rgba(31,92,77,.10), transparent 60%);
+    background-attachment:fixed;
+    min-height:100vh;
+  }
+  h1,h2,h3,h4,.font-display{font-family:'Playfair Display',Georgia,serif}
+  a{color:var(--teal);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  /* Header */
+  header.site{
+    position:sticky;top:0;z-index:50;
+    background:rgba(255,255,255,.78);backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--border);
+  }
+  .bar{max-width:1120px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;gap:14px;justify-content:space-between}
+  .wordmark{display:flex;align-items:center;gap:12px;min-width:0}
+  .wordmark .brand{font-family:'Playfair Display',serif;font-weight:800;font-size:1.4rem;color:var(--teal);letter-spacing:-.01em;white-space:nowrap}
+  .wordmark .brand .dot{color:var(--gold)}
+  .wordmark .divider{width:1px;height:24px;background:var(--border)}
+  .wordmark .appname{font-weight:600;color:var(--muted);font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .wordmark a:hover{text-decoration:none}
+  .backlink{font-size:.9rem;font-weight:600;color:var(--teal);white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+
+  main{max-width:1120px;margin:0 auto;padding:30px 20px 10px}
+  .hero{margin:6px 0 26px}
+  .hero h1{font-size:2rem;font-weight:800;margin:0 0 8px;letter-spacing:-.015em}
+  .hero p{margin:0;color:var(--muted);max-width:640px}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);background:var(--teal-soft);padding:5px 12px;border-radius:999px;margin-bottom:14px}
+  .eyebrow .g{width:7px;height:7px;border-radius:50%;background:var(--gold)}
+
+  .grid{display:grid;grid-template-columns:1fr;gap:22px}
+  @media(min-width:960px){.grid{grid-template-columns:1.05fr .95fr;align-items:start}}
+
+  .card{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:24px}
+  .card h2{font-size:1.28rem;margin:0 0 4px;font-weight:700}
+  .card .sub{color:var(--muted);font-size:.9rem;margin:0 0 18px}
+
+  label{display:block;font-weight:600;font-size:.86rem;margin:0 0 6px;color:var(--ink)}
+  .field{margin-bottom:16px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:480px){.row2{grid-template-columns:1fr}}
+  input[type=text],input[type=number],select{
+    width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:10px;
+    background:var(--surface);font:inherit;color:var(--ink);transition:border-color .18s, box-shadow .18s;
+  }
+  input:focus,select:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(31,92,77,.15)}
+  .prefix{position:relative}
+  .prefix input{padding-left:30px}
+  .prefix .k{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:600;pointer-events:none}
+
+  .toggle{display:flex;align-items:center;gap:11px;cursor:pointer;user-select:none}
+  .toggle input{position:absolute;opacity:0;width:0;height:0}
+  .switch{width:44px;height:26px;border-radius:999px;background:#d9d4ca;position:relative;transition:background .18s;flex:none}
+  .switch::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:left .18s}
+  .toggle input:checked + .switch{background:var(--teal)}
+  .toggle input:checked + .switch::after{left:21px}
+  .toggle .lbl{font-weight:600;font-size:.92rem}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 18px;border-radius:10px;font:inherit;font-weight:600;border:1px solid transparent;cursor:pointer;transition:transform .18s, box-shadow .18s, background .18s, border-color .18s;white-space:nowrap}
+  .btn:hover{transform:translateY(-1px)}
+  .btn:active{transform:translateY(0)}
+  .btn-primary{background:var(--teal);color:#fff;box-shadow:0 8px 18px -10px rgba(31,92,77,.6)}
+  .btn-primary:hover{background:var(--teal-dark);box-shadow:var(--shadow-lg)}
+  .btn-accent{background:var(--gold);color:var(--ink);box-shadow:0 8px 18px -10px rgba(232,168,56,.7)}
+  .btn-accent:hover{background:#dd9d2c;box-shadow:var(--shadow-lg)}
+  .btn-outline{background:transparent;color:var(--teal);border-color:var(--border)}
+  .btn-outline:hover{border-color:var(--teal);background:var(--teal-soft)}
+  .btn-ghost{background:transparent;color:var(--muted);border-color:transparent;padding:8px 10px}
+  .btn-ghost:hover{color:var(--danger);background:#fbeaea;transform:none}
+  .btn-sm{padding:8px 13px;font-size:.86rem}
+  .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px}
+
+  /* Result / payslip preview */
+  .result-empty{color:var(--muted);text-align:center;padding:34px 10px}
+  .result-empty .em{font-size:2.4rem;line-height:1;margin-bottom:12px}
+  .result-empty h3{margin:0 0 6px;font-weight:700;color:var(--ink);font-size:1.1rem}
+
+  .slip{border:1px solid var(--border);border-radius:14px;overflow:hidden}
+  .slip-top{background:var(--teal);color:#fff;padding:18px 20px;display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
+  .slip-top .co{font-family:'Playfair Display',serif;font-weight:700;font-size:1.15rem}
+  .slip-top .meta{font-size:.82rem;opacity:.85;margin-top:2px}
+  .slip-top .badge{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);padding:5px 11px;border-radius:999px;font-size:.72rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+  .slip-body{padding:6px 20px 8px}
+  .line{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);font-size:.96rem}
+  .line:last-child{border-bottom:none}
+  .line .lab{color:var(--muted)}
+  .line .val{font-weight:600;font-variant-numeric:tabular-nums}
+  .line.ded .val{color:var(--danger)}
+  .line.sub-h{font-weight:700;color:var(--ink)}
+  .net{background:var(--gold-soft);border:1px solid #f1dcb0;border-radius:12px;margin:14px 20px 20px;padding:16px 18px;display:flex;justify-content:space-between;align-items:center}
+  .net .nl{font-weight:700}
+  .net .nl small{display:block;font-weight:500;color:var(--muted);font-size:.76rem}
+  .net .nv{font-family:'Playfair Display',serif;font-weight:800;font-size:1.7rem;color:var(--teal-dark);font-variant-numeric:tabular-nums}
+  .who{display:flex;justify-content:space-between;gap:10px;padding:14px 20px 4px;flex-wrap:wrap}
+  .who .cell .k{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+  .who .cell .v{font-weight:600}
+
+  /* Settings */
+  details.settings{margin-top:22px;background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+  details.settings>summary{list-style:none;cursor:pointer;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;font-weight:700;font-family:'Playfair Display',serif;font-size:1.1rem}
+  details.settings>summary::-webkit-details-marker{display:none}
+  details.settings>summary .chev{transition:transform .2s;color:var(--muted)}
+  details.settings[open]>summary .chev{transform:rotate(180deg)}
+  .settings-body{padding:4px 24px 24px;border-top:1px solid var(--border)}
+  .settings-body p.note{color:var(--muted);font-size:.86rem;margin:14px 0 18px}
+  .band-row{display:grid;grid-template-columns:1fr 1fr 90px;gap:12px;align-items:end;margin-bottom:12px}
+  @media(max-width:520px){.band-row{grid-template-columns:1fr 1fr;}}
+  .band-row .r{font-size:.8rem;color:var(--muted)}
+
+  /* Saved list */
+  .saved-head{display:flex;align-items:center;justify-content:space-between;margin:34px 0 14px;gap:12px;flex-wrap:wrap}
+  .saved-head h2{font-size:1.35rem;margin:0}
+  .saved-grid{display:grid;grid-template-columns:1fr;gap:14px}
+  @media(min-width:680px){.saved-grid{grid-template-columns:1fr 1fr}}
+  @media(min-width:960px){.saved-grid{grid-template-columns:1fr 1fr 1fr}}
+  .saved-card{background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);padding:16px 17px;display:flex;flex-direction:column;gap:4px;transition:transform .18s, box-shadow .18s;cursor:pointer}
+  .saved-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+  .saved-card .nm{font-weight:700}
+  .saved-card .pd{font-size:.82rem;color:var(--muted)}
+  .saved-card .amt{font-family:'Playfair Display',serif;font-weight:700;color:var(--teal);font-size:1.15rem;margin-top:6px}
+  .saved-card .foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+  .empty-saved{color:var(--muted);background:var(--card);border:1px dashed var(--border);border-radius:14px;padding:26px;text-align:center}
+
+  .disclaimer{margin:30px 0 8px;font-size:.82rem;color:var(--muted);background:var(--teal-soft);border:1px solid #d7e5e0;border-radius:12px;padding:14px 16px;display:flex;gap:11px;align-items:flex-start}
+  .disclaimer .i{flex:none;font-size:1.05rem}
+
+  footer.site{text-align:center;color:var(--muted);font-size:.85rem;padding:34px 20px 40px}
+  footer.site a{font-weight:600}
+  footer.site .sep{margin:0 8px;color:var(--border)}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:10px;font-size:.9rem;font-weight:600;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;z-index:100}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .fade-in{animation:fadeUp .5s ease both}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .err{color:var(--danger);font-size:.8rem;margin-top:5px;display:none}
+  .err.show{display:block}
+</style>
+</head>
+<body>
+<header class="site">
+  <div class="bar">
+    <div class="wordmark">
+      <a href="https://www.diyama.online" aria-label="Diyama Solutions home">
+        <span class="brand">Diyama<span class="dot">.</span></span>
+      </a>
+      <span class="divider" aria-hidden="true"></span>
+      <span class="appname">PaySlip</span>
+    </div>
+    <a class="backlink" href="https://www.diyama.online">Back to Diyama &rarr;</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero fade-in">
+    <span class="eyebrow"><span class="g"></span> Zambian Payroll</span>
+    <h1>Payslip &amp; PAYE Calculator</h1>
+    <p>Enter a monthly gross salary and get an accurate breakdown of PAYE, NAPSA and NHIMA, then generate a branded payslip and download it as a PDF. Everything stays on your device.</p>
+  </section>
+
+  <div class="grid">
+    <!-- INPUT -->
+    <section class="card fade-in">
+      <h2>Payslip details</h2>
+      <p class="sub">Fill in the employee and salary details below.</p>
+
+      <div class="row2">
+        <div class="field">
+          <label for="empName">Employee name</label>
+          <input type="text" id="empName" placeholder="e.g. Mwansa Bwalya" autocomplete="off" />
+        </div>
+        <div class="field">
+          <label for="employer">Employer name</label>
+          <input type="text" id="employer" placeholder="e.g. Diyama Solutions Ltd" autocomplete="off" />
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label for="gross">Monthly gross salary</label>
+          <div class="prefix">
+            <span class="k">K</span>
+            <input type="number" id="gross" placeholder="0.00" min="0" step="0.01" inputmode="decimal" />
+          </div>
+          <div class="err" id="grossErr">Enter a gross salary greater than zero.</div>
+        </div>
+        <div class="field">
+          <label for="period">Pay period month</label>
+          <input type="text" id="period" placeholder="July 2026" autocomplete="off" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="toggle" for="nhimaToggle">
+          <input type="checkbox" id="nhimaToggle" checked />
+          <span class="switch"></span>
+          <span class="lbl">Apply NHIMA deduction (health insurance)</span>
+        </label>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" id="calcBtn" type="button">Calculate payslip</button>
+        <button class="btn btn-outline" id="resetBtn" type="button">Clear</button>
+      </div>
+    </section>
+
+    <!-- RESULT -->
+    <section class="card fade-in" id="resultCard">
+      <div class="result-empty" id="emptyState">
+        <div class="em">🧾</div>
+        <h3>Your payslip appears here</h3>
+        <p style="margin:0;max-width:280px;margin-inline:auto">Enter the details on the left and press Calculate to see a full breakdown.</p>
+      </div>
+      <div id="slipWrap" style="display:none"></div>
+      <div class="actions" id="resultActions" style="display:none">
+        <button class="btn btn-accent" id="pdfBtn" type="button">Download PDF</button>
+        <button class="btn btn-outline" id="saveBtn" type="button">Save payslip</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- SETTINGS -->
+  <details class="settings" id="settings">
+    <summary>
+      <span>Tax settings (advanced)</span>
+      <span class="chev" aria-hidden="true">▾</span>
+    </summary>
+    <div class="settings-body">
+      <p class="note">Defaults follow current Zambian monthly PAYE bands, NAPSA and NHIMA rates. Adjust them here if the rules change. Changes are saved on this device.</p>
+
+      <h4 style="margin:6px 0 10px;font-weight:700">PAYE bands (monthly)</h4>
+      <div id="bandsWrap"></div>
+
+      <h4 style="margin:20px 0 10px;font-weight:700">NAPSA</h4>
+      <div class="row2">
+        <div class="field">
+          <label for="napsaRate">Rate (% of gross)</label>
+          <input type="number" id="napsaRate" step="0.01" min="0" />
+        </div>
+        <div class="field">
+          <label for="napsaCap">Monthly ceiling (K)</label>
+          <input type="number" id="napsaCap" step="0.01" min="0" />
+        </div>
+      </div>
+
+      <h4 style="margin:8px 0 10px;font-weight:700">NHIMA</h4>
+      <div class="field" style="max-width:240px">
+        <label for="nhimaRate">Rate (% of gross)</label>
+        <input type="number" id="nhimaRate" step="0.01" min="0" />
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary btn-sm" id="saveSettings" type="button">Save settings</button>
+        <button class="btn btn-outline btn-sm" id="resetSettings" type="button">Restore defaults</button>
+      </div>
+    </div>
+  </details>
+
+  <!-- SAVED -->
+  <div class="saved-head">
+    <h2>Saved payslips</h2>
+    <button class="btn btn-outline btn-sm" id="clearAll" type="button" style="display:none">Clear all</button>
+  </div>
+  <div id="savedArea"></div>
+
+  <div class="disclaimer">
+    <span class="i">ⓘ</span>
+    <span>These figures are estimates for guidance only. Zambian tax bands, NAPSA ceilings and NHIMA rates can change, and individual circumstances (allowances, benefits, exemptions) may affect the final amount. Confirm with the Zambia Revenue Authority or a qualified payroll professional before paying.</span>
+  </div>
+</main>
+
+<footer class="site">
+  <div>Built by Diyama Solutions · Clarity in Action.</div>
+  <div style="margin-top:6px">
+    <a href="https://www.diyama.online">diyama.online</a>
+    <span class="sep">|</span>
+    <a href="https://wa.me/260966138238">Chat on WhatsApp</a>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+  var LS_SETTINGS = "diyama_payslip_settings_v1";
+  var LS_SLIPS = "diyama_payslip_saved_v1";
+
+  var DEFAULTS = {
+    bands: [
+      {from:0,    to:5100, rate:0},
+      {from:5100, to:7100, rate:20},
+      {from:7100, to:9200, rate:30},
+      {from:9200, to:null, rate:37}
+    ],
+    napsaRate:5,
+    napsaCap:1342.40,
+    nhimaRate:1
+  };
+
+  // ---------- helpers ----------
+  function $(id){return document.getElementById(id);}
+  function money(n){
+    n = isFinite(n)? n : 0;
+    return "K" + n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+  }
+  function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+  var toastT;
+  function toast(msg){
+    var t=$("toast"); t.textContent=msg; t.classList.add("show");
+    clearTimeout(toastT); toastT=setTimeout(function(){t.classList.remove("show");},2200);
+  }
+  function loadJSON(key,fallback){
+    try{var v=JSON.parse(localStorage.getItem(key)); return v==null?fallback:v;}catch(e){return fallback;}
+  }
+  function saveJSON(key,val){try{localStorage.setItem(key,JSON.stringify(val));}catch(e){}}
+
+  // ---------- settings state ----------
+  var settings = loadJSON(LS_SETTINGS, null);
+  if(!settings || !Array.isArray(settings.bands)){ settings = JSON.parse(JSON.stringify(DEFAULTS)); }
+
+  function renderBandInputs(){
+    var wrap=$("bandsWrap"); wrap.innerHTML="";
+    settings.bands.forEach(function(b,i){
+      var isLast = (b.to==null);
+      var row=document.createElement("div");
+      row.className="band-row";
+      row.innerHTML =
+        '<div><label>From (K)</label><input type="number" step="0.01" min="0" data-i="'+i+'" data-f="from" value="'+b.from+'" '+(i===0?'readonly':'')+'></div>'+
+        '<div><label>To (K)</label>'+(isLast
+            ? '<input type="text" value="and above" readonly>'
+            : '<input type="number" step="0.01" min="0" data-i="'+i+'" data-f="to" value="'+b.to+'">')+'</div>'+
+        '<div><label>Rate %</label><input type="number" step="0.01" min="0" data-i="'+i+'" data-f="rate" value="'+b.rate+'"></div>';
+      wrap.appendChild(row);
+    });
+  }
+  function fillSettingsForm(){
+    $("napsaRate").value=settings.napsaRate;
+    $("napsaCap").value=settings.napsaCap;
+    $("nhimaRate").value=settings.nhimaRate;
+    renderBandInputs();
+  }
+
+  // ---------- calculation ----------
+  function calcPAYE(gross){
+    var tax=0;
+    for(var i=0;i<settings.bands.length;i++){
+      var b=settings.bands[i];
+      var from=Number(b.from)||0;
+      var to=(b.to==null)?Infinity:Number(b.to);
+      if(gross>from){
+        var taxable=Math.min(gross,to)-from;
+        if(taxable>0) tax += taxable*(Number(b.rate)/100);
+      }
+    }
+    return tax;
+  }
+  function compute(gross, applyNhima){
+    var paye=calcPAYE(gross);
+    var napsa=Math.min(gross*(Number(settings.napsaRate)/100), Number(settings.napsaCap));
+    var nhima=applyNhima ? gross*(Number(settings.nhimaRate)/100) : 0;
+    var total=paye+napsa+nhima;
+    var net=gross-total;
+    return {gross:gross,paye:paye,napsa:napsa,nhima:nhima,applyNhima:applyNhima,total:total,net:net};
+  }
+
+  // ---------- render payslip ----------
+  var current=null;
+  function renderSlip(data,meta){
+    current={data:data,meta:meta};
+    var emp=meta.empName||"Employee";
+    var employer=meta.employer||"Employer";
+    var period=meta.period||"";
+    var html=""+
+      '<div class="slip">'+
+        '<div class="slip-top">'+
+          '<div><div class="co">'+esc(employer)+'</div><div class="meta">Payslip'+(period?' · '+esc(period):'')+'</div></div>'+
+          '<span class="badge">Diyama PaySlip</span>'+
+        '</div>'+
+        '<div class="who">'+
+          '<div class="cell"><div class="k">Employee</div><div class="v">'+esc(emp)+'</div></div>'+
+          '<div class="cell"><div class="k">Pay period</div><div class="v">'+esc(period||"-")+'</div></div>'+
+        '</div>'+
+        '<div class="slip-body">'+
+          '<div class="line sub-h"><span class="lab" style="color:var(--ink)">Gross salary</span><span class="val">'+money(data.gross)+'</span></div>'+
+          '<div class="line ded"><span class="lab">PAYE (income tax)</span><span class="val">- '+money(data.paye)+'</span></div>'+
+          '<div class="line ded"><span class="lab">NAPSA (pension)</span><span class="val">- '+money(data.napsa)+'</span></div>'+
+          (data.applyNhima?'<div class="line ded"><span class="lab">NHIMA (health)</span><span class="val">- '+money(data.nhima)+'</span></div>':'')+
+          '<div class="line sub-h"><span class="lab" style="color:var(--ink)">Total deductions</span><span class="val" style="color:var(--danger)">- '+money(data.total)+'</span></div>'+
+        '</div>'+
+        '<div class="net"><div class="nl">NET PAY<small>Take-home this period</small></div><div class="nv">'+money(data.net)+'</div></div>'+
+      '</div>';
+    $("slipWrap").innerHTML=html;
+    $("emptyState").style.display="none";
+    $("slipWrap").style.display="block";
+    $("resultActions").style.display="flex";
+    $("slipWrap").classList.remove("fade-in");void $("slipWrap").offsetWidth;$("slipWrap").classList.add("fade-in");
+  }
+
+  function readMeta(){
+    return {
+      empName:$("empName").value.trim(),
+      employer:$("employer").value.trim(),
+      period:$("period").value.trim(),
+      applyNhima:$("nhimaToggle").checked
+    };
+  }
+
+  function doCalc(){
+    var gross=parseFloat($("gross").value);
+    var err=$("grossErr");
+    if(!(gross>0)){ err.classList.add("show"); $("gross").focus(); return null; }
+    err.classList.remove("show");
+    var meta=readMeta();
+    var data=compute(gross, meta.applyNhima);
+    renderSlip(data,meta);
+    return {data:data,meta:meta};
+  }
+
+  // ---------- PDF ----------
+  function buildPDF(data,meta){
+    var jsPDF = window.jspdf.jsPDF;
+    var doc = new jsPDF({unit:"pt",format:"a4"});
+    var W = doc.internal.pageSize.getWidth();
+    var teal=[31,92,77], gold=[232,168,56], ink=[30,43,48], muted=[107,118,116], danger=[214,69,69], goldSoft=[251,241,221];
+    var mL=56, mR=W-56;
+
+    // header band
+    doc.setFillColor(teal[0],teal[1],teal[2]);
+    doc.rect(0,0,W,110,"F");
+    doc.setTextColor(255,255,255);
+    doc.setFont("times","bold"); doc.setFontSize(26);
+    doc.text("Diyama", mL, 56);
+    doc.setTextColor(gold[0],gold[1],gold[2]);
+    doc.text(".", mL+doc.getTextWidth("Diyama"), 56);
+    doc.setTextColor(255,255,255);
+    doc.setFont("helvetica","normal"); doc.setFontSize(10);
+    doc.text("PaySlip · Zambian Payroll", mL, 74);
+    doc.setFont("helvetica","bold"); doc.setFontSize(13);
+    doc.text("PAYSLIP", mR, 50, {align:"right"});
+    doc.setFont("helvetica","normal"); doc.setFontSize(9.5);
+    if(meta.period) doc.text(meta.period, mR, 68, {align:"right"});
+
+    // employer / employee block
+    var y=150;
+    doc.setTextColor(muted[0],muted[1],muted[2]); doc.setFontSize(8.5); doc.setFont("helvetica","bold");
+    doc.text("EMPLOYER", mL, y); doc.text("EMPLOYEE", mL+230, y);
+    doc.setTextColor(ink[0],ink[1],ink[2]); doc.setFontSize(12); doc.setFont("helvetica","bold");
+    doc.text(meta.employer||"Employer", mL, y+18);
+    doc.text(meta.empName||"Employee", mL+230, y+18);
+    doc.setTextColor(muted[0],muted[1],muted[2]); doc.setFont("helvetica","normal"); doc.setFontSize(9);
+    doc.text("Pay period: "+(meta.period||"Not specified"), mL, y+36);
+    doc.text("Issued: "+new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}), mL+230, y+36);
+
+    // table
+    var ty=y+70;
+    function row(label,val,opts){
+      opts=opts||{};
+      doc.setDrawColor(232,228,220); doc.setLineWidth(0.7);
+      doc.line(mL,ty+14,mR,ty+14);
+      doc.setFontSize(opts.big?11.5:10.5);
+      doc.setFont("helvetica",opts.bold?"bold":"normal");
+      doc.setTextColor(opts.labelInk?ink[0]:muted[0], opts.labelInk?ink[1]:muted[1], opts.labelInk?ink[2]:muted[2]);
+      doc.text(label, mL, ty+8);
+      doc.setTextColor(opts.red?danger[0]:ink[0], opts.red?danger[1]:ink[1], opts.red?danger[2]:ink[2]);
+      doc.setFont("helvetica","bold");
+      doc.text(val, mR, ty+8, {align:"right"});
+      ty+=30;
+    }
+    doc.setTextColor(muted[0],muted[1],muted[2]); doc.setFont("helvetica","bold"); doc.setFontSize(8.5);
+    doc.text("EARNINGS & DEDUCTIONS", mL, ty-6); ty+=8;
+    row("Gross salary", money(data.gross), {labelInk:true,bold:true});
+    row("PAYE (income tax)", "- "+money(data.paye), {red:true});
+    row("NAPSA (pension)", "- "+money(data.napsa), {red:true});
+    if(data.applyNhima) row("NHIMA (health insurance)", "- "+money(data.nhima), {red:true});
+    row("Total deductions", "- "+money(data.total), {labelInk:true,red:true});
+
+    // net pay box
+    ty+=10;
+    doc.setFillColor(goldSoft[0],goldSoft[1],goldSoft[2]);
+    doc.roundedRect(mL,ty,mR-mL,58,8,8,"F");
+    doc.setTextColor(ink[0],ink[1],ink[2]); doc.setFont("helvetica","bold"); doc.setFontSize(12);
+    doc.text("NET PAY", mL+18, ty+26);
+    doc.setTextColor(muted[0],muted[1],muted[2]); doc.setFont("helvetica","normal"); doc.setFontSize(8.5);
+    doc.text("Take-home this period", mL+18, ty+42);
+    doc.setTextColor(teal[0],teal[1],teal[2]); doc.setFont("times","bold"); doc.setFontSize(22);
+    doc.text(money(data.net), mR-18, ty+35, {align:"right"});
+    ty+=58;
+
+    // disclaimer + footer
+    ty+=30;
+    doc.setTextColor(muted[0],muted[1],muted[2]); doc.setFont("helvetica","normal"); doc.setFontSize(8);
+    var disc="These figures are estimates for guidance only. Zambian tax bands, NAPSA ceilings and NHIMA rates can change, and individual circumstances may affect the final amount. Confirm with the Zambia Revenue Authority before paying.";
+    doc.text(doc.splitTextToSize(disc, mR-mL), mL, ty);
+
+    var fy=doc.internal.pageSize.getHeight()-40;
+    doc.setDrawColor(232,228,220); doc.line(mL,fy-14,mR,fy-14);
+    doc.setTextColor(muted[0],muted[1],muted[2]); doc.setFontSize(8.5);
+    doc.text("Built by Diyama Solutions · Clarity in Action.", mL, fy);
+    doc.text("diyama.online", mR, fy, {align:"right"});
+    return doc;
+  }
+
+  function downloadPDF(){
+    if(!current){toast("Calculate a payslip first.");return;}
+    if(!(window.jspdf&&window.jspdf.jsPDF)){toast("PDF library still loading, try again.");return;}
+    var d=current.data,m=current.meta;
+    var doc=buildPDF(d,m);
+    var fname="Payslip_"+(m.empName||"employee").replace(/[^a-z0-9]+/gi,"-")+"_"+(m.period||"").replace(/[^a-z0-9]+/gi,"-");
+    fname=fname.replace(/-+$/,"").replace(/-+/g,"-")+".pdf";
+    doc.save(fname);
+    toast("PDF downloaded.");
+  }
+
+  // ---------- saved payslips ----------
+  function getSlips(){return loadJSON(LS_SLIPS,[]);}
+  function renderSaved(){
+    var slips=getSlips();
+    var area=$("savedArea");
+    $("clearAll").style.display = slips.length? "inline-flex":"none";
+    if(!slips.length){
+      area.innerHTML='<div class="empty-saved"><strong>No saved payslips yet.</strong><br>Calculate a payslip and press <em>Save payslip</em> to keep it here for next time.</div>';
+      return;
+    }
+    var grid=document.createElement("div"); grid.className="saved-grid";
+    slips.slice().reverse().forEach(function(s){
+      var el=document.createElement("div");
+      el.className="saved-card";
+      el.innerHTML=
+        '<div class="nm">'+esc(s.meta.empName||"Employee")+'</div>'+
+        '<div class="pd">'+esc(s.meta.employer||"")+(s.meta.period?' · '+esc(s.meta.period):'')+'</div>'+
+        '<div class="amt">'+money(s.data.net)+'</div>'+
+        '<div class="foot"><span class="btn btn-outline btn-sm openBtn">Open</span>'+
+        '<span class="btn btn-ghost btn-sm delBtn" data-id="'+s.id+'">Delete</span></div>';
+      el.querySelector(".openBtn").addEventListener("click",function(e){e.stopPropagation();openSlip(s);});
+      el.addEventListener("click",function(){openSlip(s);});
+      el.querySelector(".delBtn").addEventListener("click",function(e){e.stopPropagation();delSlip(s.id);});
+      grid.appendChild(el);
+    });
+    area.innerHTML=""; area.appendChild(grid);
+  }
+  function openSlip(s){
+    $("empName").value=s.meta.empName||"";
+    $("employer").value=s.meta.employer||"";
+    $("period").value=s.meta.period||"";
+    $("gross").value=s.data.gross;
+    $("nhimaToggle").checked=!!s.data.applyNhima;
+    renderSlip(s.data,s.meta);
+    $("resultCard").scrollIntoView({behavior:"smooth",block:"center"});
+    toast("Payslip loaded.");
+  }
+  function delSlip(id){
+    var slips=getSlips().filter(function(s){return s.id!==id;});
+    saveJSON(LS_SLIPS,slips); renderSaved(); toast("Payslip deleted.");
+  }
+  function saveCurrent(){
+    if(!current){toast("Calculate a payslip first.");return;}
+    var slips=getSlips();
+    slips.push({id:Date.now()+"-"+Math.random().toString(36).slice(2,7), ts:Date.now(), data:current.data, meta:current.meta});
+    saveJSON(LS_SLIPS,slips); renderSaved(); toast("Payslip saved.");
+  }
+
+  // ---------- settings actions ----------
+  function readSettingsForm(){
+    var bands=[];
+    var rows=document.querySelectorAll("#bandsWrap .band-row");
+    rows.forEach(function(r,i){
+      var last=(i===rows.length-1);
+      var from=parseFloat(r.querySelector('[data-f=from]').value)||0;
+      var rate=parseFloat(r.querySelector('[data-f=rate]').value)||0;
+      var to=last?null:(parseFloat(r.querySelector('[data-f=to]').value)||0);
+      bands.push({from:from,to:to,rate:rate});
+    });
+    return {
+      bands:bands,
+      napsaRate:parseFloat($("napsaRate").value)||0,
+      napsaCap:parseFloat($("napsaCap").value)||0,
+      nhimaRate:parseFloat($("nhimaRate").value)||0
+    };
+  }
+
+  // ---------- wire up ----------
+  $("calcBtn").addEventListener("click",doCalc);
+  $("gross").addEventListener("keydown",function(e){if(e.key==="Enter")doCalc();});
+  $("resetBtn").addEventListener("click",function(){
+    ["empName","employer","gross","period"].forEach(function(id){$(id).value="";});
+    $("nhimaToggle").checked=true; $("grossErr").classList.remove("show");
+    $("slipWrap").style.display="none"; $("resultActions").style.display="none";
+    $("emptyState").style.display="block"; current=null;
+  });
+  $("pdfBtn").addEventListener("click",downloadPDF);
+  $("saveBtn").addEventListener("click",saveCurrent);
+  $("clearAll").addEventListener("click",function(){
+    if(getSlips().length && confirm("Delete all saved payslips? This cannot be undone.")){
+      localStorage.removeItem(LS_SLIPS); renderSaved(); toast("All payslips cleared.");
+    }
+  });
+
+  $("saveSettings").addEventListener("click",function(){
+    settings=readSettingsForm(); saveJSON(LS_SETTINGS,settings); fillSettingsForm();
+    if(current){ // recompute live preview
+      var d=compute(current.data.gross,current.meta.applyNhima); renderSlip(d,current.meta);
+    }
+    toast("Settings saved.");
+  });
+  $("resetSettings").addEventListener("click",function(){
+    settings=JSON.parse(JSON.stringify(DEFAULTS)); saveJSON(LS_SETTINGS,settings); fillSettingsForm();
+    if(current){var d=compute(current.data.gross,current.meta.applyNhima); renderSlip(d,current.meta);}
+    toast("Defaults restored.");
+  });
+
+  // default period = current month
+  (function(){
+    var d=new Date();
+    $("period").value=d.toLocaleDateString("en-GB",{month:"long",year:"numeric"});
+  })();
+
+  fillSettingsForm();
+  renderSaved();
+})();
+</script>
+</body>
+</html>

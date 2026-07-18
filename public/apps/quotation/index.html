@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Diyama Quote Builder · Professional Quotations</title>
+<meta name="description" content="Create polished, professional quotations in seconds. A free tool by Diyama Solutions. Add your business and client details, line items, tax, terms, and download a branded PDF." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231f5c4d'/%3E%3Ctext x='50' y='72' font-size='62' font-family='Georgia,serif' font-weight='700' fill='%23fff' text-anchor='middle'%3ED%3C/text%3E%3Ccircle cx='78' cy='66' r='7' fill='%23e8a838'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<style>
+:root{
+  --teal:#1f5c4d; --teal-dark:#16453a; --teal-soft:#e7f0ed;
+  --gold:#e8a838; --gold-soft:#fbf1dd;
+  --ink:#1e2b30; --muted:#6b7674; --surface:#faf8f4;
+  --card:#ffffff; --border:#e8e4dc; --danger:#d64545; --ok:#2e9e6b;
+  --shadow:0 10px 30px -12px rgba(31,92,77,.15);
+  --shadow-lg:0 22px 48px -18px rgba(31,92,77,.28);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'DM Sans',system-ui,sans-serif;
+  color:var(--ink); background:var(--surface);
+  font-size:16px; line-height:1.55; -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+  background-image:
+    radial-gradient(600px 400px at 100% 0%, rgba(232,168,56,.10), transparent 60%),
+    radial-gradient(700px 500px at 0% 100%, rgba(31,92,77,.09), transparent 60%);
+  background-attachment:fixed;
+}
+h1,h2,h3,h4,.font-display{font-family:'Playfair Display',Georgia,serif}
+a{color:var(--teal);text-decoration:none}
+a:hover{text-decoration:underline}
+input,textarea,select,button{font-family:inherit;font-size:inherit;color:inherit}
+::placeholder{color:#a7afac}
+
+/* Header */
+.site-header{
+  position:sticky;top:0;z-index:50;
+  background:rgba(255,255,255,.78);backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.header-inner{
+  max-width:1240px;margin:0 auto;padding:14px 20px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+}
+.wordmark{display:flex;align-items:center;gap:12px;min-width:0}
+.wordmark a{display:flex;align-items:baseline;gap:1px;text-decoration:none}
+.wordmark .brand{font-family:'Playfair Display',serif;font-weight:800;font-size:1.5rem;color:var(--teal);letter-spacing:-.01em}
+.wordmark .dot{color:var(--gold);font-weight:800;font-size:1.5rem}
+.wordmark .divider{width:1px;height:24px;background:var(--border)}
+.wordmark .appname{font-weight:600;color:var(--muted);font-size:.98rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.header-actions{display:flex;align-items:center;gap:10px;flex-shrink:0}
+
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  border-radius:10px;font-weight:600;cursor:pointer;border:1px solid transparent;
+  padding:11px 18px;transition:transform .18s ease,box-shadow .18s ease,background .18s ease,border-color .18s ease;
+  white-space:nowrap;line-height:1;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn-primary{background:var(--teal);color:#fff;box-shadow:0 8px 18px -10px rgba(31,92,77,.6)}
+.btn-primary:hover{background:var(--teal-dark);box-shadow:0 12px 24px -10px rgba(31,92,77,.7)}
+.btn-accent{background:var(--gold);color:var(--ink);box-shadow:0 8px 18px -10px rgba(232,168,56,.7)}
+.btn-accent:hover{background:#dc9c2b;box-shadow:0 12px 24px -10px rgba(232,168,56,.8)}
+.btn-outline{background:var(--card);color:var(--teal);border-color:var(--border)}
+.btn-outline:hover{border-color:var(--teal);background:var(--teal-soft)}
+.btn-ghost{background:transparent;color:var(--muted);padding:9px 12px}
+.btn-ghost:hover{background:var(--teal-soft);color:var(--teal)}
+.btn-danger-ghost{background:transparent;color:var(--danger);border-color:transparent;padding:8px 12px}
+.btn-danger-ghost:hover{background:#fbeaea}
+.btn-sm{padding:8px 13px;font-size:.9rem;border-radius:9px}
+.btn:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(31,92,77,.28)}
+
+/* Layout */
+.wrap{max-width:1240px;margin:0 auto;padding:26px 20px 60px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start}
+@media(max-width:980px){.grid{grid-template-columns:1fr;gap:22px}}
+
+.card{
+  background:var(--card);border:1px solid var(--border);border-radius:16px;
+  box-shadow:var(--shadow);padding:22px;
+  animation:rise .5s ease both;
+}
+.editor-col{display:flex;flex-direction:column;gap:20px}
+.preview-col{position:sticky;top:86px}
+@media(max-width:980px){.preview-col{position:static}}
+
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+
+.section-title{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.section-title h2{font-size:1.18rem;font-weight:700}
+.section-title .tdot{width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0}
+.section-hint{color:var(--muted);font-size:.86rem;margin-top:-8px;margin-bottom:14px}
+
+label{display:block;font-weight:600;font-size:.82rem;color:var(--muted);margin-bottom:6px;letter-spacing:.01em}
+.field{margin-bottom:14px}
+.field:last-child{margin-bottom:0}
+input[type=text],input[type=email],input[type=number],input[type=date],textarea,select{
+  width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:11px 13px;transition:box-shadow .16s,border-color .16s;
+}
+textarea{resize:vertical;min-height:70px;line-height:1.5}
+input:focus,textarea:focus,select:focus{
+  outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(31,92,77,.15);
+}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:520px){.row,.row-3{grid-template-columns:1fr}}
+
+.avatar-row{display:flex;align-items:center;gap:14px}
+.avatar-preview{
+  width:56px;height:56px;border-radius:14px;background:var(--teal);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;
+  font-weight:700;font-size:1.5rem;flex-shrink:0;box-shadow:var(--shadow);overflow:hidden;
+}
+.avatar-row .field{flex:1;margin:0}
+
+/* Line items */
+.items-head,.item-row{
+  display:grid;grid-template-columns:1fr 76px 108px 108px 34px;gap:10px;align-items:center;
+}
+.items-head{font-size:.74rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;padding:0 2px 8px}
+.item-row{padding:9px 0;border-top:1px solid var(--border);animation:fadein .3s ease}
+.item-row input{padding:9px 10px}
+.item-total{font-weight:600;text-align:right;font-variant-numeric:tabular-nums;font-size:.95rem;padding-right:2px}
+.item-remove{
+  background:transparent;border:none;color:var(--muted);cursor:pointer;width:30px;height:30px;
+  border-radius:8px;display:flex;align-items:center;justify-content:center;transition:.16s;font-size:1.1rem;
+}
+.item-remove:hover{background:#fbeaea;color:var(--danger)}
+.items-head .ta,.item-row .ta{text-align:right}
+@media(max-width:640px){
+  .items-head{display:none}
+  .item-row{grid-template-columns:1fr;gap:8px;padding:14px 0;position:relative}
+  .item-row .lbl{display:block;font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;margin-bottom:4px}
+  .item-total{text-align:left}
+  .item-remove{position:absolute;top:10px;right:0}
+}
+.lbl{display:none}
+@media(max-width:640px){.lbl{display:block}}
+
+.totals-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-top:16px}
+.totals-line{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-variant-numeric:tabular-nums}
+.totals-line .lab{color:var(--muted);font-weight:500}
+.totals-line.grand{border-top:1px dashed var(--border);margin-top:8px;padding-top:12px;font-size:1.15rem;font-weight:700}
+.totals-line.grand .val{color:var(--teal)}
+.tax-inline{display:flex;align-items:center;gap:8px}
+.tax-inline input{width:74px;padding:7px 9px;text-align:right}
+
+/* Preview / quotation document */
+.quote-doc{
+  background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden;
+  box-shadow:var(--shadow-lg);
+}
+.quote-band{height:6px;background:linear-gradient(90deg,var(--teal),var(--teal) 62%,var(--gold))}
+.quote-inner{padding:30px}
+@media(max-width:520px){.quote-inner{padding:22px 18px}}
+.quote-top{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;flex-wrap:wrap}
+.qbiz{display:flex;gap:14px;align-items:flex-start;min-width:0}
+.qbiz .qavatar{
+  width:52px;height:52px;border-radius:13px;background:var(--teal);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;
+  font-weight:700;font-size:1.4rem;flex-shrink:0;overflow:hidden;
+}
+.qbiz-name{font-family:'Playfair Display',serif;font-weight:700;font-size:1.35rem;line-height:1.2}
+.qbiz-meta{color:var(--muted);font-size:.85rem;margin-top:4px;white-space:pre-line}
+.qlabel{text-align:right}
+.qlabel .qtitle{font-family:'Playfair Display',serif;font-weight:800;font-size:1.7rem;color:var(--teal);letter-spacing:.01em}
+.qlabel .qnum{color:var(--muted);font-size:.9rem;margin-top:2px;font-variant-numeric:tabular-nums}
+
+.qmeta-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}
+@media(max-width:520px){.qmeta-grid{grid-template-columns:1fr;gap:14px}}
+.qmeta-block .qh{font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.qmeta-block .qv{font-size:.92rem;white-space:pre-line}
+.qmeta-block .qstrong{font-weight:600;color:var(--ink)}
+.qdates{display:flex;gap:22px;flex-wrap:wrap;margin-top:6px}
+.qdate .qh{font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.qdate .qv{font-weight:600;font-size:.92rem}
+
+.valid-banner{
+  display:flex;align-items:center;gap:10px;margin-top:22px;
+  background:var(--gold-soft);border:1px solid #f0d9a8;border-left:4px solid var(--gold);
+  border-radius:10px;padding:12px 16px;font-weight:600;color:#7a5a12;font-size:.95rem;
+}
+.valid-banner svg{flex-shrink:0}
+
+.qtable{width:100%;border-collapse:collapse;margin-top:24px;font-size:.9rem}
+.qtable thead th{
+  background:var(--teal-soft);color:var(--teal-dark);font-weight:700;text-align:left;
+  padding:10px 12px;font-size:.74rem;text-transform:uppercase;letter-spacing:.03em;
+}
+.qtable thead th.ta{text-align:right}
+.qtable tbody td{padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+.qtable tbody td.ta{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.qtable .qdesc{font-weight:500}
+.qtotals{margin-top:18px;display:flex;justify-content:flex-end}
+.qtotals-inner{width:min(300px,100%)}
+.qtotals-line{display:flex;justify-content:space-between;padding:6px 2px;font-variant-numeric:tabular-nums}
+.qtotals-line .lab{color:var(--muted)}
+.qtotals-line.grand{border-top:2px solid var(--teal);margin-top:6px;padding-top:12px;font-weight:700;font-size:1.2rem}
+.qtotals-line.grand .val{color:var(--teal)}
+
+.qnotes{margin-top:26px;border-top:1px solid var(--border);padding-top:18px}
+.qnotes .qh{font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.qnotes .qv{font-size:.88rem;color:#404b4e;white-space:pre-line}
+.qfoot{margin-top:26px;text-align:center;color:var(--muted);font-size:.82rem;border-top:1px solid var(--border);padding-top:16px}
+.qfoot .qthanks{font-family:'Playfair Display',serif;color:var(--teal);font-size:1rem;font-weight:600;margin-bottom:3px}
+
+.preview-actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.preview-actions .btn{flex:1;min-width:130px}
+
+/* Saved list */
+.saved-panel{margin-bottom:20px}
+.saved-list{display:flex;flex-direction:column;gap:10px}
+.saved-item{
+  display:flex;align-items:center;gap:12px;justify-content:space-between;
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;
+  transition:border-color .16s,box-shadow .16s,transform .16s;
+}
+.saved-item:hover{border-color:var(--teal);box-shadow:var(--shadow);transform:translateY(-1px)}
+.saved-item.active{border-color:var(--teal);box-shadow:0 0 0 2px rgba(31,92,77,.12)}
+.saved-main{min-width:0;cursor:pointer;flex:1}
+.saved-main .sn{font-weight:600;font-size:.95rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.saved-main .sm{color:var(--muted);font-size:.8rem;font-variant-numeric:tabular-nums;margin-top:2px}
+.saved-actions{display:flex;gap:4px;flex-shrink:0}
+.icon-btn{
+  background:transparent;border:none;cursor:pointer;width:34px;height:34px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;color:var(--muted);transition:.16s;
+}
+.icon-btn:hover{background:var(--teal-soft);color:var(--teal)}
+.icon-btn.del:hover{background:#fbeaea;color:var(--danger)}
+
+.empty{text-align:center;padding:26px 10px;color:var(--muted)}
+.empty .emoji{font-size:2rem;margin-bottom:8px}
+.empty p{font-size:.9rem}
+
+.invoice-link{
+  display:flex;align-items:center;gap:8px;justify-content:center;margin-top:14px;
+  background:var(--teal-soft);border:1px dashed #b9d3cb;border-radius:12px;padding:12px 16px;
+  color:var(--teal-dark);font-size:.9rem;font-weight:500;
+}
+.invoice-link a{font-weight:700}
+
+.toast{
+  position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
+  background:var(--ink);color:#fff;padding:12px 20px;border-radius:12px;font-weight:600;font-size:.92rem;
+  box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:.28s;z-index:100;display:flex;align-items:center;gap:9px;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast .tdot2{width:8px;height:8px;border-radius:50%;background:var(--gold)}
+
+/* Intro hero */
+.hero{max-width:1240px;margin:0 auto;padding:22px 20px 0;animation:fadein .6s ease both}
+.hero h1{font-size:1.9rem;font-weight:800;line-height:1.15;letter-spacing:-.01em}
+.hero h1 .hl{color:var(--teal)}
+.hero p{color:var(--muted);margin-top:8px;max-width:640px;font-size:1.02rem}
+@media(max-width:520px){.hero h1{font-size:1.55rem}}
+
+.mini-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+
+footer.site-footer{
+  text-align:center;color:var(--muted);font-size:.85rem;padding:30px 20px 40px;line-height:1.7;
+}
+footer.site-footer a{font-weight:600}
+footer.site-footer .sep{color:var(--border);margin:0 4px}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="wordmark">
+      <a href="https://www.diyama.online" title="Diyama Solutions">
+        <span class="brand">Diyama</span><span class="dot">.</span>
+      </a>
+      <span class="divider"></span>
+      <span class="appname">Quote Builder</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost btn-sm" id="newQuoteTop">New quote</button>
+      <button class="btn btn-primary btn-sm" id="downloadTop">Download PDF</button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>Send quotations that <span class="hl">win the deal.</span></h1>
+  <p>Fill in your details, add your line items, and download a clean, branded PDF quotation in seconds. Everything saves to this browser so your work is always here when you return.</p>
+</section>
+
+<main class="wrap">
+  <div class="grid">
+    <!-- EDITOR -->
+    <div class="editor-col">
+
+      <!-- Saved quotations -->
+      <div class="card saved-panel">
+        <div class="section-title"><span class="tdot"></span><h2>Your quotations</h2></div>
+        <div id="savedList"></div>
+        <div class="mini-actions">
+          <button class="btn btn-accent btn-sm" id="newQuoteBtn">+ New quote</button>
+        </div>
+      </div>
+
+      <!-- Your business -->
+      <div class="card">
+        <div class="section-title"><span class="tdot"></span><h2>Your business</h2></div>
+        <div class="avatar-row field">
+          <div class="avatar-preview" id="avatarPreview">D</div>
+          <div class="field" style="margin:0">
+            <label for="bizAvatar">Initials or emoji avatar</label>
+            <input type="text" id="bizAvatar" maxlength="3" placeholder="D or a single emoji" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="bizName">Business name</label>
+          <input type="text" id="bizName" placeholder="Diyama Solutions" />
+        </div>
+        <div class="field">
+          <label for="bizAddress">Address</label>
+          <textarea id="bizAddress" placeholder="Lusaka, Zambia"></textarea>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="bizPhone">Phone</label>
+            <input type="text" id="bizPhone" placeholder="+260 96 613 8238" />
+          </div>
+          <div class="field">
+            <label for="bizEmail">Email</label>
+            <input type="email" id="bizEmail" placeholder="hello@diyama.online" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Client -->
+      <div class="card">
+        <div class="section-title"><span class="tdot"></span><h2>Bill to (client)</h2></div>
+        <div class="field">
+          <label for="cliName">Client name</label>
+          <input type="text" id="cliName" placeholder="Acme Trading Ltd" />
+        </div>
+        <div class="field">
+          <label for="cliAddress">Address</label>
+          <textarea id="cliAddress" placeholder="Client address"></textarea>
+        </div>
+        <div class="field">
+          <label for="cliEmail">Email</label>
+          <input type="email" id="cliEmail" placeholder="accounts@acme.com" />
+        </div>
+      </div>
+
+      <!-- Quote details -->
+      <div class="card">
+        <div class="section-title"><span class="tdot"></span><h2>Quote details</h2></div>
+        <div class="row-3">
+          <div class="field">
+            <label for="quoteNum">Quote number</label>
+            <input type="text" id="quoteNum" placeholder="Q-0001" />
+          </div>
+          <div class="field">
+            <label for="issueDate">Issue date</label>
+            <input type="date" id="issueDate" />
+          </div>
+          <div class="field">
+            <label for="validDate">Valid until</label>
+            <input type="date" id="validDate" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Line items -->
+      <div class="card">
+        <div class="section-title"><span class="tdot"></span><h2>Line items</h2></div>
+        <div class="items-head">
+          <span>Description</span>
+          <span class="ta">Qty</span>
+          <span class="ta">Unit price</span>
+          <span class="ta">Total</span>
+          <span></span>
+        </div>
+        <div id="itemsBody"></div>
+        <div class="mini-actions" style="margin-top:14px">
+          <button class="btn btn-outline btn-sm" id="addItemBtn">+ Add line item</button>
+        </div>
+
+        <div class="totals-box">
+          <div class="totals-line"><span class="lab">Subtotal</span><span class="val" id="subtotalOut">K0.00</span></div>
+          <div class="totals-line">
+            <span class="lab tax-inline">Tax
+              <input type="number" id="taxRate" min="0" max="100" step="0.1" placeholder="0" /> %
+            </span>
+            <span class="val" id="taxOut">K0.00</span>
+          </div>
+          <div class="totals-line grand"><span class="lab">Grand total</span><span class="val" id="grandOut">K0.00</span></div>
+        </div>
+      </div>
+
+      <!-- Terms -->
+      <div class="card">
+        <div class="section-title"><span class="tdot"></span><h2>Terms and notes</h2></div>
+        <div class="section-hint">Payment terms, scope notes, or anything the client should know.</div>
+        <div class="field">
+          <textarea id="terms" placeholder="50% deposit required to begin. Balance due on completion. Prices valid for the period stated above." style="min-height:90px"></textarea>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PREVIEW -->
+    <div class="preview-col">
+      <div class="card" style="padding:0;background:transparent;border:none;box-shadow:none">
+        <div class="quote-doc" id="quoteDoc">
+          <div class="quote-band"></div>
+          <div class="quote-inner">
+            <div class="quote-top">
+              <div class="qbiz">
+                <div class="qavatar" id="pvAvatar">D</div>
+                <div>
+                  <div class="qbiz-name" id="pvBizName">Your business</div>
+                  <div class="qbiz-meta" id="pvBizMeta"></div>
+                </div>
+              </div>
+              <div class="qlabel">
+                <div class="qtitle">QUOTATION</div>
+                <div class="qnum" id="pvQuoteNum">Q-0001</div>
+              </div>
+            </div>
+
+            <div class="qmeta-grid">
+              <div class="qmeta-block">
+                <div class="qh">Prepared for</div>
+                <div class="qv"><span class="qstrong" id="pvCliName">Client name</span><span id="pvCliRest"></span></div>
+              </div>
+              <div class="qmeta-block">
+                <div class="qdates">
+                  <div class="qdate">
+                    <div class="qh">Issued</div>
+                    <div class="qv" id="pvIssue">-</div>
+                  </div>
+                  <div class="qdate">
+                    <div class="qh">Valid until</div>
+                    <div class="qv" id="pvValidShort">-</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="valid-banner" id="pvValidBanner">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b5851f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+              <span id="pvValidText">This quotation is valid until the date above.</span>
+            </div>
+
+            <table class="qtable">
+              <thead>
+                <tr>
+                  <th>Description</th>
+                  <th class="ta">Qty</th>
+                  <th class="ta">Unit price</th>
+                  <th class="ta">Total</th>
+                </tr>
+              </thead>
+              <tbody id="pvItems"></tbody>
+            </table>
+
+            <div class="qtotals">
+              <div class="qtotals-inner">
+                <div class="qtotals-line"><span class="lab">Subtotal</span><span class="val" id="pvSubtotal">K0.00</span></div>
+                <div class="qtotals-line" id="pvTaxRow"><span class="lab" id="pvTaxLab">Tax</span><span class="val" id="pvTax">K0.00</span></div>
+                <div class="qtotals-line grand"><span class="lab">Grand total</span><span class="val" id="pvGrand">K0.00</span></div>
+              </div>
+            </div>
+
+            <div class="qnotes" id="pvNotesWrap">
+              <div class="qh">Terms and notes</div>
+              <div class="qv" id="pvNotes"></div>
+            </div>
+
+            <div class="qfoot">
+              <div class="qthanks">Thank you for your business.</div>
+              <div id="pvFootMeta">Prepared with Diyama Quote Builder</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="preview-actions">
+        <button class="btn btn-primary" id="downloadBtn">Download PDF</button>
+        <button class="btn btn-outline" id="duplicateBtn">Duplicate</button>
+      </div>
+
+      <div class="invoice-link">
+        <span>Ready to invoice?</span>
+        <a href="https://invoice.diyama.online">Visit invoice.diyama.online</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  Built by <a href="https://www.diyama.online">Diyama Solutions</a> <span class="sep">·</span> Clarity in Action.
+  <br />
+  <a href="https://wa.me/260966138238">Chat on WhatsApp</a>
+</footer>
+
+<div class="toast" id="toast"><span class="tdot2"></span><span id="toastText">Saved</span></div>
+
+<script>
+(function(){
+  "use strict";
+  var LS_KEY = "diyama_quotes_v1";
+  var LS_ACTIVE = "diyama_quotes_active_v1";
+
+  /* ---------- helpers ---------- */
+  function $(id){ return document.getElementById(id); }
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+  function esc(s){ return (s==null?"":String(s)).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+  function num(v){ var n = parseFloat(v); return isNaN(n)?0:n; }
+  function money(n){
+    var neg = n < 0; n = Math.abs(n);
+    var s = n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+    return (neg?"-K":"K") + s;
+  }
+  function fmtDate(iso){
+    if(!iso) return "";
+    var p = iso.split("-"); if(p.length!==3) return iso;
+    var d = new Date(+p[0], +p[1]-1, +p[2]);
+    if(isNaN(d)) return iso;
+    var months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    return d.getDate()+" "+months[d.getMonth()]+" "+d.getFullYear();
+  }
+  function todayISO(){
+    var d = new Date();
+    return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  }
+  function addDaysISO(iso, days){
+    var p = iso.split("-"); var d = new Date(+p[0], +p[1]-1, +p[2]);
+    d.setDate(d.getDate()+days);
+    return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  }
+  var toastTimer;
+  function toast(msg){
+    $("toastText").textContent = msg;
+    var t = $("toast"); t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 2000);
+  }
+
+  /* ---------- storage ---------- */
+  function loadAll(){
+    try{ return JSON.parse(localStorage.getItem(LS_KEY)) || []; }catch(e){ return []; }
+  }
+  function saveAll(list){
+    try{ localStorage.setItem(LS_KEY, JSON.stringify(list)); }catch(e){}
+  }
+  function getActiveId(){ return localStorage.getItem(LS_ACTIVE) || null; }
+  function setActiveId(id){ if(id){ localStorage.setItem(LS_ACTIVE, id); } else { localStorage.removeItem(LS_ACTIVE); } }
+
+  /* ---------- model ---------- */
+  function blankItem(){ return { id: uid(), desc:"", qty:1, price:0 }; }
+
+  function nextQuoteNumber(){
+    var list = loadAll();
+    var max = 0;
+    list.forEach(function(q){
+      var m = /(\d+)\s*$/.exec(q.quoteNum||"");
+      if(m){ var v = parseInt(m[1],10); if(v>max) max=v; }
+    });
+    return "Q-" + String(max+1).padStart(4,"0");
+  }
+
+  function newQuote(){
+    var iss = todayISO();
+    return {
+      id: uid(),
+      biz:{ name:"", address:"", phone:"", email:"", avatar:"" },
+      cli:{ name:"", address:"", email:"" },
+      quoteNum: nextQuoteNumber(),
+      issueDate: iss,
+      validDate: addDaysISO(iss, 14),
+      items:[ blankItem() ],
+      taxRate: 0,
+      terms:"50% deposit required to begin. Balance due on completion. Prices valid for the period stated above.",
+      updated: Date.now()
+    };
+  }
+
+  var current = null; // active quote object (working copy)
+
+  /* ---------- totals ---------- */
+  function calc(q){
+    var sub = 0;
+    q.items.forEach(function(it){ sub += num(it.qty) * num(it.price); });
+    var tax = sub * (num(q.taxRate)/100);
+    return { sub: sub, tax: tax, grand: sub + tax };
+  }
+
+  /* ---------- render editor from model ---------- */
+  function fillEditor(){
+    $("bizName").value = current.biz.name;
+    $("bizAddress").value = current.biz.address;
+    $("bizPhone").value = current.biz.phone;
+    $("bizEmail").value = current.biz.email;
+    $("bizAvatar").value = current.biz.avatar;
+    $("cliName").value = current.cli.name;
+    $("cliAddress").value = current.cli.address;
+    $("cliEmail").value = current.cli.email;
+    $("quoteNum").value = current.quoteNum;
+    $("issueDate").value = current.issueDate;
+    $("validDate").value = current.validDate;
+    $("taxRate").value = current.taxRate ? current.taxRate : "";
+    $("terms").value = current.terms;
+    renderItems();
+    renderPreview();
+    renderSavedList();
+  }
+
+  function renderItems(){
+    var body = $("itemsBody");
+    body.innerHTML = "";
+    current.items.forEach(function(it){
+      var row = document.createElement("div");
+      row.className = "item-row";
+      row.dataset.id = it.id;
+      var total = num(it.qty)*num(it.price);
+      row.innerHTML =
+        '<div><span class="lbl">Description</span><input type="text" data-f="desc" value="'+esc(it.desc)+'" placeholder="Service or product" /></div>'+
+        '<div><span class="lbl">Qty</span><input type="number" data-f="qty" min="0" step="1" value="'+esc(it.qty)+'" class="ta" /></div>'+
+        '<div><span class="lbl">Unit price</span><input type="number" data-f="price" min="0" step="0.01" value="'+esc(it.price)+'" class="ta" /></div>'+
+        '<div class="item-total"><span class="lbl">Total</span>'+money(total)+'</div>'+
+        '<button class="item-remove" title="Remove line" aria-label="Remove line">&times;</button>';
+      body.appendChild(row);
+    });
+  }
+
+  /* ---------- preview ---------- */
+  function renderPreview(){
+    var q = current;
+    // avatar
+    var av = (q.biz.avatar||"").trim() || (q.biz.name||"").trim().charAt(0).toUpperCase() || "D";
+    $("pvAvatar").textContent = av;
+    $("avatarPreview").textContent = av;
+
+    $("pvBizName").textContent = q.biz.name.trim() || "Your business";
+    var meta = [];
+    if(q.biz.address.trim()) meta.push(q.biz.address.trim());
+    if(q.biz.phone.trim()) meta.push(q.biz.phone.trim());
+    if(q.biz.email.trim()) meta.push(q.biz.email.trim());
+    $("pvBizMeta").textContent = meta.join("\n");
+
+    $("pvQuoteNum").textContent = q.quoteNum.trim() || "Q-0001";
+
+    $("pvCliName").textContent = q.cli.name.trim() || "Client name";
+    var crest = [];
+    if(q.cli.address.trim()) crest.push(q.cli.address.trim());
+    if(q.cli.email.trim()) crest.push(q.cli.email.trim());
+    $("pvCliRest").textContent = crest.length ? ("\n"+crest.join("\n")) : "";
+
+    $("pvIssue").textContent = q.issueDate ? fmtDate(q.issueDate) : "-";
+    $("pvValidShort").textContent = q.validDate ? fmtDate(q.validDate) : "-";
+    $("pvValidText").textContent = q.validDate
+      ? ("This quotation is valid until " + fmtDate(q.validDate) + ".")
+      : "This quotation is valid until the date above.";
+
+    // items
+    var tb = $("pvItems"); tb.innerHTML = "";
+    var any = false;
+    q.items.forEach(function(it){
+      var hasContent = it.desc.trim() || num(it.qty) || num(it.price);
+      if(!hasContent) return;
+      any = true;
+      var total = num(it.qty)*num(it.price);
+      var tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td class="qdesc">'+esc(it.desc.trim()||"-")+'</td>'+
+        '<td class="ta">'+ (num(it.qty)%1===0 ? num(it.qty) : num(it.qty)) +'</td>'+
+        '<td class="ta">'+money(num(it.price))+'</td>'+
+        '<td class="ta">'+money(total)+'</td>';
+      tb.appendChild(tr);
+    });
+    if(!any){
+      var tr = document.createElement("tr");
+      tr.innerHTML = '<td class="qdesc" colspan="4" style="color:#a7afac">Add line items to see them here.</td>';
+      tb.appendChild(tr);
+    }
+
+    var t = calc(q);
+    $("pvSubtotal").textContent = money(t.sub);
+    if(num(q.taxRate) > 0){
+      $("pvTaxRow").style.display = "";
+      $("pvTaxLab").textContent = "Tax (" + (+q.taxRate) + "%)";
+      $("pvTax").textContent = money(t.tax);
+    } else {
+      $("pvTaxRow").style.display = "none";
+    }
+    $("pvGrand").textContent = money(t.grand);
+
+    if(q.terms.trim()){
+      $("pvNotesWrap").style.display = "";
+      $("pvNotes").textContent = q.terms.trim();
+    } else {
+      $("pvNotesWrap").style.display = "none";
+    }
+    $("pvFootMeta").textContent = (q.biz.name.trim()||"Diyama Quote Builder") + " · " + (q.quoteNum.trim()||"Q-0001");
+
+    // sync editor totals box
+    $("subtotalOut").textContent = money(t.sub);
+    $("taxOut").textContent = money(t.tax);
+    $("grandOut").textContent = money(t.grand);
+  }
+
+  /* ---------- persist current ---------- */
+  var saveDebounce;
+  function persist(showToast){
+    current.updated = Date.now();
+    var list = loadAll();
+    var idx = -1;
+    for(var i=0;i<list.length;i++){ if(list[i].id===current.id){ idx=i; break; } }
+    if(idx>=0){ list[idx] = current; } else { list.unshift(current); }
+    saveAll(list);
+    setActiveId(current.id);
+    if(showToast) toast("Saved");
+  }
+  function persistDebounced(){
+    clearTimeout(saveDebounce);
+    saveDebounce = setTimeout(function(){ persist(false); renderSavedList(); }, 400);
+  }
+
+  /* ---------- saved list ---------- */
+  function renderSavedList(){
+    var list = loadAll().sort(function(a,b){ return b.updated - a.updated; });
+    var wrap = $("savedList");
+    if(list.length===0){
+      wrap.innerHTML = '<div class="empty"><div class="emoji">🧾</div><p>No saved quotations yet. Your first quote is ready to fill in below.</p></div>';
+      return;
+    }
+    wrap.className = "saved-list";
+    wrap.innerHTML = "";
+    list.forEach(function(q){
+      var t = calc(q);
+      var el = document.createElement("div");
+      el.className = "saved-item" + (q.id===current.id ? " active":"");
+      var title = (q.quoteNum||"Quote") + " · " + (q.cli.name.trim() || "No client");
+      el.innerHTML =
+        '<div class="saved-main">'+
+          '<div class="sn">'+esc(title)+'</div>'+
+          '<div class="sm">'+money(t.grand)+' · '+(q.validDate?("valid until "+esc(fmtDate(q.validDate))):"no expiry")+'</div>'+
+        '</div>'+
+        '<div class="saved-actions">'+
+          '<button class="icon-btn dup" title="Duplicate" aria-label="Duplicate">'+
+            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>'+
+          '</button>'+
+          '<button class="icon-btn del" title="Delete" aria-label="Delete">'+
+            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path></svg>'+
+          '</button>'+
+        '</div>';
+      el.querySelector(".saved-main").addEventListener("click", function(){ openQuote(q.id); });
+      el.querySelector(".dup").addEventListener("click", function(e){ e.stopPropagation(); duplicateQuote(q.id); });
+      el.querySelector(".del").addEventListener("click", function(e){ e.stopPropagation(); deleteQuote(q.id); });
+      wrap.appendChild(el);
+    });
+  }
+
+  function openQuote(id){
+    var list = loadAll();
+    var found = null;
+    for(var i=0;i<list.length;i++){ if(list[i].id===id){ found = list[i]; break; } }
+    if(!found) return;
+    current = JSON.parse(JSON.stringify(found));
+    // safety: ensure shape
+    if(!current.items || !current.items.length) current.items = [ blankItem() ];
+    setActiveId(current.id);
+    fillEditor();
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+
+  function duplicateQuote(id){
+    var list = loadAll();
+    var src = null;
+    for(var i=0;i<list.length;i++){ if(list[i].id===id){ src = list[i]; break; } }
+    if(!src) return;
+    var copy = JSON.parse(JSON.stringify(src));
+    copy.id = uid();
+    copy.quoteNum = nextQuoteNumber();
+    copy.issueDate = todayISO();
+    copy.validDate = addDaysISO(copy.issueDate, 14);
+    copy.updated = Date.now();
+    copy.items = copy.items.map(function(it){ it.id = uid(); return it; });
+    var all = loadAll(); all.unshift(copy); saveAll(all);
+    current = JSON.parse(JSON.stringify(copy));
+    setActiveId(current.id);
+    fillEditor();
+    toast("Quotation duplicated");
+  }
+
+  function deleteQuote(id){
+    if(!confirm("Delete this quotation? This cannot be undone.")) return;
+    var list = loadAll().filter(function(q){ return q.id!==id; });
+    saveAll(list);
+    if(current.id===id){
+      if(list.length){
+        current = JSON.parse(JSON.stringify(list.sort(function(a,b){return b.updated-a.updated;})[0]));
+      } else {
+        current = newQuote();
+      }
+      setActiveId(current.id);
+      fillEditor();
+    } else {
+      renderSavedList();
+    }
+    toast("Quotation deleted");
+  }
+
+  function startNewQuote(){
+    persist(false);
+    current = newQuote();
+    persist(false);
+    fillEditor();
+    toast("New quotation started");
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+
+  /* ---------- bind editor inputs ---------- */
+  function bindField(id, path){
+    $(id).addEventListener("input", function(){
+      var v = this.value;
+      var parts = path.split(".");
+      if(parts.length===1){ current[parts[0]] = v; }
+      else { current[parts[0]][parts[1]] = v; }
+      renderPreview();
+      persistDebounced();
+    });
+  }
+  bindField("bizName","biz.name");
+  bindField("bizAddress","biz.address");
+  bindField("bizPhone","biz.phone");
+  bindField("bizEmail","biz.email");
+  bindField("bizAvatar","biz.avatar");
+  bindField("cliName","cli.name");
+  bindField("cliAddress","cli.address");
+  bindField("cliEmail","cli.email");
+  bindField("quoteNum","quoteNum");
+  bindField("terms","terms");
+
+  $("issueDate").addEventListener("input", function(){ current.issueDate = this.value; renderPreview(); persistDebounced(); });
+  $("validDate").addEventListener("input", function(){ current.validDate = this.value; renderPreview(); persistDebounced(); });
+  $("taxRate").addEventListener("input", function(){ current.taxRate = num(this.value); renderPreview(); persistDebounced(); });
+
+  // line item events (delegation)
+  $("itemsBody").addEventListener("input", function(e){
+    var input = e.target.closest("input"); if(!input) return;
+    var row = e.target.closest(".item-row"); if(!row) return;
+    var id = row.dataset.id;
+    var f = input.dataset.f;
+    var it = null;
+    for(var i=0;i<current.items.length;i++){ if(current.items[i].id===id){ it = current.items[i]; break; } }
+    if(!it) return;
+    if(f==="desc"){ it.desc = input.value; }
+    else if(f==="qty"){ it.qty = input.value===""?"":num(input.value); }
+    else if(f==="price"){ it.price = input.value===""?"":num(input.value); }
+    // update just this row's total without full re-render (keep focus)
+    var totalCell = row.querySelector(".item-total");
+    if(totalCell){
+      // preserve mobile label
+      var lbl = totalCell.querySelector(".lbl");
+      totalCell.textContent = "";
+      if(lbl) totalCell.appendChild(lbl);
+      totalCell.appendChild(document.createTextNode(money(num(it.qty)*num(it.price))));
+    }
+    renderPreview();
+    persistDebounced();
+  });
+  $("itemsBody").addEventListener("click", function(e){
+    var btn = e.target.closest(".item-remove"); if(!btn) return;
+    var row = e.target.closest(".item-row"); if(!row) return;
+    var id = row.dataset.id;
+    current.items = current.items.filter(function(it){ return it.id!==id; });
+    if(current.items.length===0) current.items.push(blankItem());
+    renderItems();
+    renderPreview();
+    persist(false); renderSavedList();
+  });
+
+  $("addItemBtn").addEventListener("click", function(){
+    current.items.push(blankItem());
+    renderItems();
+    renderPreview();
+    persist(false);
+    // focus new row description
+    var rows = $("itemsBody").querySelectorAll(".item-row");
+    if(rows.length){ var last = rows[rows.length-1].querySelector('input[data-f="desc"]'); if(last) last.focus(); }
+  });
+
+  $("newQuoteBtn").addEventListener("click", startNewQuote);
+  $("newQuoteTop").addEventListener("click", startNewQuote);
+  $("duplicateBtn").addEventListener("click", function(){ persist(false); duplicateQuote(current.id); });
+
+  /* ---------- PDF ---------- */
+  function generatePDF(){
+    var q = current;
+    persist(false);
+    var jsPDFns = window.jspdf || {};
+    var JsPDF = jsPDFns.jsPDF;
+    if(!JsPDF){ toast("PDF library not loaded. Check your connection."); return; }
+    var doc = new JsPDF({ unit:"pt", format:"a4" });
+    var pageW = doc.internal.pageSize.getWidth();
+    var M = 42;
+    var teal=[31,92,77], gold=[232,168,56], ink=[30,43,48], muted=[107,118,116], border=[232,228,220], tealSoft=[231,240,237];
+
+    // top band
+    doc.setFillColor(teal[0],teal[1],teal[2]);
+    doc.rect(0,0,pageW,7,"F");
+    doc.setFillColor(gold[0],gold[1],gold[2]);
+    doc.rect(pageW*0.62,0,pageW*0.38,7,"F");
+
+    var y = 54;
+    // avatar box
+    var av = (q.biz.avatar||"").trim() || (q.biz.name||"").trim().charAt(0).toUpperCase() || "D";
+    doc.setFillColor(teal[0],teal[1],teal[2]);
+    doc.roundedRect(M, y, 40, 40, 7, 7, "F");
+    doc.setTextColor(255,255,255);
+    doc.setFont("times","bold"); doc.setFontSize(20);
+    doc.text(av, M+20, y+27, {align:"center"});
+
+    // business name + meta
+    doc.setTextColor(ink[0],ink[1],ink[2]);
+    doc.setFont("times","bold"); doc.setFontSize(18);
+    doc.text(q.biz.name.trim() || "Your business", M+52, y+16);
+    doc.setFont("helvetica","normal"); doc.setFontSize(9); doc.setTextColor(muted[0],muted[1],muted[2]);
+    var bm = [];
+    if(q.biz.address.trim()) bm = bm.concat(q.biz.address.trim().split("\n"));
+    if(q.biz.phone.trim()) bm.push(q.biz.phone.trim());
+    if(q.biz.email.trim()) bm.push(q.biz.email.trim());
+    var by = y+31;
+    bm.forEach(function(line){ doc.text(line, M+52, by); by += 12; });
+
+    // QUOTATION label right
+    doc.setFont("times","bold"); doc.setFontSize(24); doc.setTextColor(teal[0],teal[1],teal[2]);
+    doc.text("QUOTATION", pageW-M, y+16, {align:"right"});
+    doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(muted[0],muted[1],muted[2]);
+    doc.text(q.quoteNum.trim() || "Q-0001", pageW-M, y+32, {align:"right"});
+
+    y = Math.max(by, y+52) + 14;
+
+    // meta grid: prepared for (left) | dates (right)
+    doc.setFontSize(8); doc.setTextColor(muted[0],muted[1],muted[2]); doc.setFont("helvetica","bold");
+    doc.text("PREPARED FOR", M, y);
+    doc.text("ISSUED", pageW-M-150, y);
+    doc.text("VALID UNTIL", pageW-M, y, {align:"right"});
+    y += 14;
+    doc.setFont("helvetica","bold"); doc.setFontSize(11); doc.setTextColor(ink[0],ink[1],ink[2]);
+    doc.text(q.cli.name.trim() || "Client name", M, y);
+    doc.setFont("helvetica","normal"); doc.setFontSize(10);
+    doc.text(q.issueDate?fmtDate(q.issueDate):"-", pageW-M-150, y);
+    doc.setFont("helvetica","bold");
+    doc.text(q.validDate?fmtDate(q.validDate):"-", pageW-M, y, {align:"right"});
+    y += 13;
+    doc.setFont("helvetica","normal"); doc.setFontSize(9); doc.setTextColor(muted[0],muted[1],muted[2]);
+    var cm = [];
+    if(q.cli.address.trim()) cm = cm.concat(q.cli.address.trim().split("\n"));
+    if(q.cli.email.trim()) cm.push(q.cli.email.trim());
+    cm.forEach(function(line){ doc.text(line, M, y); y += 12; });
+
+    y += 8;
+    // valid banner
+    if(q.validDate){
+      doc.setFillColor(251,241,221);
+      doc.roundedRect(M, y, pageW-2*M, 26, 6, 6, "F");
+      doc.setFillColor(gold[0],gold[1],gold[2]);
+      doc.rect(M, y, 4, 26, "F");
+      doc.setTextColor(122,90,18); doc.setFont("helvetica","bold"); doc.setFontSize(10);
+      doc.text("This quotation is valid until " + fmtDate(q.validDate) + ".", M+16, y+17);
+      y += 26 + 16;
+    } else {
+      y += 4;
+    }
+
+    // items table
+    var t = calc(q);
+    var rows = q.items.filter(function(it){ return it.desc.trim()||num(it.qty)||num(it.price); })
+      .map(function(it){
+        return [ it.desc.trim()||"-", String(num(it.qty)), money(num(it.price)), money(num(it.qty)*num(it.price)) ];
+      });
+    if(rows.length===0) rows = [["No line items","","",""]];
+
+    doc.autoTable({
+      startY: y,
+      head: [["Description","Qty","Unit price","Total"]],
+      body: rows,
+      margin: { left:M, right:M },
+      styles: { font:"helvetica", fontSize:10, cellPadding:8, textColor:[40,43,48], lineColor:border, lineWidth:0.5 },
+      headStyles: { fillColor:tealSoft, textColor:teal, fontStyle:"bold", fontSize:8, halign:"left" },
+      columnStyles: { 0:{cellWidth:"auto"}, 1:{halign:"right",cellWidth:50}, 2:{halign:"right",cellWidth:90}, 3:{halign:"right",cellWidth:90} },
+      bodyStyles: { fillColor:[255,255,255] },
+      alternateRowStyles: { fillColor:[250,248,244] },
+      didParseCell: function(d){ if(d.section==="head" && d.column.index>0) d.cell.styles.halign="right"; }
+    });
+
+    y = doc.lastAutoTable.finalY + 16;
+    // totals
+    var boxX = pageW - M - 220;
+    doc.setFontSize(10);
+    function totLine(lab, val, bold, tealVal){
+      doc.setFont("helvetica", bold?"bold":"normal");
+      doc.setTextColor(bold?ink[0]:muted[0], bold?ink[1]:muted[1], bold?ink[2]:muted[2]);
+      doc.text(lab, boxX, y);
+      doc.setTextColor(tealVal?teal[0]:ink[0], tealVal?teal[1]:ink[1], tealVal?teal[2]:ink[2]);
+      doc.text(val, pageW-M, y, {align:"right"});
+      y += 16;
+    }
+    totLine("Subtotal", money(t.sub), false, false);
+    if(num(q.taxRate)>0){ totLine("Tax ("+(+q.taxRate)+"%)", money(t.tax), false, false); }
+    // grand rule
+    doc.setDrawColor(teal[0],teal[1],teal[2]); doc.setLineWidth(1.4);
+    doc.line(boxX, y-4, pageW-M, y-4);
+    y += 8;
+    doc.setFontSize(13);
+    totLine("Grand total", money(t.grand), true, true);
+
+    y += 12;
+    // terms
+    if(q.terms.trim()){
+      if(y > doc.internal.pageSize.getHeight()-120){ doc.addPage(); y = 54; }
+      doc.setDrawColor(border[0],border[1],border[2]); doc.setLineWidth(0.5);
+      doc.line(M, y, pageW-M, y); y += 16;
+      doc.setFont("helvetica","bold"); doc.setFontSize(8); doc.setTextColor(muted[0],muted[1],muted[2]);
+      doc.text("TERMS AND NOTES", M, y); y += 14;
+      doc.setFont("helvetica","normal"); doc.setFontSize(9.5); doc.setTextColor(64,75,78);
+      var wrapped = doc.splitTextToSize(q.terms.trim(), pageW-2*M);
+      doc.text(wrapped, M, y); y += wrapped.length*13 + 6;
+    }
+
+    // footer
+    var fy = doc.internal.pageSize.getHeight() - 42;
+    doc.setDrawColor(border[0],border[1],border[2]); doc.setLineWidth(0.5);
+    doc.line(M, fy-14, pageW-M, fy-14);
+    doc.setFont("times","bold"); doc.setFontSize(11); doc.setTextColor(teal[0],teal[1],teal[2]);
+    doc.text("Thank you for your business.", pageW/2, fy, {align:"center"});
+    doc.setFont("helvetica","normal"); doc.setFontSize(8); doc.setTextColor(muted[0],muted[1],muted[2]);
+    doc.text("Prepared with Diyama Quote Builder  ·  diyama.online", pageW/2, fy+13, {align:"center"});
+
+    var fname = (q.quoteNum.trim()||"quotation").replace(/[^\w\-]+/g,"_") + ".pdf";
+    doc.save(fname);
+    toast("PDF downloaded");
+  }
+  $("downloadBtn").addEventListener("click", generatePDF);
+  $("downloadTop").addEventListener("click", generatePDF);
+
+  /* ---------- init ---------- */
+  function init(){
+    var list = loadAll();
+    var activeId = getActiveId();
+    var found = null;
+    if(activeId){ for(var i=0;i<list.length;i++){ if(list[i].id===activeId){ found = list[i]; break; } } }
+    if(!found && list.length){ found = list.sort(function(a,b){return b.updated-a.updated;})[0]; }
+    if(found){
+      current = JSON.parse(JSON.stringify(found));
+      if(!current.items || !current.items.length) current.items = [ blankItem() ];
+    } else {
+      current = newQuote();
+      persist(false);
+    }
+    setActiveId(current.id);
+    fillEditor();
+  }
+  init();
+})();
+</script>
+</body>
+</html>

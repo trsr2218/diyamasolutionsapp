@@ -57,7 +57,7 @@ export const apps: DiyamaApp[] = [
     description:
       "Create clean, branded invoices, add your items, and download a polished PDF ready to send. Your invoices are saved so you can reopen or duplicate them anytime.",
     category: "Business Systems",
-    url: "https://invoice.diyama.online",
+    url: "/apps/invoicer",
     status: "live",
     image: invoicerShot,
     domain: "invoice.diyama.online",
@@ -73,7 +73,7 @@ export const apps: DiyamaApp[] = [
     description:
       "Turn a link, a WhatsApp chat, your WiFi, or a full contact card into a clean, downloadable QR code your customers can scan on the spot.",
     category: "Tools",
-    url: "https://qr.diyama.online",
+    url: "/apps/qr-studio",
     status: "live",
     image: qrStudioShot,
     domain: "qr.diyama.online",
@@ -89,7 +89,7 @@ export const apps: DiyamaApp[] = [
     description:
       "Build professional quotations with your terms and a clear validity date, then download a branded PDF. Saved quotes are ready to reopen or turn into invoices.",
     category: "Business Systems",
-    url: "https://quote.diyama.online",
+    url: "/apps/quotation",
     status: "live",
     image: quotationShot,
     domain: "quote.diyama.online",
@@ -105,7 +105,7 @@ export const apps: DiyamaApp[] = [
     description:
       "Set your services and hours, and take bookings with automatic time slots. Every booking comes with a one tap WhatsApp confirmation for your customer.",
     category: "Business Systems",
-    url: "https://booking.diyama.online",
+    url: "/apps/bookme",
     status: "live",
     image: bookmeShot,
     domain: "booking.diyama.online",
@@ -121,7 +121,7 @@ export const apps: DiyamaApp[] = [
     description:
       "Build a beautiful link in bio page with your links and socials, then share it anywhere. Perfect for Instagram, TikTok, and WhatsApp profiles.",
     category: "Marketing",
-    url: "https://link.diyama.online",
+    url: "/apps/biolink",
     status: "live",
     image: biolinkShot,
     domain: "link.diyama.online",
@@ -137,7 +137,7 @@ export const apps: DiyamaApp[] = [
     description:
       "Work out PAYE, NAPSA, and NHIMA from a gross salary and download a clean payslip. Built around current Zambian bands, with everything adjustable.",
     category: "Business Systems",
-    url: "https://payroll.diyama.online",
+    url: "/apps/payslip",
     status: "live",
     image: payslipShot,
     domain: "payroll.diyama.online",
@@ -153,7 +153,7 @@ export const apps: DiyamaApp[] = [
     description:
       "Track your products, adjust stock as you sell and restock, and get low stock warnings at a glance. See your total stock value in one place.",
     category: "Business Systems",
-    url: "https://stock.diyama.online",
+    url: "/apps/stocktrack",
     status: "live",
     image: stocktrackShot,
     domain: "stock.diyama.online",
@@ -169,7 +169,7 @@ export const apps: DiyamaApp[] = [
     description:
       "Log income and expenses, watch your monthly balance, and read simple charts that show where the money is going. Export anytime.",
     category: "Business Systems",
-    url: "https://expense.diyama.online",
+    url: "/apps/expensa",
     status: "live",
     image: expensaShot,
     domain: "expense.diyama.online",
@@ -185,7 +185,7 @@ export const apps: DiyamaApp[] = [
     description:
       "Build a digital business card with a QR code and downloadable contact file, then share a link that lets anyone save your details instantly.",
     category: "Marketing",
-    url: "https://card.diyama.online",
+    url: "/apps/tapcard",
     status: "live",
     image: tapcardShot,
     domain: "card.diyama.online",
@@ -201,7 +201,7 @@ export const apps: DiyamaApp[] = [
     description:
       "Create a digital stamp card for your cafe or shop, stamp customers on every visit, and delight them when they unlock a reward. Track every customer.",
     category: "Marketing",
-    url: "https://loyalty.diyama.online",
+    url: "/apps/loyalty",
     status: "live",
     image: loyaltyShot,
     domain: "loyalty.diyama.online",

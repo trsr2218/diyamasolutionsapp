@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Diyama TapCard · Digital Business Card Builder</title>
+<meta name="description" content="Build a beautiful digital business card in minutes. Share a link, generate a QR code, and let anyone save your contact instantly. By Diyama Solutions." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231f5c4d'/%3E%3Ctext x='50' y='68' font-family='Georgia,serif' font-size='58' font-weight='700' text-anchor='middle' fill='%23faf8f4'%3ED%3C/text%3E%3Ccircle cx='74' cy='64' r='7' fill='%23e8a838'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<style>
+:root{
+  --teal:#1f5c4d; --teal-dark:#16453a; --teal-soft:#e7f0ed;
+  --gold:#e8a838; --gold-soft:#fbf1dd;
+  --ink:#1e2b30; --muted:#6b7674; --surface:#faf8f4; --card:#ffffff;
+  --border:#e8e4dc; --danger:#d64545; --ok:#2e9e6b;
+  --accent:#1f5c4d;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:"DM Sans",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  color:var(--ink); background:var(--surface); font-size:16px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(60vw 60vw at 100% 0%, rgba(232,168,56,.10), transparent 60%),
+    radial-gradient(55vw 55vw at 0% 100%, rgba(31,92,77,.10), transparent 60%);
+  background-attachment:fixed; min-height:100vh;
+}
+h1,h2,h3,.font-display{font-family:"Playfair Display",Georgia,serif}
+a{color:var(--teal);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Header */
+.site-header{
+  position:sticky;top:0;z-index:50;
+  background:rgba(255,255,255,.78);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.header-inner{max-width:1120px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.wordmark{display:flex;align-items:center;gap:12px;min-width:0}
+.wordmark .brand{font-family:"Playfair Display",serif;font-weight:800;font-size:22px;color:var(--teal);letter-spacing:-.01em}
+.wordmark .brand .dot{color:var(--gold)}
+.wordmark .divider{width:1px;height:22px;background:var(--border)}
+.wordmark .appname{font-weight:600;color:var(--muted);font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.header-cta{font-size:14px;font-weight:600;color:var(--teal);white-space:nowrap}
+
+/* Layout */
+.wrap{max-width:1120px;margin:0 auto;padding:32px 20px 8px}
+.lede h1{font-size:clamp(28px,5vw,40px);margin:0 0 8px;letter-spacing:-.02em}
+.lede p{margin:0;color:var(--muted);max-width:56ch}
+.grid{display:grid;grid-template-columns:1fr;gap:24px;margin-top:26px}
+@media(min-width:900px){.grid{grid-template-columns:1fr 1fr;gap:32px;align-items:start}}
+
+/* Cards / panels */
+.panel{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:0 10px 30px -12px rgba(31,92,77,.15);padding:24px}
+.panel h2{font-size:20px;margin:0 0 4px}
+.panel .sub{color:var(--muted);font-size:14px;margin:0 0 18px}
+.sticky-col{position:sticky;top:88px}
+
+/* Form */
+.field{margin-bottom:14px}
+.field label{display:block;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:6px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:460px){.row2{grid-template-columns:1fr}}
+input[type=text],input[type=tel],input[type=email],input[type=url],textarea,select{
+  width:100%;font-family:inherit;font-size:15px;color:var(--ink);
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 12px;transition:box-shadow .18s,border-color .18s
+}
+textarea{resize:vertical;min-height:64px}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(31,92,77,.15)}
+.hint{font-size:12px;color:var(--muted);margin-top:5px}
+
+/* avatar mode chips */
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.chip{font-size:13px;font-weight:600;padding:7px 13px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;transition:.18s}
+.chip:hover{border-color:var(--teal)}
+.chip.on{background:var(--teal-soft);border-color:var(--teal);color:var(--teal-dark)}
+
+/* color picker */
+.swatches{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.swatch{width:30px;height:30px;border-radius:8px;border:2px solid #fff;box-shadow:0 0 0 1px var(--border);cursor:pointer;transition:transform .15s}
+.swatch:hover{transform:translateY(-2px)}
+.swatch.on{box-shadow:0 0 0 2px var(--ink)}
+input[type=color]{width:38px;height:34px;padding:2px;border:1px solid var(--border);border-radius:8px;background:var(--surface);cursor:pointer}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:inherit;font-weight:600;font-size:15px;border-radius:10px;padding:11px 18px;cursor:pointer;border:1px solid transparent;transition:transform .18s,box-shadow .18s,background .18s;text-decoration:none}
+.btn:active{transform:translateY(0)!important}
+.btn-primary{background:var(--teal);color:#fff}
+.btn-primary:hover{background:var(--teal-dark);transform:translateY(-1px);box-shadow:0 8px 20px -8px rgba(31,92,77,.55);text-decoration:none}
+.btn-accent{background:var(--gold);color:var(--ink)}
+.btn-accent:hover{transform:translateY(-1px);box-shadow:0 8px 20px -8px rgba(232,168,56,.6);text-decoration:none}
+.btn-outline{background:transparent;color:var(--teal);border-color:var(--border)}
+.btn-outline:hover{border-color:var(--teal);background:var(--teal-soft);transform:translateY(-1px);text-decoration:none}
+.btn-block{width:100%}
+.btnrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+
+/* ===== Business card preview ===== */
+.bizcard{
+  --a:var(--accent);
+  background:#fff;border-radius:18px;border:1px solid var(--border);
+  box-shadow:0 18px 44px -18px rgba(31,92,77,.28);
+  overflow:hidden;max-width:400px;margin:0 auto;
+}
+.bizcard .band{
+  height:96px;position:relative;
+  background:linear-gradient(135deg,var(--a),color-mix(in srgb,var(--a) 62%,#000 15%));
+}
+.bizcard .band:after{content:"";position:absolute;inset:0;background:radial-gradient(120px 120px at 85% -20%,rgba(255,255,255,.28),transparent 70%)}
+.bizcard .body{padding:0 24px 24px;margin-top:-46px;position:relative}
+.avatar{
+  width:92px;height:92px;border-radius:22px;border:4px solid #fff;
+  background:var(--a);color:#fff;display:flex;align-items:center;justify-content:center;
+  font-family:"Playfair Display",serif;font-weight:700;font-size:38px;overflow:hidden;
+  box-shadow:0 8px 20px -8px rgba(0,0,0,.35)
+}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.avatar .emoji{font-family:"DM Sans",sans-serif;font-size:44px;line-height:1}
+.bizcard .name{font-family:"Playfair Display",serif;font-weight:700;font-size:24px;margin:14px 0 2px;letter-spacing:-.01em;color:var(--ink)}
+.bizcard .title{font-weight:600;color:var(--a);font-size:15px;margin:0}
+.bizcard .company{color:var(--muted);font-size:14px;margin:1px 0 0}
+.bizcard .rule{height:1px;background:var(--border);margin:16px 0}
+.contacts{display:flex;flex-direction:column;gap:11px;margin:0;padding:0;list-style:none}
+.contacts li{display:flex;align-items:flex-start;gap:12px;font-size:14.5px;color:var(--ink)}
+.contacts .ic{flex:0 0 34px;height:34px;border-radius:10px;background:var(--teal-soft);color:var(--a);display:flex;align-items:center;justify-content:center;margin-top:1px}
+.contacts a{color:var(--ink);word-break:break-word}
+.contacts a:hover{color:var(--a)}
+.contacts .lab{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.emptycard{color:var(--muted);font-size:14px;font-style:italic}
+
+/* QR block */
+.qrwrap{margin-top:18px;display:flex;gap:16px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px}
+.qrwrap canvas,.qrwrap img{width:104px;height:104px;border-radius:10px;background:#fff;padding:6px;border:1px solid var(--border)}
+.qrwrap .qtxt{font-size:13px;color:var(--muted)}
+.qrwrap .qtxt strong{display:block;color:var(--ink);font-size:14px;margin-bottom:2px}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:600;box-shadow:0 12px 30px -10px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:.3s;z-index:100}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* footer */
+.site-footer{text-align:center;color:var(--muted);font-size:13px;padding:34px 20px 40px;max-width:720px;margin:0 auto}
+.site-footer a{color:var(--teal);font-weight:600}
+.site-footer .sep{margin:0 8px;opacity:.5}
+
+/* fade in */
+.fade{opacity:0;transform:translateY(10px);animation:rise .6s cubic-bezier(.2,.7,.2,1) forwards}
+.fade.d1{animation-delay:.06s}.fade.d2{animation-delay:.14s}
+@keyframes rise{to{opacity:1;transform:none}}
+
+/* ===== PUBLIC card page ===== */
+.public-stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 18px 30px}
+.public-card{max-width:420px;width:100%}
+.public-actions{max-width:420px;width:100%;margin:18px auto 0;display:flex;flex-direction:column;gap:10px}
+.made-line{text-align:center;color:var(--muted);font-size:13px;margin-top:20px}
+.made-line a{color:var(--teal);font-weight:600}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<!-- ============ EDITOR VIEW ============ -->
+<div id="editorView">
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="wordmark">
+        <a href="https://www.diyama.online" class="brand" aria-label="Diyama Solutions home" style="text-decoration:none">Diyama<span class="dot">.</span></a>
+        <span class="divider"></span>
+        <span class="appname">TapCard</span>
+      </div>
+      <a class="header-cta" href="https://www.diyama.online">Back to Diyama</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="lede fade">
+      <h1>Your digital business card, ready in minutes.</h1>
+      <p>Fill in your details, pick an accent, and share a single link. Anyone who opens it can save your contact instantly, no app required.</p>
+    </div>
+
+    <div class="grid">
+      <!-- Editor panel -->
+      <section class="panel fade d1" aria-label="Card details">
+        <h2>Card details</h2>
+        <p class="sub">Everything updates live on the right.</p>
+
+        <div class="field">
+          <label for="f_name">Full name</label>
+          <input type="text" id="f_name" placeholder="e.g. Chanda Mwansa" autocomplete="name" />
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label for="f_title">Job title</label>
+            <input type="text" id="f_title" placeholder="e.g. Managing Director" />
+          </div>
+          <div class="field">
+            <label for="f_company">Company</label>
+            <input type="text" id="f_company" placeholder="e.g. Diyama Solutions" />
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label for="f_phone">Phone</label>
+            <input type="tel" id="f_phone" placeholder="+260 97 000 0000" autocomplete="tel" />
+          </div>
+          <div class="field">
+            <label for="f_whatsapp">WhatsApp number</label>
+            <input type="tel" id="f_whatsapp" placeholder="260966138238" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="f_email">Email</label>
+          <input type="email" id="f_email" placeholder="you@company.com" autocomplete="email" />
+        </div>
+        <div class="field">
+          <label for="f_website">Website</label>
+          <input type="url" id="f_website" placeholder="https://www.company.com" />
+        </div>
+        <div class="field">
+          <label for="f_address">Address</label>
+          <textarea id="f_address" placeholder="Street, city, country"></textarea>
+        </div>
+
+        <div class="rule" style="height:1px;background:var(--border);margin:20px 0"></div>
+
+        <!-- Avatar -->
+        <div class="field">
+          <label>Avatar</label>
+          <div class="chips" role="tablist" aria-label="Avatar type">
+            <button type="button" class="chip on" data-av="initials">Initials</button>
+            <button type="button" class="chip" data-av="emoji">Emoji</button>
+            <button type="button" class="chip" data-av="image">Image URL</button>
+          </div>
+          <div id="avEmojiWrap" class="hidden">
+            <input type="text" id="f_emoji" maxlength="4" placeholder="e.g. 🚀" />
+            <div class="hint">One emoji works best.</div>
+          </div>
+          <div id="avImageWrap" class="hidden">
+            <input type="url" id="f_image" placeholder="https://.../photo.jpg" />
+            <div class="hint">Paste a public image link (square photos look best).</div>
+          </div>
+          <div id="avInitialsHint" class="hint">Initials are taken from your full name automatically.</div>
+        </div>
+
+        <!-- Accent color -->
+        <div class="field">
+          <label>Accent color</label>
+          <div class="swatches">
+            <span class="swatch on" data-color="#1f5c4d" style="background:#1f5c4d" title="Diyama Teal"></span>
+            <span class="swatch" data-color="#16453a" style="background:#16453a" title="Deep Teal"></span>
+            <span class="swatch" data-color="#e8a838" style="background:#e8a838" title="Gold"></span>
+            <span class="swatch" data-color="#2e9e6b" style="background:#2e9e6b" title="Green"></span>
+            <span class="swatch" data-color="#3457d5" style="background:#3457d5" title="Blue"></span>
+            <span class="swatch" data-color="#8a3ffc" style="background:#8a3ffc" title="Purple"></span>
+            <span class="swatch" data-color="#d64545" style="background:#d64545" title="Red"></span>
+            <span class="swatch" data-color="#1e2b30" style="background:#1e2b30" title="Ink"></span>
+            <input type="color" id="f_accent" value="#1f5c4d" aria-label="Custom accent color" />
+          </div>
+        </div>
+
+        <div class="btnrow">
+          <button type="button" class="btn btn-outline" id="btnReset">Clear card</button>
+        </div>
+      </section>
+
+      <!-- Preview panel -->
+      <section class="fade d2">
+        <div class="sticky-col">
+          <div class="panel" style="padding:22px">
+            <h2 style="margin-bottom:14px">Live preview</h2>
+            <div id="cardMount"></div>
+
+            <div class="qrwrap" id="qrBlock">
+              <div id="qrTarget"></div>
+              <div class="qtxt">
+                <strong>Scan to save</strong>
+                Point any phone camera here to add this contact.
+              </div>
+            </div>
+
+            <div class="btnrow" style="margin-top:18px">
+              <button type="button" class="btn btn-primary btn-block" id="btnShare">Copy shareable card link</button>
+            </div>
+            <div class="btnrow">
+              <button type="button" class="btn btn-accent" id="btnVcf">Download vCard (.vcf)</button>
+              <button type="button" class="btn btn-outline" id="btnPreviewPublic">Preview public card</button>
+            </div>
+            <div class="hint" style="margin-top:10px">Your draft is saved automatically on this device.</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    Built by Diyama Solutions <span class="sep">·</span> Clarity in Action.
+    <div style="margin-top:6px">
+      <a href="https://www.diyama.online">diyama.online</a>
+      <span class="sep">·</span>
+      <a href="https://wa.me/260966138238">Chat on WhatsApp</a>
+    </div>
+  </footer>
+</div>
+
+<!-- ============ PUBLIC VIEW ============ -->
+<div id="publicView" class="hidden">
+  <div class="public-stage">
+    <div class="public-card" id="publicMount"></div>
+    <div class="public-actions">
+      <button type="button" class="btn btn-primary btn-block" id="btnPublicSave">Save contact</button>
+      <a class="btn btn-outline btn-block" id="btnPublicWa" href="#" target="_blank" rel="noopener">Message on WhatsApp</a>
+    </div>
+    <p class="made-line">Make yours at <a href="https://card.diyama.online">card.diyama.online</a></p>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+/* ---------- state ---------- */
+var DEFAULT = {
+  name:"", title:"", company:"", phone:"", whatsapp:"", email:"",
+  website:"", address:"", avatarMode:"initials", emoji:"", image:"", accent:"#1f5c4d"
+};
+var LS_KEY = "diyama_tapcard_draft_v1";
+var state = Object.assign({}, DEFAULT);
+
+/* ---------- helpers ---------- */
+function $(id){return document.getElementById(id);}
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];});}
+function clean(s){return String(s==null?"":s).trim();}
+
+var toastTimer;
+function toast(msg){
+  var t=$("toast"); t.textContent=msg; t.classList.add("show");
+  clearTimeout(toastTimer); toastTimer=setTimeout(function(){t.classList.remove("show");},2200);
+}
+
+/* unicode-safe base64 */
+function b64encode(str){
+  return btoa(unescape(encodeURIComponent(str)));
+}
+function b64decode(str){
+  return decodeURIComponent(escape(atob(str)));
+}
+function urlSafe(b){return b.replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");}
+function urlUnsafe(b){
+  b=b.replace(/-/g,"+").replace(/_/g,"/");
+  while(b.length%4)b+="=";
+  return b;
+}
+
+function initials(name){
+  var p=clean(name).split(/\s+/).filter(Boolean);
+  if(!p.length)return "";
+  if(p.length===1)return p[0].slice(0,2).toUpperCase();
+  return (p[0][0]+p[p.length-1][0]).toUpperCase();
+}
+function normWebsite(u){
+  u=clean(u); if(!u)return "";
+  if(!/^https?:\/\//i.test(u))u="https://"+u;
+  return u;
+}
+function waDigits(n){return clean(n).replace(/[^\d]/g,"");}
+
+/* ---------- vCard ---------- */
+function vcardFor(s){
+  function e(v){return String(v==null?"":v).replace(/\\/g,"\\\\").replace(/\n/g,"\\n").replace(/,/g,"\\,").replace(/;/g,"\\;");}
+  var parts=clean(s.name).split(/\s+/).filter(Boolean);
+  var last=parts.length>1?parts[parts.length-1]:"";
+  var first=parts.length>1?parts.slice(0,-1).join(" "):(parts[0]||"");
+  var L=[];
+  L.push("BEGIN:VCARD");
+  L.push("VERSION:3.0");
+  L.push("N:"+e(last)+";"+e(first)+";;;");
+  L.push("FN:"+e(clean(s.name)));
+  if(clean(s.company))L.push("ORG:"+e(clean(s.company)));
+  if(clean(s.title))L.push("TITLE:"+e(clean(s.title)));
+  if(clean(s.phone))L.push("TEL;TYPE=WORK,VOICE:"+e(clean(s.phone)));
+  if(waDigits(s.whatsapp))L.push("TEL;TYPE=CELL:"+e("+"+waDigits(s.whatsapp)));
+  if(clean(s.email))L.push("EMAIL;TYPE=WORK:"+e(clean(s.email)));
+  if(normWebsite(s.website))L.push("URL:"+e(normWebsite(s.website)));
+  if(clean(s.address))L.push("ADR;TYPE=WORK:;;"+e(clean(s.address).replace(/\n/g,", "))+";;;;");
+  L.push("END:VCARD");
+  return L.join("\r\n");
+}
+
+function downloadVcf(s){
+  var name=clean(s.name)||"contact";
+  var blob=new Blob([vcardFor(s)],{type:"text/vcard;charset=utf-8"});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement("a");
+  a.href=url; a.download=name.replace(/[^\w\- ]+/g,"").replace(/\s+/g,"_")+".vcf";
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},400);
+}
+
+/* ---------- QR ---------- */
+function renderQR(mountId,s){
+  var mount=$(mountId); if(!mount)return;
+  mount.innerHTML="";
+  if(typeof QRCode==="undefined"){mount.innerHTML='<div class="emptycard">QR unavailable</div>';return;}
+  var data=vcardFor(s);
+  var canvas=document.createElement("canvas");
+  mount.appendChild(canvas);
+  QRCode.toCanvas(canvas,data,{width:220,margin:1,color:{dark:"#1e2b30",light:"#ffffff"},errorCorrectionLevel:"M"},function(err){
+    if(err){mount.innerHTML='<div class="emptycard">QR error</div>';}
+  });
+}
+
+/* ---------- card markup ---------- */
+function avatarHTML(s){
+  if(s.avatarMode==="image" && clean(s.image)){
+    return '<img src="'+esc(clean(s.image))+'" alt="" onerror="this.style.display=\'none\';this.parentNode.classList.add(\'noimg\');this.parentNode.textContent=\''+esc(initials(s.name)||"·")+'\'" />';
+  }
+  if(s.avatarMode==="emoji" && clean(s.emoji)){
+    return '<span class="emoji">'+esc(clean(s.emoji))+'</span>';
+  }
+  var ini=initials(s.name);
+  return ini?esc(ini):'<span class="emoji">·</span>';
+}
+
+function contactRow(icon,label,inner){
+  return '<li><span class="ic">'+icon+'</span><span><span class="lab">'+esc(label)+'</span>'+inner+'</span></li>';
+}
+var IC={
+  phone:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
+  wa:'<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91C21.95 6.45 17.5 2 12.04 2zm5.8 14.16c-.24.68-1.42 1.32-1.95 1.36-.5.05-1.13.24-3.66-.77-3.08-1.22-5.03-4.35-5.18-4.55-.15-.2-1.24-1.65-1.24-3.15 0-1.5.79-2.24 1.07-2.54.28-.3.61-.38.81-.38.2 0 .41 0 .59.01.19.01.44-.07.69.53.24.6.83 2.06.9 2.21.07.15.12.32.02.52-.1.2-.15.32-.3.5-.15.17-.31.38-.44.51-.15.15-.3.31-.13.61.17.3.75 1.23 1.6 2 1.11.98 2.04 1.29 2.34 1.44.3.15.47.12.65-.07.18-.2.75-.87.95-1.17.2-.3.4-.25.68-.15.28.1 1.75.83 2.05.98.3.15.5.22.57.35.07.13.07.73-.17 1.42z"/></svg>',
+  email:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>',
+  web:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 0 20 15.3 15.3 0 0 1 0-20"/></svg>',
+  addr:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>'
+};
+
+function cardHTML(s){
+  var hasAny = clean(s.name)||clean(s.title)||clean(s.company)||clean(s.phone)||clean(s.email);
+  var rows="";
+  if(clean(s.phone))rows+=contactRow(IC.phone,"Phone",'<a href="tel:'+esc(clean(s.phone).replace(/\s+/g,""))+'">'+esc(clean(s.phone))+'</a>');
+  if(waDigits(s.whatsapp))rows+=contactRow(IC.wa,"WhatsApp",'<a href="https://wa.me/'+esc(waDigits(s.whatsapp))+'" target="_blank" rel="noopener">+'+esc(waDigits(s.whatsapp))+'</a>');
+  if(clean(s.email))rows+=contactRow(IC.email,"Email",'<a href="mailto:'+esc(clean(s.email))+'">'+esc(clean(s.email))+'</a>');
+  if(normWebsite(s.website))rows+=contactRow(IC.web,"Website",'<a href="'+esc(normWebsite(s.website))+'" target="_blank" rel="noopener">'+esc(clean(s.website).replace(/^https?:\/\//i,""))+'</a>');
+  if(clean(s.address))rows+=contactRow(IC.addr,"Address",'<span>'+esc(clean(s.address)).replace(/\n/g,"<br>")+'</span>');
+
+  var html='<div class="bizcard" style="--accent:'+esc(s.accent||"#1f5c4d")+'">';
+  html+='<div class="band"></div>';
+  html+='<div class="body">';
+  html+='<div class="avatar">'+avatarHTML(s)+'</div>';
+  if(hasAny){
+    html+='<div class="name">'+(esc(clean(s.name))||'Your name')+'</div>';
+    if(clean(s.title))html+='<p class="title">'+esc(clean(s.title))+'</p>';
+    if(clean(s.company))html+='<p class="company">'+esc(clean(s.company))+'</p>';
+  }else{
+    html+='<div class="name">Your name</div>';
+    html+='<p class="emptycard">Start typing to build your card.</p>';
+  }
+  if(rows){html+='<div class="rule"></div><ul class="contacts">'+rows+'</ul>';}
+  html+='</div></div>';
+  return html;
+}
+
+/* ---------- editor bindings ---------- */
+var fieldMap={
+  name:"f_name", title:"f_title", company:"f_company", phone:"f_phone",
+  whatsapp:"f_whatsapp", email:"f_email", website:"f_website", address:"f_address",
+  emoji:"f_emoji", image:"f_image"
+};
+
+function readForm(){
+  for(var k in fieldMap){ if($(fieldMap[k])) state[k]=$(fieldMap[k]).value; }
+}
+function writeForm(){
+  for(var k in fieldMap){ if($(fieldMap[k])) $(fieldMap[k]).value=state[k]||""; }
+  $("f_accent").value=state.accent||"#1f5c4d";
+  setAvatarMode(state.avatarMode||"initials",true);
+  syncSwatch();
+}
+function syncSwatch(){
+  var found=false;
+  document.querySelectorAll(".swatch").forEach(function(sw){
+    var on=sw.getAttribute("data-color").toLowerCase()===(state.accent||"").toLowerCase();
+    sw.classList.toggle("on",on); if(on)found=true;
+  });
+}
+function setAvatarMode(mode,silent){
+  state.avatarMode=mode;
+  document.querySelectorAll(".chip").forEach(function(c){c.classList.toggle("on",c.getAttribute("data-av")===mode);});
+  $("avEmojiWrap").classList.toggle("hidden",mode!=="emoji");
+  $("avImageWrap").classList.toggle("hidden",mode!=="image");
+  $("avInitialsHint").classList.toggle("hidden",mode!=="initials");
+  if(!silent)update();
+}
+
+var saveTimer;
+function persist(){
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(function(){
+    try{localStorage.setItem(LS_KEY,JSON.stringify(state));}catch(e){}
+  },250);
+}
+
+function update(){
+  readForm();
+  $("cardMount").innerHTML=cardHTML(state);
+  renderQR("qrTarget",state);
+  persist();
+}
+
+/* ---------- share ---------- */
+function encodeState(s){
+  var min={};
+  ["name","title","company","phone","whatsapp","email","website","address","avatarMode","emoji","image","accent"].forEach(function(k){
+    if(clean(s[k]))min[k]=s[k];
+  });
+  return urlSafe(b64encode(JSON.stringify(min)));
+}
+function shareUrl(s){
+  var base=location.origin+location.pathname;
+  return base+"?c="+encodeState(s);
+}
+function copyShare(){
+  readForm();
+  if(!clean(state.name)){toast("Add your name first.");return;}
+  var url=shareUrl(state);
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(function(){toast("Shareable link copied.");},function(){promptCopy(url);});
+  }else{promptCopy(url);}
+}
+function promptCopy(url){
+  window.prompt("Copy your shareable card link:",url);
+}
+
+/* ---------- public view ---------- */
+function decodeParam(){
+  var m=location.search.match(/[?&]c=([^&]+)/);
+  if(!m)return null;
+  try{
+    var obj=JSON.parse(b64decode(urlUnsafe(decodeURIComponent(m[1]))));
+    return Object.assign({},DEFAULT,obj);
+  }catch(e){return null;}
+}
+
+function renderPublic(s){
+  document.title=(clean(s.name)?clean(s.name)+" · ":"")+"Diyama TapCard";
+  $("editorView").classList.add("hidden");
+  $("publicView").classList.remove("hidden");
+  $("publicMount").innerHTML=cardHTML(s)+
+    '<div class="qrwrap" style="max-width:400px;margin:16px auto 0">'+
+      '<div id="pubQr"></div>'+
+      '<div class="qtxt"><strong>Scan to save</strong>Open your phone camera and point it here to add this contact.</div>'+
+    '</div>';
+  renderQR("pubQr",s);
+  $("btnPublicSave").onclick=function(){downloadVcf(s);toast("Contact file downloaded.");};
+  var wa=$("btnPublicWa");
+  if(waDigits(s.whatsapp)){wa.href="https://wa.me/"+waDigits(s.whatsapp);wa.classList.remove("hidden");}
+  else{wa.classList.add("hidden");}
+}
+
+/* ---------- init ---------- */
+function initEditor(){
+  // load draft
+  try{
+    var raw=localStorage.getItem(LS_KEY);
+    if(raw)state=Object.assign({},DEFAULT,JSON.parse(raw));
+  }catch(e){}
+  writeForm();
+  update();
+
+  // input listeners
+  for(var k in fieldMap){(function(id){var el=$(id);if(el)el.addEventListener("input",update);})(fieldMap[k]);}
+
+  document.querySelectorAll(".chip").forEach(function(c){
+    c.addEventListener("click",function(){setAvatarMode(c.getAttribute("data-av"));});
+  });
+  document.querySelectorAll(".swatch").forEach(function(sw){
+    sw.addEventListener("click",function(){
+      state.accent=sw.getAttribute("data-color");
+      $("f_accent").value=state.accent; syncSwatch(); update();
+    });
+  });
+  $("f_accent").addEventListener("input",function(){state.accent=$("f_accent").value;syncSwatch();update();});
+
+  $("btnShare").addEventListener("click",copyShare);
+  $("btnVcf").addEventListener("click",function(){readForm();if(!clean(state.name)){toast("Add your name first.");return;}downloadVcf(state);toast("vCard downloaded.");});
+  $("btnPreviewPublic").addEventListener("click",function(){readForm();if(!clean(state.name)){toast("Add your name first.");return;}location.href=shareUrl(state);});
+  $("btnReset").addEventListener("click",function(){
+    if(!confirm("Clear all fields on this card?"))return;
+    state=Object.assign({},DEFAULT);
+    try{localStorage.removeItem(LS_KEY);}catch(e){}
+    writeForm(); update(); toast("Card cleared.");
+  });
+}
+
+(function boot(){
+  var pub=decodeParam();
+  if(pub){ renderPublic(pub); }
+  else { initEditor(); }
+})();
+</script>
+</body>
+</html>
