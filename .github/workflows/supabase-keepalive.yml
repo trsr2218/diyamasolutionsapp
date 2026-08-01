@@ -13,10 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Ping Supabase REST API
+        env:
+          # anon (publishable) key only; it is already public in the site's JS bundle,
+          # so committing it here exposes nothing new. RLS controls all access.
+          ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5zenJqZ21pY2Z5d3ByanJnY29xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxMTc1NTgsImV4cCI6MjA5OTY5MzU1OH0.XzpJeOk4By9sCsaJkEaRtFqSygAVJjAHuEkPKNJFSmY
         run: |
-          # anon (publishable) key only; it is already public in the site bundle.
           curl --fail --silent --show-error \
             "https://nszrjgmicfywprjrgcoq.supabase.co/rest/v1/reviews?select=id&limit=1" \
-            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
-            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "apikey: $ANON_KEY" \
+            -H "Authorization: Bearer $ANON_KEY" \
             -o /dev/null -w "HTTP %{http_code}\n"
