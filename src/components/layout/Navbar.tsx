@@ -1,21 +1,149 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
 import diyamaLogo from "@/assets/logo.jpg";
 
-const navLinks = [
-  { label: "Home", path: "/" },
+/* Five items and one call to action, not ten.
+ *
+ * Visitor feedback, August 2026: the old ten link bar read as "complicated,
+ * full, distracting, overwhelming" and was likely reducing the actions we
+ * actually want people to take. A quiet bar lets the Book Consultation
+ * button win. Nothing was removed from the site: Partners, Clients, About
+ * and Contact moved into a menu, and the footer still lists every page.
+ *
+ * Home is gone on purpose. The logo is the home link, as it is everywhere.
+ */
+
+type NavChild = { label: string; path: string; blurb: string };
+type NavLinkEntry = { label: string; path: string };
+type NavMenuEntry = { label: string; children: NavChild[] };
+type NavEntry = NavLinkEntry | NavMenuEntry;
+
+const isMenu = (entry: NavEntry): entry is NavMenuEntry => "children" in entry;
+
+const navEntries: NavEntry[] = [
   { label: "Services", path: "/services" },
   { label: "Apps", path: "/apps" },
-  { label: "Clients", path: "/clients" },
-  { label: "Partners", path: "/partners" },
-  { label: "Diyama AI", path: "/ai" },
-  { label: "Business Fit", path: "/business-fit" },
+  {
+    label: "Free Tools",
+    children: [
+      { label: "Diyama AI", path: "/ai", blurb: "Ask a business question, get an answer now" },
+      { label: "Business Fit", path: "/business-fit", blurb: "A 2 minute quiz, then your free Business Kit" },
+    ],
+  },
   { label: "Learn", path: "/learn" },
-  { label: "About", path: "/about" },
-  { label: "Contact", path: "/contact" },
+  {
+    label: "Company",
+    children: [
+      { label: "About", path: "/about", blurb: "Who we are and how we work" },
+      { label: "Clients", path: "/clients", blurb: "Businesses we have helped move" },
+      { label: "Partners", path: "/partners", blurb: "Brands we advertise for" },
+      { label: "Contact", path: "/contact", blurb: "Call, email or send us a message" },
+    ],
+  },
 ];
+
+const linkBase =
+  "relative px-3 py-2 rounded-md text-sm font-medium transition-colors";
+
+/* The sliding pill and underline are shared across every top level item via
+   layoutId. Only one item can be active at a time, so a link and a menu
+   trigger never claim the same layoutId in the same render. */
+const ActiveMarks = () => (
+  <>
+    <motion.span
+      layoutId="nav-active-pill"
+      className="absolute inset-0 bg-primary/8 rounded-md"
+      transition={{ type: "spring", stiffness: 380, damping: 32 }}
+    />
+    <motion.span
+      layoutId="nav-active-underline"
+      className="absolute left-3 right-3 -bottom-[1px] h-0.5 bg-accent rounded-full"
+      transition={{ type: "spring", stiffness: 380, damping: 32 }}
+    />
+  </>
+);
+
+/* Opens on hover and on keyboard focus, closes on Escape, on blur out and on
+   a short delay so the pointer can cross the gap to the panel. */
+const NavMenu = ({ entry, active }: { entry: NavMenuEntry; active: boolean }) => {
+  const [open, setOpen] = useState(false);
+  const closeTimer = useRef<number | undefined>(undefined);
+
+  useEffect(() => () => window.clearTimeout(closeTimer.current), []);
+
+  const show = () => {
+    window.clearTimeout(closeTimer.current);
+    setOpen(true);
+  };
+  const hide = () => {
+    window.clearTimeout(closeTimer.current);
+    closeTimer.current = window.setTimeout(() => setOpen(false), 120);
+  };
+
+  return (
+    <div
+      className="relative"
+      onMouseEnter={show}
+      onMouseLeave={hide}
+      onFocus={show}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setOpen(false);
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Escape") setOpen(false);
+      }}
+    >
+      <button
+        type="button"
+        aria-haspopup="true"
+        aria-expanded={open}
+        onClick={() => setOpen((o) => !o)}
+        className={`${linkBase} inline-flex items-center gap-1 ${
+          active ? "text-primary" : "text-muted-foreground hover:text-foreground"
+        }`}
+      >
+        {active && <ActiveMarks />}
+        <span className="relative z-10">{entry.label}</span>
+        <ChevronDown
+          size={14}
+          className={`relative z-10 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -6, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -6, scale: 0.98 }}
+            transition={{ duration: 0.16, ease: "easeOut" }}
+            role="menu"
+            className="absolute left-0 top-full pt-2 w-[19rem] origin-top"
+          >
+            <div className="rounded-xl border border-border/70 bg-background/95 backdrop-blur-lg shadow-lg p-1.5">
+              {entry.children.map((child) => (
+                <Link
+                  key={child.path}
+                  to={child.path}
+                  role="menuitem"
+                  onClick={() => setOpen(false)}
+                  className="block rounded-lg px-3 py-2.5 transition-colors hover:bg-primary/5 focus:bg-primary/5 focus:outline-none"
+                >
+                  <span className="block text-sm font-medium text-foreground">{child.label}</span>
+                  <span className="block text-xs text-muted-foreground mt-0.5 leading-snug">
+                    {child.blurb}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -32,6 +160,11 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const isActive = (entry: NavEntry) =>
+    isMenu(entry)
+      ? entry.children.some((c) => c.path === location.pathname)
+      : entry.path === location.pathname;
+
   return (
     <motion.nav
       initial={{ y: -70, opacity: 0 }}
@@ -42,7 +175,7 @@ const Navbar = () => {
       }`}
     >
       <div className="container-wide mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16">
-        <Link to="/" className="flex items-center gap-2 group">
+        <Link to="/" className="flex items-center gap-2 group" aria-label="Diyama Solutions, home">
           <motion.img
             src={diyamaLogo}
             alt="Diyama Solutions"
@@ -56,35 +189,23 @@ const Navbar = () => {
         </Link>
 
         {/* Desktop */}
-        <div className="hidden lg:flex items-center gap-0.5">
-          {navLinks.map((link) => {
-            const active = location.pathname === link.path;
-            return (
+        <div className="hidden lg:flex items-center gap-1">
+          {navEntries.map((entry) =>
+            isMenu(entry) ? (
+              <NavMenu key={entry.label} entry={entry} active={isActive(entry)} />
+            ) : (
               <Link
-                key={link.path}
-                to={link.path}
-                className={`relative px-2.5 py-2 rounded-md text-sm font-medium transition-colors ${
-                  active ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                key={entry.path}
+                to={entry.path}
+                className={`${linkBase} ${
+                  isActive(entry) ? "text-primary" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {active && (
-                  <motion.span
-                    layoutId="nav-active-pill"
-                    className="absolute inset-0 bg-primary/8 rounded-md"
-                    transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                  />
-                )}
-                <span className="relative z-10">{link.label}</span>
-                {active && (
-                  <motion.span
-                    layoutId="nav-active-underline"
-                    className="absolute left-2.5 right-2.5 -bottom-[1px] h-0.5 bg-accent rounded-full"
-                    transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                  />
-                )}
+                {isActive(entry) && <ActiveMarks />}
+                <span className="relative z-10">{entry.label}</span>
               </Link>
-            );
-          })}
+            )
+          )}
         </div>
 
         <div className="hidden lg:flex items-center gap-3">
@@ -102,6 +223,7 @@ const Navbar = () => {
           whileTap={{ scale: 0.85 }}
           className="lg:hidden p-2 text-foreground"
           aria-label="Toggle menu"
+          aria-expanded={open}
         >
           <AnimatePresence mode="wait" initial={false}>
             <motion.span
@@ -124,7 +246,7 @@ const Navbar = () => {
         style={{ scaleX: progress }}
       />
 
-      {/* Mobile menu */}
+      {/* Mobile menu. Same five entries, the two menus become labelled groups. */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -140,25 +262,47 @@ const Navbar = () => {
               animate="visible"
               variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.04 } } }}
             >
-              {navLinks.map((link) => (
+              {navEntries.map((entry) => (
                 <motion.div
-                  key={link.path}
+                  key={entry.label}
                   variants={{
                     hidden: { opacity: 0, x: -14 },
                     visible: { opacity: 1, x: 0, transition: { duration: 0.25 } },
                   }}
                 >
-                  <Link
-                    to={link.path}
-                    onClick={() => setOpen(false)}
-                    className={`block px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
-                      location.pathname === link.path
-                        ? "text-primary bg-primary/5"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
+                  {isMenu(entry) ? (
+                    <div className="pt-3 first:pt-0">
+                      <p className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+                        {entry.label}
+                      </p>
+                      {entry.children.map((child) => (
+                        <Link
+                          key={child.path}
+                          to={child.path}
+                          onClick={() => setOpen(false)}
+                          className={`block px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
+                            location.pathname === child.path
+                              ? "text-primary bg-primary/5"
+                              : "text-muted-foreground hover:text-foreground"
+                          }`}
+                        >
+                          {child.label}
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                    <Link
+                      to={entry.path}
+                      onClick={() => setOpen(false)}
+                      className={`block px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
+                        location.pathname === entry.path
+                          ? "text-primary bg-primary/5"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {entry.label}
+                    </Link>
+                  )}
                 </motion.div>
               ))}
               <motion.div
@@ -170,7 +314,7 @@ const Navbar = () => {
                 <Link
                   to="/consultations"
                   onClick={() => setOpen(false)}
-                  className="block btn-primary text-sm text-center mt-3"
+                  className="block btn-primary text-sm text-center mt-4"
                 >
                   Book Consultation
                 </Link>
