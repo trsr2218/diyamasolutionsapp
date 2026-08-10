@@ -25,6 +25,38 @@ const aiJsonLd = {
 
 type Msg = { role: "user" | "assistant"; content: string };
 
+// Per-user chat memory. No auth exists, so "per user" means per browser.
+// Conversations are kept for 24 hours, then cleared on the next visit.
+const CHAT_STORAGE_KEY = "diyama_ai_chat_v1";
+const CHAT_TTL_MS = 24 * 60 * 60 * 1000;
+
+function loadStoredMessages(): Msg[] {
+  try {
+    const raw = localStorage.getItem(CHAT_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as { updatedAt?: number; messages?: Msg[] };
+    if (!parsed?.updatedAt || Date.now() - parsed.updatedAt > CHAT_TTL_MS) {
+      localStorage.removeItem(CHAT_STORAGE_KEY);
+      return [];
+    }
+    return Array.isArray(parsed.messages) ? parsed.messages : [];
+  } catch {
+    return [];
+  }
+}
+
+function persistMessages(messages: Msg[]) {
+  try {
+    if (messages.length === 0) {
+      localStorage.removeItem(CHAT_STORAGE_KEY);
+      return;
+    }
+    localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify({ updatedAt: Date.now(), messages }));
+  } catch {
+    // Storage full or unavailable: memory simply falls back to in-session only.
+  }
+}
+
 const suggestedPrompts = [
   "How do I get my first 50 customers?",
   "What's the best marketing strategy for a restaurant?",
@@ -94,13 +126,18 @@ async function streamChat({
 }
 
 const DiyamaAI = () => {
-  const [messages, setMessages] = useState<Msg[]>([]);
+  const [messages, setMessages] = useState<Msg[]>(() => loadStoredMessages());
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  // Persist the conversation so it survives refreshes for 24 hours.
+  useEffect(() => {
+    persistMessages(messages);
   }, [messages]);
 
   const handleSend = async (text?: string) => {

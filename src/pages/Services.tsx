@@ -1,8 +1,28 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { services, serviceCategories } from "@/data/services";
+
+// Home page quick actions deep-link here with ?intent=... so a visitor lands on
+// the services that match what they picked, instead of the full generic list.
+const intents: Record<string, { heading: string; blurb: string; serviceIds: string[] }> = {
+  "get-customers": {
+    heading: "Get more customers",
+    blurb: "Services that fill your pipeline and turn attention into paying customers.",
+    serviceIds: ["customer-acquisition", "lead-generation", "digital-marketing", "restaurant-growth", "google-maps-reviews"],
+  },
+  "build-brand": {
+    heading: "Build my brand",
+    blurb: "Everything that makes your business look sharp and unmistakably yours.",
+    serviceIds: ["branding", "content-creation", "short-form-video", "social-media"],
+  },
+  "grow-visibility": {
+    heading: "Grow online visibility",
+    blurb: "Get found by the right people across search, maps, and social.",
+    serviceIds: ["digital-marketing", "social-media", "google-maps-reviews", "web-development", "lodge-hospitality"],
+  },
+};
 import servicesImg from "@/assets/services-strategy.jpg";
 import PageTransition from "@/components/PageTransition";
 import Seo from "@/components/Seo";
@@ -14,10 +34,25 @@ const fadeUp = {
 };
 
 const Services = () => {
+  const [searchParams] = useSearchParams();
+  const intentKey = searchParams.get("intent") || "";
+  const activeIntent = intents[intentKey] || null;
+
   const [activeCategory, setActiveCategory] = useState("All");
   const [expandedService, setExpandedService] = useState<string | null>(null);
+  const [intentDismissed, setIntentDismissed] = useState(false);
 
-  const filtered = activeCategory === "All" ? services : services.filter((s) => s.category === activeCategory);
+  // The intent view holds until the visitor picks a category pill or chooses to
+  // browse everything, at which point they see the full services list.
+  const useIntent = !!activeIntent && activeCategory === "All" && !intentDismissed;
+
+  const filtered = useIntent
+    ? (activeIntent.serviceIds
+        .map((id) => services.find((s) => s.id === id))
+        .filter(Boolean) as typeof services)
+    : activeCategory === "All"
+      ? services
+      : services.filter((s) => s.category === activeCategory);
 
   return (
     <PageTransition>
@@ -42,6 +77,25 @@ const Services = () => {
 
       <section className="section-padding bg-gradient-to-b from-surface to-background">
         <div className="container-wide mx-auto">
+          {/* Intent banner: shown when arriving from a home page quick action */}
+          {useIntent && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-8 rounded-2xl border border-primary/15 bg-primary/5 p-6 sm:p-7"
+            >
+              <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-1">Recommended for you</p>
+              <h2 className="font-display text-2xl font-bold">{activeIntent!.heading}</h2>
+              <p className="text-muted-foreground text-sm mt-2 max-w-2xl">{activeIntent!.blurb}</p>
+              <button
+                onClick={() => setIntentDismissed(true)}
+                className="mt-4 text-sm text-primary font-medium inline-flex items-center gap-1 hover:gap-2 transition-all"
+              >
+                Or browse all services <ArrowRight size={14} />
+              </button>
+            </motion.div>
+          )}
+
           {/* Category Filters */}
           <div className="flex flex-wrap gap-2 mb-10">
             {["All", ...serviceCategories].map((cat) => (

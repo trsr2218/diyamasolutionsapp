@@ -2,8 +2,8 @@ import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform, type Variants } from "framer-motion";
 import { useRef } from "react";
 import { ArrowRight, Sparkles, Users, BookOpen, MessageSquare, TrendingUp, Lightbulb } from "lucide-react";
-import { services } from "@/data/services";
 import { clients } from "@/data/clients";
+import { apps } from "@/data/apps";
 import heroImg from "@/assets/hero-consultant.jpg";
 import strategyImg from "@/assets/services-strategy.jpg";
 import teamImg from "@/assets/about-team.jpg";
@@ -32,8 +32,8 @@ const fadeIn: Variants = {
 };
 
 const Index = () => {
-  const featuredClients = clients.filter((c) => c.featured);
-  const previewServices = services.slice(0, 6);
+  // The four apps most likely to convert, curated via the `featured` flag in the data.
+  const topApps = apps.filter((a) => a.featured).slice(0, 4);
 
   const heroRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
@@ -133,10 +133,10 @@ const Index = () => {
             </motion.p>
             <motion.div variants={stagger} className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 max-w-3xl mx-auto">
               {[
-                { label: "Get more customers", icon: TrendingUp, path: "/services", img: strategyImg },
-                { label: "Build my brand", icon: Sparkles, path: "/services", img: teamImg },
+                { label: "Get more customers", icon: TrendingUp, path: "/services?intent=get-customers", img: strategyImg },
+                { label: "Build my brand", icon: Sparkles, path: "/services?intent=build-brand", img: teamImg },
                 { label: "Launch something new", icon: Lightbulb, path: "/business-fit", img: heroImg },
-                { label: "Grow online visibility", icon: Users, path: "/services", img: workspaceImg },
+                { label: "Grow online visibility", icon: Users, path: "/services?intent=grow-visibility", img: workspaceImg },
                 { label: "Talk to an advisor", icon: MessageSquare, path: "/ai", img: advisorImg },
                 { label: "Learn something useful", icon: BookOpen, path: "/learn", img: meetingImg },
               ].map((item) => (
@@ -168,57 +168,87 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Services Preview */}
+      {/* Business Fit feature — the hook: a personalized kit in under a minute */}
+      <section className="section-padding bg-primary text-primary-foreground relative overflow-hidden">
+        <AnimatedBg variant="dark" />
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_60%_40%,hsl(var(--accent)/0.12),transparent_60%)]" />
+        </div>
+        <div className="container-narrow mx-auto text-center relative z-10">
+          <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }}>
+            <motion.div variants={fadeIn} className="animate-float inline-block mb-4">
+              <div className="w-16 h-16 rounded-2xl bg-accent/20 border border-accent/30 flex items-center justify-center mx-auto animate-pulse-glow">
+                <Sparkles className="text-accent" size={28} />
+              </div>
+            </motion.div>
+            <motion.div variants={fadeUp} className="inline-flex items-center gap-2 text-xs font-semibold bg-accent/15 text-accent border border-accent/25 rounded-full px-4 py-1.5 mb-5">
+              Free, in under a minute
+            </motion.div>
+            <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-display font-bold mb-4">
+              Not sure what your business needs? <span className="text-accent italic">Find your fit.</span>
+            </motion.h2>
+            <motion.p variants={fadeUp} className="text-lg opacity-80 mb-8 max-w-xl mx-auto">
+              Answer a few quick questions and our AI builds you a personalized kit: what to prioritize, quick wins you can act on this week, and the exact services that fit where you are.
+            </motion.p>
+            <motion.div variants={fadeUp}>
+              <Link to="/business-fit" className="btn-accent inline-flex items-center gap-2">
+                Build my free Business Kit <ArrowRight size={16} />
+              </Link>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Apps showcase — four apps most likely to convert, plus See more */}
       <section className="relative overflow-hidden bg-surface">
         <AnimatedBg variant="subtle" />
         <div className="relative z-10 section-padding">
           <div className="container-wide mx-auto">
-            <motion.div
-              variants={stagger}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-60px" }}
-            >
+            <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }}>
               <div className="flex items-end justify-between mb-10">
                 <motion.div variants={fadeUp}>
-                  <h2 className="text-3xl sm:text-4xl font-display font-bold">What we <span className="text-gradient-primary">help with</span></h2>
-                  <p className="text-muted-foreground mt-2">Practical services that move your business forward.</p>
+                  <h2 className="text-3xl sm:text-4xl font-display font-bold">Apps that <span className="text-gradient-primary">run your business</span></h2>
+                  <p className="text-muted-foreground mt-2">Ready-to-use tools built by Diyama. Try them free, subscribe when you're ready.</p>
                 </motion.div>
                 <motion.div variants={fadeUp}>
-                  <Link to="/services" className="hidden sm:inline-flex items-center gap-1 text-primary font-medium text-sm hover:underline">
-                    View all <ArrowRight size={14} />
+                  <Link to="/apps" className="hidden sm:inline-flex items-center gap-1 text-primary font-medium text-sm hover:underline">
+                    See more apps <ArrowRight size={14} />
                   </Link>
                 </motion.div>
               </div>
-              <motion.div variants={stagger} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {previewServices.map((s) => (
-                  <motion.div key={s.id} variants={fadeIn}>
-                    <motion.div
-                      whileHover={{ y: -6 }}
-                      transition={{ type: "spring", stiffness: 280, damping: 18 }}
-                    >
-                      <div className="card-elevated p-6 h-full flex flex-col">
-                        <motion.span
-                          className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/10 to-accent/15 border border-primary/10 flex items-center justify-center text-2xl mb-4"
-                          whileHover={{ scale: 1.15, rotate: -6 }}
-                          transition={{ type: "spring", stiffness: 300 }}
-                        >
-                          {s.icon}
-                        </motion.span>
-                        <h3 className="font-display text-lg font-semibold mb-2">{s.title}</h3>
-                        <p className="text-sm text-muted-foreground flex-1">{s.description}</p>
-                        <Link to="/services" className="mt-4 text-primary text-sm font-medium inline-flex items-center gap-1 hover:gap-2 transition-all hover:underline">
-                          Learn more <ArrowRight size={12} />
-                        </Link>
-                      </div>
+              <motion.div variants={stagger} className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+                {topApps.map((app) => (
+                  <motion.div key={app.id} variants={fadeIn}>
+                    <motion.div whileHover={{ y: -6 }} transition={{ type: "spring", stiffness: 280, damping: 18 }} className="h-full">
+                      <Link to="/apps" className="card-elevated block h-full overflow-hidden group">
+                        <div className="relative h-28 sm:h-36 overflow-hidden">
+                          <img
+                            src={app.image}
+                            alt={app.name}
+                            loading="lazy"
+                            className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-foreground/50 to-transparent" />
+                          <span className="absolute top-2 right-2 text-[10px] font-semibold uppercase tracking-wide bg-accent text-white px-2 py-0.5 rounded-full">
+                            {app.status === "live" ? "Live" : app.status === "coming-soon" ? "Soon" : "Demo"}
+                          </span>
+                        </div>
+                        <div className="p-4">
+                          <h3 className="font-display text-sm sm:text-base font-semibold leading-tight">{app.name}</h3>
+                          <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{app.tagline}</p>
+                          <span className="mt-3 text-primary text-xs font-medium inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+                            Try it free <ArrowRight size={12} />
+                          </span>
+                        </div>
+                      </Link>
                     </motion.div>
                   </motion.div>
                 ))}
               </motion.div>
+              <Link to="/apps" className="sm:hidden mt-6 btn-outline-primary inline-flex items-center gap-1 text-sm">
+                See more apps <ArrowRight size={14} />
+              </Link>
             </motion.div>
-            <Link to="/services" className="sm:hidden mt-6 btn-outline-primary inline-flex items-center gap-1 text-sm">
-              View all services <ArrowRight size={14} />
-            </Link>
           </div>
         </div>
       </section>
@@ -249,35 +279,6 @@ const Index = () => {
             <motion.div variants={fadeUp}>
               <Link to="/clients" className="mt-8 inline-flex items-center gap-1 text-primary font-medium text-sm hover:underline">
                 See all clients <ArrowRight size={14} />
-              </Link>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Business Fit Teaser */}
-      <section className="section-padding bg-primary text-primary-foreground relative overflow-hidden">
-        <AnimatedBg variant="dark" />
-        {/* Extra shimmer layer */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_60%_40%,hsl(var(--accent)/0.12),transparent_60%)]" />
-        </div>
-        <div className="container-narrow mx-auto text-center relative z-10">
-          <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }}>
-            <motion.div variants={fadeIn} className="animate-float inline-block mb-4">
-              <div className="w-16 h-16 rounded-2xl bg-accent/20 border border-accent/30 flex items-center justify-center mx-auto animate-pulse-glow">
-                <Sparkles className="text-accent" size={28} />
-              </div>
-            </motion.div>
-            <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-display font-bold mb-4">
-              Discover your business fit
-            </motion.h2>
-            <motion.p variants={fadeUp} className="text-lg opacity-80 mb-8 max-w-xl mx-auto">
-              Answer a few questions and our AI will generate personalized recommendations, quick wins, and a suggested service bundle, all in under a minute.
-            </motion.p>
-            <motion.div variants={fadeUp}>
-              <Link to="/business-fit" className="btn-accent inline-flex items-center gap-2">
-                Try the Business Fit Generator <ArrowRight size={16} />
               </Link>
             </motion.div>
           </motion.div>

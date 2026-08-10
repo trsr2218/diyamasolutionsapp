@@ -122,33 +122,45 @@ const BusinessFit = () => {
       // Non-blocking: the kit still gets generated.
     }
 
-    try {
-      const resp = await fetch(`${SUPABASE_URL}/functions/v1/business-fit`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${SUPABASE_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          businessName: form.businessName,
-          businessType: form.businessType,
-          stage: form.stage,
-          targetCustomers: form.targetCustomers,
-          currentChallenge: form.challenge,
-          currentGoal: form.goal,
-        }),
-      });
+    // Retry the generation a few times before giving up, so a transient hiccup
+    // does not bounce the visitor back to the form. Only a persistent failure
+    // surfaces an error.
+    const MAX_ATTEMPTS = 3;
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    let lastMessage = "Could not generate report. Please try again.";
 
-      const data = await resp.json().catch(() => ({}));
-      if (!resp.ok || data?.error) throw new Error(data?.error || "Could not generate report. Please try again.");
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+      try {
+        const resp = await fetch(`${SUPABASE_URL}/functions/v1/business-fit`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${SUPABASE_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            businessName: form.businessName,
+            businessType: form.businessType,
+            stage: form.stage,
+            targetCustomers: form.targetCustomers,
+            currentChallenge: form.challenge,
+            currentGoal: form.goal,
+          }),
+        });
 
-      setResult(data.result);
-    } catch (e) {
-      const message = e instanceof Error && e.message ? e.message : "Could not generate report. Please try again.";
-      toast({ title: "Error", description: message, variant: "destructive" });
-    } finally {
-      setLoading(false);
+        const data = await resp.json().catch(() => ({}));
+        if (!resp.ok || data?.error) throw new Error(data?.error || lastMessage);
+
+        setResult(data.result);
+        setLoading(false);
+        return;
+      } catch (e) {
+        lastMessage = e instanceof Error && e.message ? e.message : lastMessage;
+        if (attempt < MAX_ATTEMPTS) await sleep(1200 * attempt);
+      }
     }
+
+    toast({ title: "Error", description: lastMessage, variant: "destructive" });
+    setLoading(false);
   };
 
   const fields = [
@@ -192,8 +204,8 @@ const BusinessFit = () => {
                 <motion.div
                   className="h-full bg-gradient-to-r from-primary via-accent to-primary rounded-full"
                   initial={{ width: "8%" }}
-                  animate={{ width: ["8%", "38%", "62%", "81%", "94%"] }}
-                  transition={{ duration: 11, ease: "easeOut", times: [0, 0.2, 0.45, 0.7, 1] }}
+                  animate={{ width: ["8%", "34%", "58%", "78%", "92%", "97%"] }}
+                  transition={{ duration: 24, ease: "easeOut", times: [0, 0.12, 0.3, 0.55, 0.8, 1] }}
                 />
               </div>
             </motion.div>
@@ -308,7 +320,7 @@ const BusinessFit = () => {
           {/* Progress */}
           <div className="max-w-md mx-auto mb-3 flex items-center justify-between text-xs text-muted-foreground">
             <span>Step {step + 1} of {totalSteps}</span>
-            <span>{Math.round(((step) / totalSteps) * 100)}%</span>
+            <span>{Math.round(((step + 1) / totalSteps) * 100)}%</span>
           </div>
           <div className="flex gap-1 mb-8 max-w-md mx-auto">
             {Array.from({ length: totalSteps }).map((_, i) => (

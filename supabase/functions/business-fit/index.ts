@@ -46,46 +46,78 @@ Return a JSON object with exactly these fields:
 
 Be specific, warm, and practical. Reference their actual business type and challenge. Do not be generic.`;
 
-    // Fallback chain: free-tier models can return 503 under load
+    // Fallback chain: free-tier models can return 503/429 under load. Each model
+    // is retried a few times on transient errors so a single hiccup no longer
+    // bounces the visitor back to the form; only a total outage fails the request.
     const MODELS = ["gemini-3.5-flash", "gemini-3.1-flash-lite", "gemini-3-flash-preview"];
-    let geminiResp: Response | null = null;
-    let lastError = "Gemini API error";
-    for (const model of MODELS) {
-      const resp = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ role: "user", parts: [{ text: prompt }] }],
-            generationConfig: {
-              responseMimeType: "application/json",
-              maxOutputTokens: 1024,
-              temperature: 0.7,
-            },
-          }),
+    const TRANSIENT = new Set([429, 500, 502, 503, 504]);
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+    const generateReportText = async (): Promise<string> => {
+      let lastError = "Gemini API error";
+      for (const model of MODELS) {
+        for (let attempt = 1; attempt <= 3; attempt++) {
+          let resp: Response;
+          try {
+            resp = await fetch(
+              `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  contents: [{ role: "user", parts: [{ text: prompt }] }],
+                  generationConfig: {
+                    responseMimeType: "application/json",
+                    maxOutputTokens: 1024,
+                    temperature: 0.7,
+                  },
+                }),
+              }
+            );
+          } catch (e) {
+            lastError = e instanceof Error ? e.message : "Network error reaching Gemini";
+            await sleep(400 * attempt);
+            continue;
+          }
+
+          if (resp.ok) {
+            const data = await resp.json().catch(() => ({}));
+            const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (text) return text;
+            lastError = "Empty response from Gemini";
+            await sleep(400 * attempt);
+            continue;
+          }
+
+          const err = await resp.json().catch(() => ({}));
+          lastError = err.error?.message || `Gemini API error (${model}: ${resp.status})`;
+          // Retry the same model only on transient statuses; otherwise fall through
+          // to the next model in the chain immediately.
+          if (!TRANSIENT.has(resp.status)) break;
+          await sleep(500 * attempt);
         }
-      );
-      if (resp.ok) {
-        geminiResp = resp;
-        break;
       }
-      const err = await resp.json().catch(() => ({}));
-      lastError = err.error?.message || `Gemini API error (${model}: ${resp.status})`;
-    }
+      throw new Error(lastError);
+    };
 
-    if (!geminiResp) {
-      return new Response(JSON.stringify({ error: lastError }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    // Tolerate models that wrap JSON in markdown fences or add stray prose.
+    const parseReport = (raw: string) => {
+      let s = raw.trim();
+      if (s.startsWith("```")) {
+        s = s.replace(/^```(?:json)?/i, "").replace(/```$/, "").trim();
+      }
+      try {
+        return JSON.parse(s);
+      } catch {
+        const start = s.indexOf("{");
+        const end = s.lastIndexOf("}");
+        if (start !== -1 && end > start) return JSON.parse(s.slice(start, end + 1));
+        throw new Error("Could not read the generated report. Please try again.");
+      }
+    };
 
-    const geminiData = await geminiResp.json();
-    const rawText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!rawText) throw new Error("No response from Gemini");
-
-    const result = JSON.parse(rawText);
+    const rawText = await generateReportText();
+    const result = parseReport(rawText);
 
     // Store submission
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
