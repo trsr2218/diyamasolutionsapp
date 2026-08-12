@@ -3,7 +3,6 @@ import { motion, useScroll, useTransform, type Variants } from "framer-motion";
 import { useRef } from "react";
 import { ArrowRight, Sparkles, Users, BookOpen, MessageSquare, TrendingUp, Lightbulb } from "lucide-react";
 import { clients } from "@/data/clients";
-import { apps } from "@/data/apps";
 import heroImg from "@/assets/hero-consultant.jpg";
 import strategyImg from "@/assets/services-strategy.jpg";
 import teamImg from "@/assets/about-team.jpg";
@@ -32,8 +31,6 @@ const fadeIn: Variants = {
 };
 
 const Index = () => {
-  // The four apps most likely to convert, curated via the `featured` flag in the data.
-  const topApps = apps.filter((a) => a.featured).slice(0, 4);
 
   const heroRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
@@ -199,59 +196,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Apps showcase — four apps most likely to convert, plus See more */}
-      <section className="relative overflow-hidden bg-surface">
-        <AnimatedBg variant="subtle" />
-        <div className="relative z-10 section-padding">
-          <div className="container-wide mx-auto">
-            <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }}>
-              <div className="flex items-end justify-between mb-10">
-                <motion.div variants={fadeUp}>
-                  <h2 className="text-3xl sm:text-4xl font-display font-bold">Apps that <span className="text-gradient-primary">run your business</span></h2>
-                  <p className="text-muted-foreground mt-2">Ready-to-use tools built by Diyama. Try them free, subscribe when you're ready.</p>
-                </motion.div>
-                <motion.div variants={fadeUp}>
-                  <Link to="/apps" className="hidden sm:inline-flex items-center gap-1 text-primary font-medium text-sm hover:underline">
-                    See more apps <ArrowRight size={14} />
-                  </Link>
-                </motion.div>
-              </div>
-              <motion.div variants={stagger} className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-                {topApps.map((app) => (
-                  <motion.div key={app.id} variants={fadeIn}>
-                    <motion.div whileHover={{ y: -6 }} transition={{ type: "spring", stiffness: 280, damping: 18 }} className="h-full">
-                      <Link to="/apps" className="card-elevated block h-full overflow-hidden group">
-                        <div className="relative h-28 sm:h-36 overflow-hidden">
-                          <img
-                            src={app.image}
-                            alt={app.name}
-                            loading="lazy"
-                            className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-foreground/50 to-transparent" />
-                          <span className="absolute top-2 right-2 text-[10px] font-semibold uppercase tracking-wide bg-accent text-white px-2 py-0.5 rounded-full">
-                            {app.status === "live" ? "Live" : app.status === "coming-soon" ? "Soon" : "Demo"}
-                          </span>
-                        </div>
-                        <div className="p-4">
-                          <h3 className="font-display text-sm sm:text-base font-semibold leading-tight">{app.name}</h3>
-                          <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{app.tagline}</p>
-                          <span className="mt-3 text-primary text-xs font-medium inline-flex items-center gap-1 group-hover:gap-2 transition-all">
-                            Try it free <ArrowRight size={12} />
-                          </span>
-                        </div>
-                      </Link>
-                    </motion.div>
-                  </motion.div>
-                ))}
-              </motion.div>
-              <Link to="/apps" className="sm:hidden mt-6 btn-outline-primary inline-flex items-center gap-1 text-sm">
-                See more apps <ArrowRight size={14} />
-              </Link>
-            </motion.div>
-          </div>
-        </div>
-      </section>
 
       {/* Client Trust Strip */}
       <section className="section-padding relative overflow-hidden bg-gradient-to-b from-background to-surface">

@@ -1,4 +1,5 @@
 import { motion, type Variants } from "framer-motion";
+import { Link } from "react-router-dom";
 import {
   ExternalLink,
   Check,
@@ -8,6 +9,7 @@ import {
   GraduationCap,
   Clock,
   Boxes,
+  ArrowRight,
   type LucideIcon,
 } from "lucide-react";
 import { apps } from "@/data/apps";
@@ -104,8 +106,8 @@ const Apps = () => {
                 Our Apps
               </motion.h1>
               <motion.p variants={fadeUp} className="text-lg opacity-85">
-                Business apps and systems built by Diyama. Whether you lead a global enterprise or a
-                growing startup, try them free, then subscribe to unlock the full experience.
+Business apps and systems built by Diyama. We are rebuilding this range around one
+                properly finished product at a time, so there is nothing listed here today.
               </motion.p>
             </motion.div>
           </div>
@@ -122,6 +124,18 @@ const Apps = () => {
             viewport={{ once: true, margin: "-60px" }}
             className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-14"
           >
+            {apps.length === 0 ? (
+              <div className="sm:col-span-2 lg:col-span-3 card-elevated p-10 text-center">
+                <h2 className="font-display text-2xl font-semibold mb-3">Nothing listed right now</h2>
+                <p className="text-muted-foreground max-w-xl mx-auto">
+                  Our tools are being rebuilt and consolidated. If you need a system for your business,
+                  tell us what it has to do and we will quote you for it.
+                </p>
+                <Link to="/contact" className="btn-primary inline-flex items-center gap-2 mt-6">
+                  Tell us what you need <ArrowRight size={16} />
+                </Link>
+              </div>
+            ) : null}
             {apps.map((app) => {
               const Icon = appIcons[app.id] ?? Boxes;
               return (

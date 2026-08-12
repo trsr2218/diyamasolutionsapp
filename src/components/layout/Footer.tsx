@@ -27,7 +27,6 @@ const footerLinks = [
   {
     title: "Tools",
     links: [
-      { label: "Our Apps", path: "/apps" },
       { label: "Diyama AI", path: "/ai" },
       { label: "Business Fit Generator", path: "/business-fit" },
       { label: "Book Consultation", path: "/consultations" },
