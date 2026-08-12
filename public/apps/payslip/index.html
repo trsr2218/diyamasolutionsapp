@@ -313,18 +313,20 @@
 <script>
 (function(){
   "use strict";
-  var LS_SETTINGS = "diyama_payslip_settings_v1";
+  var LS_SETTINGS = "diyama_payslip_settings_v2";
   var LS_SLIPS = "diyama_payslip_saved_v1";
 
   var DEFAULTS = {
+    // Verified against the 2026 Zambian tax year, 9 August 2026. Re-verify every January
+    // against the national budget before the first payroll run of the year.
     bands: [
       {from:0,    to:5100, rate:0},
-      {from:5100, to:7100, rate:20},
-      {from:7100, to:9200, rate:30},
-      {from:9200, to:null, rate:37}
+      {from:5100, to:7100, rate:25},
+      {from:7100, to:9900, rate:30},
+      {from:9900, to:null, rate:37.5}
     ],
     napsaRate:5,
-    napsaCap:1342.40,
+    napsaCap:1861.80,
     nhimaRate:1
   };
 
