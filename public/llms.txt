@@ -10,8 +10,18 @@ Diyama helps entrepreneurs, SMEs, and established companies get found online, wi
 - [Diyama AI advisor](https://www.diyama.online/ai): A free AI business advisor, available 24/7, no signup.
 - [Business Fit generator](https://www.diyama.online/business-fit): Answer a few questions and get a free personalized business kit with recommendations, quick wins, and next steps.
 
-## Business systems
-- [Business systems](https://www.diyama.online/apps): We build systems for African businesses. Our own published range is being rebuilt and consolidated, so nothing is listed for download at the moment. Tell us what the system has to do and we will quote for it.
+## Free business apps (try instantly, no signup)
+- [Diyama Invoicer](https://www.diyama.online/apps/invoicer): Create professional invoices and download branded PDFs.
+- [Diyama QR Studio](https://www.diyama.online/apps/qr-studio): Generate QR codes for links, WhatsApp, WiFi, and contact cards.
+- [Diyama Quote Builder](https://www.diyama.online/apps/quotation): Build and download professional quotations.
+- [Diyama BookMe](https://www.diyama.online/apps/bookme): Take appointments with automatic time slots and WhatsApp confirmations.
+- [Diyama BioLink](https://www.diyama.online/apps/biolink): Build a shareable link in bio page for your business.
+- [Diyama PaySlip](https://www.diyama.online/apps/payslip): Calculate Zambian PAYE, NAPSA, and NHIMA and download payslips.
+- [Diyama StockTrack](https://www.diyama.online/apps/stocktrack): Track inventory with low stock alerts and stock value.
+- [Diyama Expensa](https://www.diyama.online/apps/expensa): Track income and expenses with live charts.
+- [Diyama TapCard](https://www.diyama.online/apps/tapcard): Create a digital business card with a QR code and vCard.
+- [Diyama Loyalty](https://www.diyama.online/apps/loyalty): Run digital loyalty stamp cards for your shop or cafe.
+- [All apps](https://www.diyama.online/apps): The full range, including Diyama POS, the eClass learning platform, and the World Clock display.
 
 ## Learn
 - [Learn hub](https://www.diyama.online/learn): Free, practical guides for African business owners on marketing, growth, tourism, restaurants, the creator economy, and more.

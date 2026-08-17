@@ -21,9 +21,9 @@ export const pageSeo: Record<string, PageSeoEntry> = {
       "Marketing, growth strategy, branding, web development, and consulting services built to move African businesses forward, one practical step at a time.",
   },
   "/apps": {
-    title: "Business Systems | Diyama Solutions",
+    title: "Free Business Apps for African Businesses | Diyama Solutions",
     description:
-      "We build business systems for African companies. Our own range is being rebuilt and consolidated, so tell us what your business needs and we will quote you for it.",
+      "Try free business apps built by Diyama: invoicing, quotations, QR codes, bookings, Zambian payroll, stock, expenses, loyalty, and more. No signup to start.",
   },
   "/clients": {
     title: "Our Clients & Work | Diyama Solutions",

@@ -106,8 +106,8 @@ const Apps = () => {
                 Our Apps
               </motion.h1>
               <motion.p variants={fadeUp} className="text-lg opacity-85">
-Business apps and systems built by Diyama. We are rebuilding this range around one
-                properly finished product at a time, so there is nothing listed here today.
+                Business apps and systems built by Diyama. Whether you lead a global enterprise or a
+                growing startup, try them free, then subscribe to unlock the full experience.
               </motion.p>
             </motion.div>
           </div>

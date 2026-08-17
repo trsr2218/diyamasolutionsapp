@@ -24,6 +24,7 @@ const isMenu = (entry: NavEntry): entry is NavMenuEntry => "children" in entry;
 
 const navEntries: NavEntry[] = [
   { label: "Services", path: "/services" },
+  { label: "Apps", path: "/apps" },
   {
     label: "Free Tools",
     children: [
