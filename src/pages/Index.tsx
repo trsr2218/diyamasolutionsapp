@@ -13,6 +13,7 @@ import meetingImg from "@/assets/consultation-meeting.jpg";
 import PageTransition from "@/components/PageTransition";
 import AnimatedBg from "@/components/AnimatedBg";
 import DiyamaAvatar from "@/components/DiyamaAvatar";
+import AppOfTheDay from "@/components/AppOfTheDay";
 import Seo from "@/components/Seo";
 import { pageSeo } from "@/seo/pageSeo";
 
@@ -216,6 +217,7 @@ const Index = () => {
                   </Link>
                 </motion.div>
               </div>
+              <AppOfTheDay />
               <motion.div variants={stagger} className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
                 {topApps.map((app) => (
                   <motion.div key={app.id} variants={fadeIn}>

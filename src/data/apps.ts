@@ -44,6 +44,13 @@ export interface DiyamaApp {
   fullOffer: string;
   tags: string[];
   featured: boolean;
+  /**
+   * Who the app is for, which decides the day it gets the homepage spotlight.
+   * "back-office" runs the business and shows on working days, "storefront" faces
+   * the owner's own customers and shows at the weekend. See `src/lib/appOfTheDay.ts`.
+   * Required, so a new app cannot be added without deciding where it belongs.
+   */
+  audience: "back-office" | "storefront";
 }
 
 export const apps: DiyamaApp[] = [
@@ -62,6 +69,7 @@ export const apps: DiyamaApp[] = [
     fullOffer: "Your own business account, unlimited products and sales records, reports, and priority support.",
     tags: ["POS", "Inventory", "Retail", "Restaurants"],
     featured: true,
+    audience: "back-office",
   },
   {
     id: "invoicer",
@@ -78,6 +86,7 @@ export const apps: DiyamaApp[] = [
     fullOffer: "Your logo and branded template set up for you, plus recurring invoices and reminders.",
     tags: ["Invoicing", "PDF", "Finance"],
     featured: true,
+    audience: "back-office",
   },
   {
     id: "qr-studio",
@@ -94,6 +103,7 @@ export const apps: DiyamaApp[] = [
     fullOffer: "Branded QR codes with your colors and logo, plus scan tracking for campaigns.",
     tags: ["QR Codes", "Marketing", "Free"],
     featured: true,
+    audience: "storefront",
   },
   {
     id: "quotation",
@@ -110,6 +120,7 @@ export const apps: DiyamaApp[] = [
     fullOffer: "Custom branded templates and a smooth quote to invoice workflow.",
     tags: ["Quotations", "Sales", "PDF"],
     featured: false,
+    audience: "back-office",
   },
   {
     id: "bookme",
@@ -126,6 +137,7 @@ export const apps: DiyamaApp[] = [
     fullOffer: "Your own branded booking page with automated reminders.",
     tags: ["Bookings", "Appointments", "Services"],
     featured: true,
+    audience: "storefront",
   },
   {
     id: "biolink",
@@ -142,6 +154,7 @@ export const apps: DiyamaApp[] = [
     fullOffer: "A custom domain and visitor analytics for your page.",
     tags: ["Link in Bio", "Social", "Marketing"],
     featured: false,
+    audience: "storefront",
   },
   {
     id: "payslip",
@@ -158,6 +171,7 @@ export const apps: DiyamaApp[] = [
     fullOffer: "Full monthly payroll runs for your whole team, handled with you.",
     tags: ["Payroll", "Zambia", "HR"],
     featured: false,
+    audience: "back-office",
   },
   {
     id: "stocktrack",
@@ -174,6 +188,7 @@ export const apps: DiyamaApp[] = [
     fullOffer: "Multi branch stock, suppliers, and reports connected together.",
     tags: ["Inventory", "Stock", "Retail"],
     featured: false,
+    audience: "back-office",
   },
   {
     id: "expensa",
@@ -190,6 +205,7 @@ export const apps: DiyamaApp[] = [
     fullOffer: "Connected bookkeeping and monthly reports prepared for you.",
     tags: ["Expenses", "Cash Flow", "Finance"],
     featured: false,
+    audience: "back-office",
   },
   {
     id: "tapcard",
@@ -206,6 +222,7 @@ export const apps: DiyamaApp[] = [
     fullOffer: "Branded cards for your whole team with your identity.",
     tags: ["Digital Card", "Networking", "QR"],
     featured: false,
+    audience: "storefront",
   },
   {
     id: "loyalty",
@@ -222,6 +239,7 @@ export const apps: DiyamaApp[] = [
     fullOffer: "SMS and WhatsApp loyalty campaigns to bring customers back.",
     tags: ["Loyalty", "Retention", "Retail"],
     featured: false,
+    audience: "storefront",
   },
   {
     id: "eclass",
@@ -238,6 +256,7 @@ export const apps: DiyamaApp[] = [
     fullOffer: "A dedicated platform for your institution with your branding, unlimited students, and ongoing support.",
     tags: ["E-Learning", "Schools", "Training"],
     featured: false,
+    audience: "back-office",
   },
   {
     id: "world-clock",
@@ -254,5 +273,6 @@ export const apps: DiyamaApp[] = [
     fullOffer: "Custom branding, multiple saved timezone sets, and display configurations for your business.",
     tags: ["Utility", "Displays", "Free"],
     featured: false,
+    audience: "storefront",
   },
 ];
