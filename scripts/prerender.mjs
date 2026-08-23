@@ -31,7 +31,7 @@ catch { console.log("[prerender] puppeteer-core not installed, skipping."); proc
 const read = (p) => fs.readFileSync(path.join(root, p), "utf8");
 const articleIds = [...read("src/data/articles.ts").matchAll(/^\s{4}id:\s*"([^"]+)"/gm)].map((m) => m[1]);
 const routes = [
-  "/", "/services", "/apps", "/clients", "/partners", "/ai", "/business-fit",
+  "/", "/services", "/pricing", "/apps", "/clients", "/partners", "/ai", "/business-fit",
   "/consultations", "/learn", "/affiliate", "/about", "/contact", "/privacy", "/terms",
   ...articleIds.map((id) => `/learn/${id}`),
 ];

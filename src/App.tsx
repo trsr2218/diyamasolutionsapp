@@ -8,6 +8,7 @@ import Layout from "./components/layout/Layout";
 import ScrollToTop from "./components/ScrollToTop";
 import Index from "./pages/Index";
 import Services from "./pages/Services";
+import Pricing from "./pages/Pricing";
 import Clients from "./pages/Clients";
 import Apps from "./pages/Apps";
 import Partners from "./pages/Partners";
@@ -32,6 +33,7 @@ const AnimatedRoutes = () => {
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Index />} />
         <Route path="/services" element={<Services />} />
+        <Route path="/pricing" element={<Pricing />} />
         <Route path="/clients" element={<Clients />} />
         <Route path="/apps" element={<Apps />} />
         <Route path="/partners" element={<Partners />} />

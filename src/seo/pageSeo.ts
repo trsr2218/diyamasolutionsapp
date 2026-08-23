@@ -15,6 +15,10 @@ export const pageSeo: Record<string, PageSeoEntry> = {
     description:
       "Diyama Solutions helps businesses in Zambia and across Africa grow through marketing, strategy, branding, web development, and free business apps.",
   },
+  "/pricing": {
+    title: "Prices | Diyama Solutions",
+    description: "What our work costs, in the open. Social media from K750 a month, websites from K1,000, site care from K150 a month. Starting prices in kwacha, full quote in writing before any work starts.",
+  },
   "/services": {
     title: "Our Services | Diyama Solutions",
     description:

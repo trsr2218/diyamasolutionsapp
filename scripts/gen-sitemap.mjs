@@ -15,6 +15,7 @@ const ids = (file) => [...read(file).matchAll(/^\s{4}id:\s*"([^"]+)"/gm)].map((m
 const staticRoutes = [
   { loc: "/", pri: "1.0", freq: "weekly" },
   { loc: "/services", pri: "0.9", freq: "weekly" },
+  { loc: "/pricing", pri: "0.9", freq: "monthly" },
   { loc: "/apps", pri: "0.9", freq: "weekly" },
   { loc: "/business-fit", pri: "0.8", freq: "monthly" },
   { loc: "/ai", pri: "0.8", freq: "monthly" },
