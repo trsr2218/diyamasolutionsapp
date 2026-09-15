@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Mail, Phone } from "lucide-react";
-import diyamaLogo from "@/assets/logo.jpg";
+import diyamaLogo from "@/assets/logo-small.webp";
 
 const footerLinks = [
   {
@@ -50,7 +50,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="col-span-2 md:col-span-4 lg:col-span-1 mb-4 lg:mb-0">
             <Link to="/" className="inline-flex items-center gap-2">
-              <img src={diyamaLogo} alt="Diyama Solutions" className="h-12 w-auto" />
+              <img src={diyamaLogo} alt="Diyama Solutions" width={48} height={48} loading="lazy" className="h-12 w-12" />
             </Link>
             <p className="mt-3 text-sm opacity-70 leading-relaxed max-w-xs">
               Helping businesses move from confusion to clarity, from stalling to growing.

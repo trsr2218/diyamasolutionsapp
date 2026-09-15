@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Heart, Target, Lightbulb, Users } from "lucide-react";
-import aboutImg from "@/assets/about-team.jpg";
-import heroImg from "@/assets/hero-consultant.jpg";
+import aboutImg from "@/assets/about-team.webp";
+import heroImg from "@/assets/hero-consultant.webp";
 import PageTransition from "@/components/PageTransition";
 import Seo from "@/components/Seo";
 import { pageSeo } from "@/seo/pageSeo";

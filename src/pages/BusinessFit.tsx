@@ -6,7 +6,8 @@ import PageTransition from "@/components/PageTransition";
 import DiyamaAvatar from "@/components/DiyamaAvatar";
 import Seo from "@/components/Seo";
 import { pageSeo } from "@/seo/pageSeo";
-import { toast } from "@/hooks/use-toast";
+import WhatsAppFallback from "@/components/WhatsAppFallback";
+import { formToMessage } from "@/lib/whatsapp";
 import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY as SUPABASE_KEY } from "@/lib/supabaseEnv";
 
 const fitJsonLd = {
@@ -85,6 +86,7 @@ const BusinessFit = () => {
   const [email, setEmail] = useState("");
   const [result, setResult] = useState<FitResult | null>(null);
   const [loading, setLoading] = useState(false);
+  const [failed, setFailed] = useState(false);
   const [analyzeIdx, setAnalyzeIdx] = useState(0);
 
   useEffect(() => {
@@ -100,6 +102,7 @@ const BusinessFit = () => {
 
   const handleGenerate = async () => {
     setLoading(true);
+    setFailed(false);
 
     // Join the mailing list. A 409 means they already subscribed, which is
     // fine; any other failure must never block the kit itself.
@@ -159,7 +162,7 @@ const BusinessFit = () => {
       }
     }
 
-    toast({ title: "Error", description: lastMessage, variant: "destructive" });
+    setFailed(true);
     setLoading(false);
   };
 
@@ -382,6 +385,20 @@ const BusinessFit = () => {
                     Unlock my free kit <Sparkles size={14} />
                   </motion.button>
                 </div>
+                {failed && (
+                  <WhatsAppFallback
+                    className="mt-6 text-left"
+                    message={formToMessage("Hi Diyama, your Business Fit tool did not work for me. Here are my answers:", {
+                      Business: form.businessName,
+                      Type: form.businessType,
+                      Stage: form.stage,
+                      Customers: form.targetCustomers,
+                      Challenge: form.challenge,
+                      Goal: form.goal,
+                      Email: email,
+                    })}
+                  />
+                )}
               </motion.div>
             ) : (
               <motion.div

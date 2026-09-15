@@ -23,7 +23,7 @@ const intents: Record<string, { heading: string; blurb: string; serviceIds: stri
     serviceIds: ["digital-marketing", "social-media", "google-maps-reviews", "web-development", "lodge-hospitality"],
   },
 };
-import servicesImg from "@/assets/services-strategy.jpg";
+import servicesImg from "@/assets/services-strategy.webp";
 import PageTransition from "@/components/PageTransition";
 import Seo from "@/components/Seo";
 import { pageSeo } from "@/seo/pageSeo";

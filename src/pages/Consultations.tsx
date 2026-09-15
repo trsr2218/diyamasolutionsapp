@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Send, CheckCircle, Loader2 } from "lucide-react";
-import consultationImg from "@/assets/consultation-meeting.jpg";
+import consultationImg from "@/assets/consultation-meeting.webp";
 import PageTransition from "@/components/PageTransition";
 import Seo from "@/components/Seo";
 import { pageSeo } from "@/seo/pageSeo";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
+import WhatsAppFallback from "@/components/WhatsAppFallback";
+import { formToMessage } from "@/lib/whatsapp";
 
 const consultationTypes = [
   "Startup Advice", "Marketing Strategy", "Growth Strategy", "Branding",
@@ -20,6 +21,7 @@ const formats = ["Video Call", "Phone Call", "WhatsApp Chat", "In Person (Lusaka
 const Consultations = () => {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [failed, setFailed] = useState(false);
   const [form, setForm] = useState({
     fullName: "", company: "", email: "", whatsapp: "", topic: "",
     challenge: "", goal: "", format: "", preferredDate: "", budget: "",
@@ -28,6 +30,7 @@ const Consultations = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setFailed(false);
     try {
       const { error } = await supabase.from("consultation_requests").insert({
         full_name: form.fullName,
@@ -44,7 +47,7 @@ const Consultations = () => {
       if (error) throw error;
       setSubmitted(true);
     } catch {
-      toast({ title: "Error", description: "Could not submit. Please try again.", variant: "destructive" });
+      setFailed(true);
     } finally {
       setLoading(false);
     }
@@ -120,6 +123,22 @@ const Consultations = () => {
             <button type="submit" disabled={loading} className="btn-primary inline-flex items-center gap-2">
               {loading ? <><Loader2 size={16} className="animate-spin" /> Submitting...</> : <><Send size={16} /> Submit Request</>}
             </button>
+            {failed && (
+              <WhatsAppFallback
+                message={formToMessage("Hi Diyama, I would like to book a consultation:", {
+                  Name: form.fullName,
+                  Company: form.company,
+                  Email: form.email,
+                  WhatsApp: form.whatsapp,
+                  Topic: form.topic,
+                  Challenge: form.challenge,
+                  Goal: form.goal,
+                  Format: form.format,
+                  "Preferred time": form.preferredDate,
+                  Budget: form.budget,
+                })}
+              />
+            )}
           </form>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import hypeFmShot from "@/assets/apps/hype-fm.jpg";
+import hypeFmShot from "@/assets/apps/hype-fm.webp";
 
 export interface Client {
   id: string;

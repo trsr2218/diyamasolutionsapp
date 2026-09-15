@@ -96,6 +96,25 @@ Backend provisioning steps: see `BACKEND-SETUP.md`.
 - `font-display` for headings. Framer Motion variant objects must be typed `Variants`
   (from framer-motion) or `ease` strings fail typechecking.
 
+### Adding a page (three places, or it 404s)
+
+1. Add the lazy import in `src/pages/lazyPages.ts` (and its path in `byPath`), then the `<Route>` in `App.tsx`.
+2. Add the path to the `rewrites` pattern in `vercel.json`. Anything not listed there and not a
+   prerendered file returns `dist/404.html` with a real 404 status (written by `scripts/make-404.mjs`).
+3. Add it to `routes` in `scripts/prerender.mjs` and `staticRoutes` in `scripts/gen-sitemap.mjs`.
+
+`vercel.json` also holds the security headers, including a CSP. `scripts/deploy-prod.mjs`
+translates both into the prebuilt Build Output config, so edit them only in `vercel.json`.
+A new external host (script, font, image, API) must be added to the CSP or it is blocked.
+
+### Images and failure handling
+
+- Photos in `src/assets` are WebP (1600px wide for photos, 800px for app screenshots). Do not add
+  raw camera or 1920px JPGs. `src/assets/logo.jpg` stays: `../../generate-report.js` uses it.
+- Every form falls back to `WhatsAppFallback` when Supabase fails, carrying what the visitor typed.
+  The backend has paused unnoticed before; a failed save must never lose a lead.
+- Diyama AI checks the backend is reachable on load and says "Offline right now" if not.
+
 ### Path alias
 
 `@/` maps to `src/` — use it for all imports.

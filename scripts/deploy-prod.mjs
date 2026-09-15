@@ -20,19 +20,40 @@ run("npm run build");
 run("node scripts/prerender.mjs dist");
 
 // 2. Assemble a Vercel Build Output (config + prerendered static).
+//    A prebuilt deploy ignores vercel.json, so its headers and rewrites are
+//    translated here. vercel.json stays the one place they are written.
 const outDir = path.join(root, ".vercel", "output");
 const staticDir = path.join(outDir, "static");
 fs.mkdirSync(outDir, { recursive: true });
 fs.rmSync(staticDir, { recursive: true, force: true });
 fs.cpSync(path.join(root, "dist"), staticDir, { recursive: true });
+
+const vercelJson = JSON.parse(fs.readFileSync(path.join(root, "vercel.json"), "utf8"));
+// Handles the two source shapes vercel.json uses: "(.*)" and ":name(regex)".
+const toRegex = (source) => {
+  const re = source.replace(/:\w+\(([^)]+)\)/g, "($1)");
+  if (/:\w/.test(re)) throw new Error(`deploy-prod: unsupported vercel.json source "${source}"`);
+  return `^${re}/?$`;
+};
+const headerRoutes = (vercelJson.headers || []).map((h) => ({
+  src: toRegex(h.source),
+  headers: Object.fromEntries(h.headers.map(({ key, value }) => [key, value])),
+  continue: true,
+}));
+const rewriteRoutes = (vercelJson.rewrites || []).map((r) => ({ src: toRegex(r.source), dest: r.destination }));
+
 fs.writeFileSync(
   path.join(outDir, "config.json"),
   JSON.stringify(
     {
       version: 3,
       routes: [
+        ...headerRoutes,
         { handle: "filesystem" },
-        { src: "^(?:/(.*))$", dest: "/index.html", check: true },
+        ...rewriteRoutes,
+        // Anything that is not a file or a known page is a real 404, not the homepage.
+        { handle: "error" },
+        { src: "^/(.*)$", dest: "/404.html", status: 404 },
       ],
     },
     null,

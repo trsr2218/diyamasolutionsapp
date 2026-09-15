@@ -8,8 +8,24 @@ import Seo from "@/components/Seo";
 import { pageSeo } from "@/seo/pageSeo";
 import { toast } from "@/hooks/use-toast";
 import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from "@/lib/supabaseEnv";
+import { whatsappLink } from "@/lib/whatsapp";
 
 const CHAT_URL = `${SUPABASE_URL}/functions/v1/chat`;
+
+/**
+ * Is the backend host reachable at all? The failure that actually happens is
+ * the free Supabase project pausing, which makes its hostname stop resolving.
+ * A no-cors request needs no preflight and costs no AI tokens: it resolves
+ * (opaquely) if the host answers and rejects if it does not.
+ */
+async function backendReachable(): Promise<boolean> {
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/`, { mode: "no-cors", cache: "no-store" });
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 const aiJsonLd = {
   "@context": "https://schema.org",
@@ -129,7 +145,16 @@ const DiyamaAI = () => {
   const [messages, setMessages] = useState<Msg[]>(() => loadStoredMessages());
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  // Assume online until the check says otherwise, so a working chat never flashes "offline".
+  const [online, setOnline] = useState(true);
+  const [lastQuestion, setLastQuestion] = useState("");
   const chatEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    backendReachable().then((ok) => { if (!cancelled) setOnline(ok); });
+    return () => { cancelled = true; };
+  }, []);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -145,6 +170,7 @@ const DiyamaAI = () => {
     if (!msg.trim() || isLoading) return;
     setInput("");
 
+    setLastQuestion(msg);
     const userMsg: Msg = { role: "user", content: msg };
     const newMessages = [...messages, userMsg];
     setMessages(newMessages);
@@ -166,14 +192,15 @@ const DiyamaAI = () => {
       await streamChat({
         messages: newMessages,
         onDelta: upsertAssistant,
-        onDone: () => setIsLoading(false),
+        onDone: () => { setOnline(true); setIsLoading(false); },
         onError: (err) => {
           toast({ title: "Error", description: err, variant: "destructive" });
           setIsLoading(false);
         },
       });
     } catch {
-      toast({ title: "Connection error", description: "Could not reach Diyama AI. Please try again.", variant: "destructive" });
+      // Could not reach the server at all: say so plainly and hand over to a person.
+      setOnline(false);
       setIsLoading(false);
     }
   };
@@ -182,6 +209,7 @@ const DiyamaAI = () => {
     <PageTransition>
       <Seo {...pageSeo["/ai"]} path="/ai" jsonLd={aiJsonLd} />
       <div className="min-h-[calc(100vh-4rem)] flex flex-col">
+        <h1 className="sr-only">Diyama AI, a free business advisor</h1>
         <div className="px-4 py-3 sm:py-4 bg-gradient-to-b from-foreground to-foreground/95 text-primary-foreground relative overflow-hidden">
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-5 right-10 w-48 h-48 rounded-full bg-accent blur-3xl" />
@@ -192,6 +220,7 @@ const DiyamaAI = () => {
               <DiyamaAvatar
                 size={44}
                 mood={isLoading ? (messages[messages.length - 1]?.role === "assistant" ? "speaking" : "thinking") : "idle"}
+                online={online}
               />
               <div className="text-left">
                 <div className="inline-flex items-center gap-1.5 text-sm font-semibold">
@@ -202,7 +231,9 @@ const DiyamaAI = () => {
                     ? messages[messages.length - 1]?.role === "assistant"
                       ? "Typing..."
                       : "Thinking..."
-                    : "Online, ready to help"}
+                    : online
+                      ? "Online, ready to help"
+                      : "Offline right now"}
                 </p>
               </div>
             </motion.div>
@@ -218,7 +249,7 @@ const DiyamaAI = () => {
                 transition={{ type: "spring", stiffness: 200, damping: 20 }}
                 className="flex flex-col items-center text-center mb-8"
               >
-                <DiyamaAvatar size={88} mood="idle" className="mb-5" />
+                <DiyamaAvatar size={88} mood="idle" className="mb-5" online={online} />
                 <h2 className="font-display text-2xl sm:text-3xl font-bold mb-2">
                   Hi, I'm <span className="text-gradient-primary">Diyama</span>.
                 </h2>
@@ -273,6 +304,23 @@ const DiyamaAI = () => {
         </div>
 
         <div className="border-t bg-background sticky bottom-0 py-4 shadow-lg">
+          {!online && (
+            <div role="status" className="container-narrow mx-auto px-4 mb-3">
+              <div className="rounded-xl border border-accent/40 bg-accent/10 px-4 py-3 text-sm flex flex-col sm:flex-row sm:items-center gap-2 sm:justify-between">
+                <span className="text-muted-foreground">
+                  Diyama AI cannot answer right now. A person can, on WhatsApp.
+                </span>
+                <a
+                  href={whatsappLink(lastQuestion ? `Hi Diyama, I wanted to ask: ${lastQuestion}` : "Hi Diyama, I have a business question:")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-accent text-sm inline-flex items-center justify-center shrink-0"
+                >
+                  Ask on WhatsApp
+                </a>
+              </div>
+            </div>
+          )}
           <div className="container-narrow mx-auto px-4 flex items-center gap-3">
             {messages.length > 0 && (
               <button onClick={() => setMessages([])} className="p-2.5 rounded-lg border text-muted-foreground hover:text-foreground transition-colors" title="Reset conversation">

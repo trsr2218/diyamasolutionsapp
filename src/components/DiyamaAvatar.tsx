@@ -6,6 +6,8 @@ interface DiyamaAvatarProps {
   size?: number;
   mood?: AvatarMood;
   className?: string;
+  /** Status dot: green when reachable, grey when not. */
+  online?: boolean;
 }
 
 /**
@@ -13,7 +15,7 @@ interface DiyamaAvatarProps {
  * blinking eyes. Moods: idle (calm breathing), thinking (eyes wander,
  * orbit ring spins), speaking (lively bounce).
  */
-const DiyamaAvatar = ({ size = 48, mood = "idle", className = "" }: DiyamaAvatarProps) => {
+const DiyamaAvatar = ({ size = 48, mood = "idle", className = "", online = true }: DiyamaAvatarProps) => {
   const eyeSize = Math.max(3, size * 0.09);
   const eyeGap = size * 0.22;
   const eyeTop = size * 0.38;
@@ -113,12 +115,12 @@ const DiyamaAvatar = ({ size = 48, mood = "idle", className = "" }: DiyamaAvatar
         />
       </motion.div>
 
-      {/* Online dot */}
+      {/* Status dot */}
       <span
-        className="absolute rounded-full bg-green-400 border-2 border-background"
+        className={`absolute rounded-full border-2 border-background ${online ? "bg-green-400" : "bg-muted-foreground/50"}`}
         style={{ width: size * 0.2, height: size * 0.2, bottom: 0, right: 0 }}
       >
-        <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-60" />
+        {online && <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-60" />}
       </span>
     </div>
   );

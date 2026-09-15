@@ -13,7 +13,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { apps } from "@/data/apps";
-import servicesImg from "@/assets/services-strategy.jpg";
+import servicesImg from "@/assets/services-strategy.webp";
 import PageTransition from "@/components/PageTransition";
 import AnimatedBg from "@/components/AnimatedBg";
 import SitePreview from "@/components/SitePreview";

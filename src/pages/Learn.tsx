@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { BookOpen, Clock } from "lucide-react";
 import { articles } from "@/data/articles";
-import learnImg from "@/assets/learn-workspace.jpg";
+import learnImg from "@/assets/learn-workspace.webp";
 import PageTransition from "@/components/PageTransition";
 import Seo from "@/components/Seo";
 import { pageSeo } from "@/seo/pageSeo";

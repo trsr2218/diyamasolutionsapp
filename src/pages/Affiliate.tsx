@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Users, Send as SendIcon, DollarSign, Shield, CheckCircle, Loader2 } from "lucide-react";
-import aboutImg from "@/assets/about-team.jpg";
+import aboutImg from "@/assets/about-team.webp";
 import PageTransition from "@/components/PageTransition";
 import Seo from "@/components/Seo";
 import { pageSeo } from "@/seo/pageSeo";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
+import WhatsAppFallback from "@/components/WhatsAppFallback";
+import { formToMessage } from "@/lib/whatsapp";
 
 const partnerTypes = [
   { title: "Referral Partner", description: "Know someone who needs help? Refer them and earn commission on every deal.", icon: Users },
@@ -29,11 +30,13 @@ const fadeUp = {
 const Affiliate = () => {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [failed, setFailed] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", phone: "", type: "", message: "" });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setFailed(false);
     try {
       const { error } = await supabase.from("affiliate_signups").insert({
         full_name: form.name,
@@ -45,7 +48,7 @@ const Affiliate = () => {
       if (error) throw error;
       setSubmitted(true);
     } catch {
-      toast({ title: "Error", description: "Could not submit. Please try again.", variant: "destructive" });
+      setFailed(true);
     } finally {
       setLoading(false);
     }
@@ -125,6 +128,17 @@ const Affiliate = () => {
               <button type="submit" disabled={loading} className="btn-primary w-full inline-flex items-center justify-center gap-2">
                 {loading ? <Loader2 size={16} className="animate-spin" /> : <SendIcon size={16} />} Apply Now
               </button>
+              {failed && (
+                <WhatsAppFallback
+                  message={formToMessage("Hi Diyama, I would like to join the partner program:", {
+                    Name: form.name,
+                    Email: form.email,
+                    Phone: form.phone,
+                    "Partner type": form.type,
+                    "About me": form.message,
+                  })}
+                />
+              )}
             </form>
           )}
         </div>

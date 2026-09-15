@@ -1,25 +1,109 @@
 name: Supabase keep-alive
 
-# Supabase pauses free-tier projects after ~7 days without database activity,
-# which has taken the whole diyama.online backend down twice. This pings the
-# database every 3 days so the project always counts as active.
+# Supabase pauses free-tier projects after about 7 days without database activity,
+# which has now taken the whole diyama.online backend down three times. This pings
+# the database every 3 days so the project always counts as active.
+#
+# 24 AUGUST 2026, READ THIS BEFORE CHANGING ANYTHING HERE.
+# The ping half of this file worked perfectly and it did not help at all. The project
+# paused on 10 August and this workflow failed on 10, 13, 16, 19 and 22 August, five
+# times, correctly, into a log nobody opened. Diyama AI, Business Fit and the contact
+# form were down for fourteen days and it was a VISITOR who eventually reported it.
+#
+# So the check is no longer the point. The alert is. A guard that fails silently is
+# not a guard, and the failure route to a human is the part that has to be maintained.
 on:
   schedule:
     - cron: "17 6 */3 * *"
   workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
 
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
       - name: Ping Supabase REST API
+        id: ping
         env:
           # anon (publishable) key only; it is already public in the site's JS bundle,
           # so committing it here exposes nothing new. RLS controls all access.
           ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5zenJqZ21pY2Z5d3ByanJnY29xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxMTc1NTgsImV4cCI6MjA5OTY5MzU1OH0.XzpJeOk4By9sCsaJkEaRtFqSygAVJjAHuEkPKNJFSmY
         run: |
-          curl --fail --silent --show-error \
+          set -o pipefail
+          fail() { echo "detail=$1" >> "$GITHUB_OUTPUT"; exit 1; }
+
+          # 1. The database. This is the thing that pauses.
+          code=$(curl --silent --show-error --max-time 30 \
             "https://nszrjgmicfywprjrgcoq.supabase.co/rest/v1/reviews?select=id&limit=1" \
             -H "apikey: $ANON_KEY" \
             -H "Authorization: Bearer $ANON_KEY" \
-            -o /dev/null -w "HTTP %{http_code}\n"
+            -o /dev/null -w "%{http_code}") || fail "REST call could not connect at all. If the host does not resolve, the project is paused."
+          echo "REST HTTP $code"
+          [ "$code" = "200" ] || fail "REST returned HTTP $code, expected 200."
+
+          # 2. Diyama AI. Checked separately because the database can be up while the
+          #    edge functions are broken, which is exactly what happened on 24 August.
+          chat=$(curl --silent --show-error --max-time 90 -o /dev/null -w "%{http_code}" \
+            -X POST "https://nszrjgmicfywprjrgcoq.supabase.co/functions/v1/chat" \
+            -H "apikey: $ANON_KEY" -H "Authorization: Bearer $ANON_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{"messages":[{"role":"user","content":"ping"}]}') || fail "The chat function could not be reached."
+          echo "chat HTTP $chat"
+          [ "$chat" = "200" ] || fail "Diyama AI returned HTTP $chat. The site's chat is broken even if the database is up."
+
+          # 3. Business Fit. Same reason. This one failed on empty model output for days
+          #    while everything around it looked healthy.
+          fit=$(curl --silent --show-error --max-time 150 -o /tmp/fit.json -w "%{http_code}" \
+            -X POST "https://nszrjgmicfywprjrgcoq.supabase.co/functions/v1/business-fit" \
+            -H "apikey: $ANON_KEY" -H "Authorization: Bearer $ANON_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{"businessName":"Keepalive check","businessType":"Retail","stage":"Growing","targetCustomers":"Local shoppers","currentChallenge":"Slow weekdays","currentGoal":"More repeat customers"}') || fail "The business-fit function could not be reached."
+          echo "business-fit HTTP $fit"
+          [ "$fit" = "200" ] || fail "Business Fit returned HTTP $fit: $(head -c 200 /tmp/fit.json)"
+          grep -q '"summary"' /tmp/fit.json || fail "Business Fit returned 200 but no report in the body."
+
+          echo "All three healthy."
+
+      # The part that was missing. An issue is opened on the repo, which emails the
+      # owner, so a failure lands somewhere a person actually looks. Only one issue
+      # is kept open at a time so five failed runs do not become five issues.
+      - name: Raise an issue if anything is down
+        if: failure()
+        uses: actions/github-script@v7
+        env:
+          DETAIL: ${{ steps.ping.outputs.detail }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        with:
+          script: |
+            const title = 'diyama.online backend is down';
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: 'backend-down'
+            });
+            const body = [
+              'The Supabase keep-alive check failed.',
+              '',
+              '**What failed:** ' + (process.env.DETAIL || 'see the run log'),
+              '',
+              'Run: ' + process.env.RUN_URL,
+              '',
+              'This check covers three things: the database, Diyama AI, and Business Fit.',
+              'If the host does not resolve, the project is paused and restoring it takes one',
+              'click at https://supabase.com/dashboard/project/nszrjgmicfywprjrgcoq',
+              '',
+              'Close this issue once the site is back. It reopens itself on the next failure.'
+            ].join('\n');
+            if (existing.data.length) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: existing.data[0].number, body
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo,
+                title, body, labels: ['backend-down']
+              });
+            }

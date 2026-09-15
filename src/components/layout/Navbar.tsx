@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
-import diyamaLogo from "@/assets/logo.jpg";
+import diyamaLogo from "@/assets/logo-mark.webp";
 
 /* Five items and one call to action, not ten.
  *
@@ -180,11 +180,13 @@ const Navbar = () => {
           <motion.img
             src={diyamaLogo}
             alt="Diyama Solutions"
-            className="h-10 w-auto rounded-sm"
+            width={40}
+            height={40}
+            className="h-10 w-10 rounded-full"
             whileHover={{ scale: 1.06, rotate: -2 }}
             transition={{ type: "spring", stiffness: 300, damping: 15 }}
           />
-          <span className="font-display text-xl font-bold text-primary tracking-tight hidden sm:inline">
+          <span className="font-display text-xl font-bold text-primary tracking-tight">
             Diyama<span className="text-accent group-hover:animate-pulse">.</span>
           </span>
         </Link>

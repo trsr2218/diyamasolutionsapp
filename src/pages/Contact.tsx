@@ -2,21 +2,24 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Send, CheckCircle, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
-import contactImg from "@/assets/contact-advisor.jpg";
+import contactImg from "@/assets/contact-advisor.webp";
 import PageTransition from "@/components/PageTransition";
 import Seo from "@/components/Seo";
 import { pageSeo } from "@/seo/pageSeo";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
+import WhatsAppFallback from "@/components/WhatsAppFallback";
+import { formToMessage } from "@/lib/whatsapp";
 
 const Contact = () => {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [failed, setFailed] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setFailed(false);
     try {
       const { error } = await supabase.from("contact_submissions").insert({
         name: form.name,
@@ -27,7 +30,7 @@ const Contact = () => {
       if (error) throw error;
       setSubmitted(true);
     } catch {
-      toast({ title: "Error", description: "Could not send message. Please try again.", variant: "destructive" });
+      setFailed(true);
     } finally {
       setLoading(false);
     }
@@ -128,6 +131,16 @@ const Contact = () => {
                   <button type="submit" disabled={loading} className="btn-primary inline-flex items-center gap-2">
                     {loading ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />} Send Message
                   </button>
+                  {failed && (
+                    <WhatsAppFallback
+                      message={formToMessage("Hi Diyama, I tried to send this from your contact form:", {
+                        Name: form.name,
+                        Email: form.email,
+                        Subject: form.subject,
+                        Message: form.message,
+                      })}
+                    />
+                  )}
                   <p className="text-xs text-muted-foreground">We respect your privacy. Your information is never shared.</p>
                 </motion.form>
               )}

@@ -68,7 +68,15 @@ Be specific, warm, and practical. Reference their actual business type and chall
                   contents: [{ role: "user", parts: [{ text: prompt }] }],
                   generationConfig: {
                     responseMimeType: "application/json",
-                    maxOutputTokens: 1024,
+                    // These models think before they answer, and the thinking is
+                    // charged against maxOutputTokens. At 1024 the whole budget went
+                    // on thinking, the reply came back with no text at all, and the
+                    // visitor saw "Could not read the generated report" every time.
+                    // The report itself is six fields and runs to roughly 800 tokens,
+                    // so the budget is raised and the thinking is switched off: this
+                    // is a filled-in form, not a problem that needs reasoning.
+                    thinkingConfig: { thinkingBudget: 0 },
+                    maxOutputTokens: 4096,
                     temperature: 0.7,
                   },
                 }),
@@ -112,6 +120,10 @@ Be specific, warm, and practical. Reference their actual business type and chall
         const start = s.indexOf("{");
         const end = s.lastIndexOf("}");
         if (start !== -1 && end > start) return JSON.parse(s.slice(start, end + 1));
+        // The visitor gets a plain sentence, but the reason has to land somewhere a
+        // human can read it. This failure ran for days looking like an outage.
+        console.error("business-fit: unparseable model output, length " + s.length +
+          ", first 300 chars: " + s.slice(0, 300));
         throw new Error("Could not read the generated report. Please try again.");
       }
     };

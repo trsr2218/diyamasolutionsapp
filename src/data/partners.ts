@@ -1,4 +1,4 @@
-import fenaltShot from "@/assets/apps/fenalt-foods.jpg";
+import fenaltShot from "@/assets/apps/fenalt-foods.webp";
 
 export interface Partner {
   id: string;

@@ -1,16 +1,16 @@
-import posShot from "@/assets/apps/diyama-pos.jpg";
-import eclassShot from "@/assets/apps/eclass.jpg";
-import worldClockShot from "@/assets/apps/world-clock.jpg";
-import invoicerShot from "@/assets/apps/app-invoicer.jpg";
-import qrStudioShot from "@/assets/apps/app-qr-studio.jpg";
-import quotationShot from "@/assets/apps/app-quotation.jpg";
-import bookmeShot from "@/assets/apps/app-bookme.jpg";
-import biolinkShot from "@/assets/apps/app-biolink.jpg";
-import payslipShot from "@/assets/apps/app-payslip.jpg";
-import stocktrackShot from "@/assets/apps/app-stocktrack.jpg";
-import expensaShot from "@/assets/apps/app-expensa.jpg";
-import tapcardShot from "@/assets/apps/app-tapcard.jpg";
-import loyaltyShot from "@/assets/apps/app-loyalty.jpg";
+import posShot from "@/assets/apps/diyama-pos.webp";
+import eclassShot from "@/assets/apps/eclass.webp";
+import worldClockShot from "@/assets/apps/world-clock.webp";
+import invoicerShot from "@/assets/apps/app-invoicer.webp";
+import qrStudioShot from "@/assets/apps/app-qr-studio.webp";
+import quotationShot from "@/assets/apps/app-quotation.webp";
+import bookmeShot from "@/assets/apps/app-bookme.webp";
+import biolinkShot from "@/assets/apps/app-biolink.webp";
+import payslipShot from "@/assets/apps/app-payslip.webp";
+import stocktrackShot from "@/assets/apps/app-stocktrack.webp";
+import expensaShot from "@/assets/apps/app-expensa.webp";
+import tapcardShot from "@/assets/apps/app-tapcard.webp";
+import loyaltyShot from "@/assets/apps/app-loyalty.webp";
 
 /**
  * Apps shown publicly on the site.

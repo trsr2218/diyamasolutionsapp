@@ -1,13 +1,22 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import { MessageCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { whatsappLink } from "@/lib/whatsapp";
+
+// Pages with their own input pinned to the bottom of the screen, where the
+// floating button would sit on top of the send button on a phone.
+const HIDDEN_ON = ["/ai"];
 
 const FloatingCTA = () => {
   const [hovered, setHovered] = useState(false);
+  const { pathname } = useLocation();
+
+  if (HIDDEN_ON.includes(pathname)) return null;
 
   return (
     <motion.a
-      href="https://wa.me/260966138238"
+      href={whatsappLink()}
       target="_blank"
       rel="noopener noreferrer"
       initial={{ scale: 0, opacity: 0 }}
