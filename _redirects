@@ -1,0 +1,15 @@
+/services /index.html 200
+/pricing /index.html 200
+/clients /index.html 200
+/apps /index.html 200
+/partners /index.html 200
+/ai /index.html 200
+/business-fit /index.html 200
+/consultations /index.html 200
+/learn /index.html 200
+/affiliate /index.html 200
+/about /index.html 200
+/contact /index.html 200
+/privacy /index.html 200
+/terms /index.html 200
+/learn/* /index.html 200

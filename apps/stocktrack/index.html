@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Diyama StockTrack · Simple Stock Manager</title>
+<meta name="description" content="Diyama StockTrack is a simple, private inventory and stock manager for your shop. Track products, quantities, stock value and low stock alerts, all in your browser." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231f5c4d'/%3E%3Ctext x='50' y='70' font-size='58' text-anchor='middle' fill='%23fff' font-family='Georgia,serif' font-weight='700'%3ES%3C/text%3E%3Ccircle cx='78' cy='30' r='9' fill='%23e8a838'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --teal: #1f5c4d;
+    --teal-dark: #16453a;
+    --teal-soft: #e7f0ed;
+    --gold: #e8a838;
+    --gold-soft: #fbf1dd;
+    --ink: #1e2b30;
+    --muted: #6b7674;
+    --surface: #faf8f4;
+    --card: #ffffff;
+    --border: #e8e4dc;
+    --danger: #d64545;
+    --ok: #2e9e6b;
+    --shadow: 0 10px 30px -12px rgba(31,92,77,.15);
+    --shadow-lift: 0 16px 40px -14px rgba(31,92,77,.28);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--ink);
+    background-color: var(--surface);
+    background-image:
+      radial-gradient(60rem 40rem at 100% -10%, rgba(232,168,56,.10), transparent 60%),
+      radial-gradient(55rem 40rem at -10% 110%, rgba(31,92,77,.10), transparent 60%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, .font-display { font-family: 'Playfair Display', Georgia, serif; }
+
+  a { color: var(--teal); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ---------- Header ---------- */
+  header.site {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(255,255,255,.78);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .header-inner {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .wordmark { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .wordmark:hover { text-decoration: none; }
+  .wordmark .brand {
+    font-family: 'Playfair Display', serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: var(--teal);
+    letter-spacing: -.5px;
+  }
+  .wordmark .brand .dot { color: var(--gold); }
+  .wordmark .divider { width: 1px; height: 24px; background: var(--border); }
+  .wordmark .appname {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: .95rem;
+    color: var(--muted);
+    letter-spacing: .2px;
+  }
+  .header-cta {
+    font-size: .85rem;
+    font-weight: 600;
+    color: var(--teal);
+    padding: 8px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--card);
+    transition: all .18s ease;
+    white-space: nowrap;
+  }
+  .header-cta:hover { text-decoration: none; transform: translateY(-1px); box-shadow: var(--shadow); border-color: var(--teal-soft); }
+
+  /* ---------- Layout ---------- */
+  main { max-width: 1160px; margin: 0 auto; padding: 28px 20px 40px; }
+
+  .page-head { margin-bottom: 22px; animation: fadeUp .5s ease both; }
+  .page-head h1 { font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: 800; color: var(--ink); letter-spacing: -.5px; }
+  .page-head p { color: var(--muted); margin-top: 6px; max-width: 60ch; }
+
+  /* ---------- Dashboard cards ---------- */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 26px;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 20px 22px;
+    transition: transform .18s ease, box-shadow .18s ease;
+    animation: fadeUp .5s ease both;
+  }
+  .stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lift); }
+  .stat-card .label {
+    display: flex; align-items: center; gap: 8px;
+    font-size: .8rem; font-weight: 600; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .6px;
+  }
+  .stat-card .label .ico {
+    width: 30px; height: 30px; border-radius: 9px;
+    display: grid; place-items: center; flex: none;
+  }
+  .stat-card .value {
+    font-family: 'Playfair Display', serif;
+    font-weight: 800;
+    font-size: clamp(1.6rem, 3.4vw, 2.1rem);
+    color: var(--ink);
+    margin-top: 10px;
+    line-height: 1.1;
+  }
+  .stat-card .sub { font-size: .82rem; color: var(--muted); margin-top: 4px; }
+  .stat-card.low .value.alert { color: var(--danger); }
+
+  /* ---------- Toolbar ---------- */
+  .toolbar {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 20px;
+    animation: fadeUp .55s ease both;
+  }
+  .search-wrap { position: relative; flex: 1 1 240px; min-width: 180px; }
+  .search-wrap svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+  .toolbar .spacer { flex: 1 1 auto; }
+
+  input, select {
+    font-family: inherit;
+    font-size: .95rem;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 13px;
+    width: 100%;
+    transition: box-shadow .18s ease, border-color .18s ease;
+  }
+  .search-wrap input { padding-left: 38px; }
+  input:focus, select:focus {
+    outline: none;
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(31,92,77,.15);
+  }
+  select { cursor: pointer; }
+  .filter-select { flex: 0 1 190px; min-width: 150px; }
+
+  /* ---------- Buttons ---------- */
+  .btn {
+    font-family: inherit;
+    font-weight: 600;
+    font-size: .92rem;
+    border: none;
+    border-radius: 10px;
+    padding: 11px 18px;
+    cursor: pointer;
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+  .btn-primary { background: var(--teal); color: #fff; box-shadow: 0 8px 20px -10px rgba(31,92,77,.6); }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 14px 26px -10px rgba(31,92,77,.7); background: var(--teal-dark); }
+  .btn-accent { background: var(--gold); color: var(--ink); box-shadow: 0 8px 20px -10px rgba(232,168,56,.7); }
+  .btn-accent:hover { transform: translateY(-1px); box-shadow: 0 14px 26px -10px rgba(232,168,56,.8); }
+  .btn-outline { background: var(--card); color: var(--teal); border: 1px solid var(--border); }
+  .btn-outline:hover { transform: translateY(-1px); box-shadow: var(--shadow); border-color: var(--teal-soft); }
+  .btn:active { transform: translateY(0); }
+  .btn-ghost { background: transparent; color: var(--muted); padding: 8px 10px; }
+  .btn-ghost:hover { color: var(--teal); background: var(--teal-soft); }
+
+  /* ---------- Table ---------- */
+  .table-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    animation: fadeUp .6s ease both;
+  }
+  .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { width: 100%; border-collapse: collapse; min-width: 760px; }
+  thead th {
+    text-align: left;
+    font-size: .74rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    color: var(--muted);
+    padding: 14px 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  thead th.num, tbody td.num { text-align: right; }
+  thead th.center, tbody td.center { text-align: center; }
+  tbody td {
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: .93rem;
+    vertical-align: middle;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr { transition: background .15s ease; }
+  tbody tr:hover { background: #fcfbf8; }
+  tbody tr.low { background: rgba(214,69,69,.055); }
+  tbody tr.low:hover { background: rgba(214,69,69,.09); }
+
+  .prod-name { font-weight: 600; color: var(--ink); }
+  .prod-sku { font-size: .78rem; color: var(--muted); }
+  .cat-tag {
+    display: inline-block;
+    font-size: .76rem;
+    font-weight: 600;
+    color: var(--teal);
+    background: var(--teal-soft);
+    padding: 3px 10px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .qty-num { font-weight: 700; font-size: 1rem; }
+  .badge-low {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: .72rem; font-weight: 700;
+    color: var(--danger); background: rgba(214,69,69,.12);
+    padding: 3px 9px; border-radius: 999px;
+    margin-left: 8px; white-space: nowrap;
+  }
+  .badge-ok {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: .72rem; font-weight: 600;
+    color: var(--ok);
+    white-space: nowrap;
+  }
+
+  .stock-ctl { display: inline-flex; align-items: center; gap: 6px; }
+  .step-btn {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    display: grid; place-items: center;
+    transition: all .15s ease;
+  }
+  .step-btn.plus:hover { background: var(--teal); color: #fff; border-color: var(--teal); transform: translateY(-1px); }
+  .step-btn.minus:hover { background: var(--danger); color: #fff; border-color: var(--danger); transform: translateY(-1px); }
+
+  .row-actions { display: inline-flex; gap: 4px; }
+  .icon-btn {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    display: grid; place-items: center;
+    transition: all .15s ease;
+  }
+  .icon-btn:hover { background: var(--teal-soft); color: var(--teal); }
+  .icon-btn.del:hover { background: rgba(214,69,69,.12); color: var(--danger); }
+
+  /* ---------- Empty state ---------- */
+  .empty {
+    padding: 60px 24px;
+    text-align: center;
+  }
+  .empty .emoji { font-size: 3rem; }
+  .empty h3 { font-size: 1.4rem; font-weight: 700; color: var(--ink); margin-top: 12px; }
+  .empty p { color: var(--muted); margin: 8px auto 22px; max-width: 42ch; }
+
+  .no-results { padding: 48px 24px; text-align: center; color: var(--muted); }
+
+  /* ---------- Modal ---------- */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(30,43,48,.5);
+    backdrop-filter: blur(3px);
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 24px 16px;
+    z-index: 100;
+    overflow-y: auto;
+  }
+  .overlay.open { display: flex; animation: fadeIn .2s ease; }
+  .modal {
+    background: var(--card);
+    border-radius: 18px;
+    box-shadow: 0 30px 70px -20px rgba(30,43,48,.5);
+    width: 100%;
+    max-width: 520px;
+    margin: auto;
+    animation: modalUp .25s cubic-bezier(.2,.7,.3,1);
+    overflow: hidden;
+  }
+  .modal-head {
+    padding: 22px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+  }
+  .modal-head h2 { font-size: 1.4rem; font-weight: 700; color: var(--ink); }
+  .modal-head p { font-size: .85rem; color: var(--muted); margin-top: 2px; }
+  .modal-body { padding: 20px 24px; }
+  .modal-foot {
+    padding: 16px 24px 22px;
+    display: flex; gap: 10px; justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+
+  .field { margin-bottom: 15px; }
+  .field.row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .field label {
+    display: block;
+    font-size: .82rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .field label .opt { color: var(--muted); font-weight: 400; }
+  .field .hint { font-size: .76rem; color: var(--muted); margin-top: 5px; }
+  .field .err { font-size: .78rem; color: var(--danger); margin-top: 5px; display: none; }
+  .field.invalid input { border-color: var(--danger); box-shadow: 0 0 0 3px rgba(214,69,69,.12); }
+  .field.invalid .err { display: block; }
+
+  /* reason chooser */
+  .reason-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 4px; }
+  .reason-opt {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 14px 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  .reason-opt:hover { border-color: var(--teal); transform: translateY(-1px); box-shadow: var(--shadow); }
+  .reason-opt.sel { border-color: var(--teal); background: var(--teal-soft); }
+  .reason-opt .ri { font-size: 1.4rem; }
+  .reason-opt .rl { font-size: .82rem; font-weight: 600; margin-top: 4px; color: var(--ink); }
+  .adjust-summary {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    font-size: .9rem;
+  }
+  .adjust-summary b { color: var(--ink); }
+  .qty-preview { font-weight: 700; color: var(--teal); }
+  .qty-preview.neg { color: var(--danger); }
+
+  /* ---------- Toast ---------- */
+  #toasts {
+    position: fixed;
+    bottom: 20px; left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    display: flex; flex-direction: column; gap: 10px;
+    width: calc(100% - 32px); max-width: 380px;
+  }
+  .toast {
+    background: var(--ink);
+    color: #fff;
+    padding: 13px 16px;
+    border-radius: 12px;
+    font-size: .9rem;
+    font-weight: 500;
+    box-shadow: 0 14px 30px -10px rgba(0,0,0,.4);
+    display: flex; align-items: center; gap: 10px;
+    animation: toastIn .25s ease;
+  }
+  .toast .tdot { width: 9px; height: 9px; border-radius: 50%; flex: none; background: var(--ok); }
+  .toast.warn .tdot { background: var(--gold); }
+  .toast.err .tdot { background: var(--danger); }
+  .toast .undo {
+    margin-left: auto; color: var(--gold); font-weight: 700; cursor: pointer;
+    background: none; border: none; font-family: inherit; font-size: .88rem;
+  }
+
+  /* ---------- Footer ---------- */
+  footer.site {
+    text-align: center;
+    padding: 34px 20px 40px;
+    color: var(--muted);
+    font-size: .85rem;
+    border-top: 1px solid var(--border);
+    margin-top: 20px;
+  }
+  footer.site .sep { color: var(--border); margin: 0 8px; }
+  footer.site a { font-weight: 600; }
+
+  /* ---------- Animations ---------- */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes modalUp { from { opacity: 0; transform: translateY(16px) scale(.98); } to { opacity: 1; transform: none; } }
+  @keyframes toastIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 760px) {
+    .stats { grid-template-columns: 1fr; gap: 12px; }
+    .header-inner { padding: 12px 16px; }
+    main { padding: 22px 16px 32px; }
+    .toolbar { padding: 14px; }
+    .filter-select { flex: 1 1 100%; }
+    .field.row { grid-template-columns: 1fr; }
+    .reason-grid { grid-template-columns: 1fr; }
+    .wordmark .appname { display: none; }
+    .wordmark .divider { display: none; }
+  }
+  @media (max-width: 420px) {
+    .header-cta { padding: 7px 11px; font-size: .8rem; }
+    .btn { padding: 10px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="header-inner">
+    <a class="wordmark" href="https://www.diyama.online" title="Go to Diyama Solutions">
+      <span class="brand">Diyama<span class="dot">.</span></span>
+      <span class="divider"></span>
+      <span class="appname">StockTrack</span>
+    </a>
+    <a class="header-cta" href="https://www.diyama.online" target="_blank" rel="noopener">Back to Diyama</a>
+  </div>
+</header>
+
+<main>
+  <div class="page-head">
+    <h1>Your Stock, Under Control</h1>
+    <p>Track products, quantities and stock value for your shop. Everything is saved privately on this device, no account needed.</p>
+  </div>
+
+  <!-- Dashboard -->
+  <section class="stats" id="stats">
+    <div class="stat-card">
+      <div class="label">
+        <span class="ico" style="background:var(--teal-soft);color:var(--teal)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96 12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg>
+        </span>
+        Total Products
+      </div>
+      <div class="value" id="statProducts">0</div>
+      <div class="sub" id="statUnits">0 units in stock</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">
+        <span class="ico" style="background:var(--gold-soft);color:var(--gold)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </span>
+        Total Stock Value
+      </div>
+      <div class="value" id="statValue">K0.00</div>
+      <div class="sub">Sum of quantity times unit cost</div>
+    </div>
+    <div class="stat-card low">
+      <div class="label">
+        <span class="ico" style="background:rgba(214,69,69,.12);color:var(--danger)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </span>
+        Low Stock Items
+      </div>
+      <div class="value" id="statLow">0</div>
+      <div class="sub" id="statLowSub">All items well stocked</div>
+    </div>
+  </section>
+
+  <!-- Toolbar -->
+  <section class="toolbar">
+    <div class="search-wrap">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="search" id="searchInput" placeholder="Search by name or SKU" aria-label="Search products" autocomplete="off" />
+    </div>
+    <select class="filter-select" id="categoryFilter" aria-label="Filter by category">
+      <option value="">All categories</option>
+    </select>
+    <div class="spacer"></div>
+    <button class="btn btn-outline" id="exportBtn" title="Download all products as a CSV file">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Export CSV
+    </button>
+    <button class="btn btn-primary" id="addBtn">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Product
+    </button>
+  </section>
+
+  <!-- Table / empty state -->
+  <section class="table-card" id="tableCard">
+    <div class="table-scroll">
+      <table id="productTable">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Category</th>
+            <th class="num">Unit Cost</th>
+            <th class="center">Adjust Stock</th>
+            <th class="num">Quantity</th>
+            <th class="num">Stock Value</th>
+            <th class="center">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="productBody"></tbody>
+      </table>
+    </div>
+    <div id="emptyState" class="empty" style="display:none">
+      <div class="emoji">📦</div>
+      <h3>No products yet</h3>
+      <p>Add your first product to start tracking stock, value and low stock alerts for your shop.</p>
+      <button class="btn btn-accent" id="emptyAddBtn">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Your First Product
+      </button>
+    </div>
+    <div id="noResults" class="no-results" style="display:none">
+      No products match your search. Try a different term or clear the filter.
+    </div>
+  </section>
+</main>
+
+<footer class="site">
+  Built by Diyama Solutions <span class="sep">·</span> Clarity in Action.
+  <br />
+  <a href="https://www.diyama.online" target="_blank" rel="noopener">diyama.online</a>
+  <span class="sep">·</span>
+  <a href="https://wa.me/260966138238" target="_blank" rel="noopener">Chat on WhatsApp</a>
+</footer>
+
+<!-- Product modal -->
+<div class="overlay" id="productOverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-head">
+      <div>
+        <h2 id="modalTitle">Add Product</h2>
+        <p>Fill in the details below. Fields marked optional can be left blank.</p>
+      </div>
+      <button class="icon-btn" id="closeModal" aria-label="Close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <form id="productForm" novalidate>
+      <div class="modal-body">
+        <div class="field" id="f-name">
+          <label for="in-name">Product name</label>
+          <input type="text" id="in-name" placeholder="e.g. Maize Meal 25kg" autocomplete="off" />
+          <div class="err">Please enter a product name.</div>
+        </div>
+        <div class="field row">
+          <div>
+            <label for="in-sku">SKU <span class="opt">(optional)</span></label>
+            <input type="text" id="in-sku" placeholder="e.g. MM-25" autocomplete="off" />
+          </div>
+          <div id="f-category">
+            <label for="in-category">Category</label>
+            <input type="text" id="in-category" placeholder="e.g. Groceries" list="catList" autocomplete="off" />
+            <datalist id="catList"></datalist>
+          </div>
+        </div>
+        <div class="field row">
+          <div id="f-qty">
+            <label for="in-qty">Quantity</label>
+            <input type="number" id="in-qty" placeholder="0" min="0" step="1" inputmode="numeric" />
+            <div class="err">Enter a quantity of 0 or more.</div>
+          </div>
+          <div id="f-cost">
+            <label for="in-cost">Unit cost (K)</label>
+            <input type="number" id="in-cost" placeholder="0.00" min="0" step="0.01" inputmode="decimal" />
+            <div class="err">Enter a unit cost of 0 or more.</div>
+          </div>
+        </div>
+        <div class="field" id="f-reorder">
+          <label for="in-reorder">Reorder level <span class="opt">(low stock alert at or below)</span></label>
+          <input type="number" id="in-reorder" placeholder="5" min="0" step="1" inputmode="numeric" />
+          <div class="hint">Rows turn red when quantity drops to this level or lower.</div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-ghost" id="cancelModal">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="saveProduct">Save Product</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Adjust stock modal -->
+<div class="overlay" id="adjustOverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="adjustTitle">
+    <div class="modal-head">
+      <div>
+        <h2 id="adjustTitle">Adjust Stock</h2>
+        <p id="adjustSubtitle">Choose a reason and confirm the change.</p>
+      </div>
+      <button class="icon-btn" id="closeAdjust" aria-label="Close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="adjust-summary">
+        <b id="adjProdName">Product</b><br />
+        Current quantity: <b id="adjCurrent">0</b> &nbsp;→&nbsp; New quantity: <span class="qty-preview" id="adjPreview">0</span>
+      </div>
+      <div class="field" style="margin-bottom:12px">
+        <label for="adjAmount">Amount</label>
+        <input type="number" id="adjAmount" min="1" step="1" value="1" inputmode="numeric" />
+      </div>
+      <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:8px">Reason for this change</label>
+      <div class="reason-grid" id="reasonGrid">
+        <div class="reason-opt" data-reason="Sale"><div class="ri">🛒</div><div class="rl">Sale</div></div>
+        <div class="reason-opt" data-reason="Restock"><div class="ri">📥</div><div class="rl">Restock</div></div>
+        <div class="reason-opt" data-reason="Adjustment"><div class="ri">✏️</div><div class="rl">Adjustment</div></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button type="button" class="btn btn-ghost" id="cancelAdjust">Cancel</button>
+      <button type="button" class="btn btn-primary" id="confirmAdjust">Confirm Change</button>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  var STORE_KEY = "diyama_stocktrack_v1";
+  var products = [];
+  var editingId = null;
+
+  // adjust state
+  var adjust = { id: null, dir: 1, reason: null };
+
+  // ---------- Persistence ----------
+  function load() {
+    try {
+      var raw = localStorage.getItem(STORE_KEY);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) products = parsed;
+      }
+    } catch (e) { products = []; }
+  }
+  function save() {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(products)); }
+    catch (e) { toast("Could not save to this browser.", "err"); }
+  }
+
+  function uid() {
+    return "p" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  }
+
+  // ---------- Helpers ----------
+  function el(id) { return document.getElementById(id); }
+
+  function fmtK(n) {
+    var v = Number(n) || 0;
+    return "K" + v.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  function fmtNum(n) {
+    return (Number(n) || 0).toLocaleString("en-US");
+  }
+  function esc(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+
+  // ---------- Rendering ----------
+  function currentFilters() {
+    return {
+      q: el("searchInput").value.trim().toLowerCase(),
+      cat: el("categoryFilter").value
+    };
+  }
+
+  function visibleProducts() {
+    var f = currentFilters();
+    return products.filter(function (p) {
+      var matchCat = !f.cat || p.category === f.cat;
+      var hay = (p.name + " " + (p.sku || "")).toLowerCase();
+      var matchQ = !f.q || hay.indexOf(f.q) !== -1;
+      return matchCat && matchQ;
+    });
+  }
+
+  function renderStats() {
+    var totalProducts = products.length;
+    var totalUnits = 0, totalValue = 0, lowCount = 0;
+    products.forEach(function (p) {
+      totalUnits += p.quantity;
+      totalValue += p.quantity * p.cost;
+      if (p.quantity <= p.reorder) lowCount++;
+    });
+    el("statProducts").textContent = fmtNum(totalProducts);
+    el("statUnits").textContent = fmtNum(totalUnits) + (totalUnits === 1 ? " unit in stock" : " units in stock");
+    el("statValue").textContent = fmtK(totalValue);
+    var lowEl = el("statLow");
+    lowEl.textContent = fmtNum(lowCount);
+    lowEl.classList.toggle("alert", lowCount > 0);
+    el("statLowSub").textContent = lowCount === 0
+      ? "All items well stocked"
+      : (lowCount === 1 ? "1 item needs restocking" : lowCount + " items need restocking");
+  }
+
+  function renderCategories() {
+    var cats = {};
+    products.forEach(function (p) { if (p.category) cats[p.category] = true; });
+    var list = Object.keys(cats).sort(function (a, b) { return a.localeCompare(b); });
+
+    var sel = el("categoryFilter");
+    var prev = sel.value;
+    sel.innerHTML = '<option value="">All categories</option>';
+    list.forEach(function (c) {
+      var o = document.createElement("option");
+      o.value = c; o.textContent = c;
+      sel.appendChild(o);
+    });
+    if (list.indexOf(prev) !== -1) sel.value = prev;
+
+    var dl = el("catList");
+    dl.innerHTML = "";
+    list.forEach(function (c) {
+      var o = document.createElement("option");
+      o.value = c;
+      dl.appendChild(o);
+    });
+  }
+
+  function renderTable() {
+    var body = el("productBody");
+    var rows = visibleProducts();
+    var hasAny = products.length > 0;
+
+    el("emptyState").style.display = hasAny ? "none" : "block";
+    el("productTable").style.display = hasAny ? "" : "none";
+    el("noResults").style.display = (hasAny && rows.length === 0) ? "block" : "none";
+
+    body.innerHTML = "";
+    rows.forEach(function (p) {
+      var low = p.quantity <= p.reorder;
+      var tr = document.createElement("tr");
+      if (low) tr.className = "low";
+
+      var status = low
+        ? '<span class="badge-low">' +
+            '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' +
+            'Low</span>'
+        : '';
+
+      var skuHtml = p.sku ? '<div class="prod-sku">SKU: ' + esc(p.sku) + '</div>' : '';
+      var catHtml = p.category ? '<span class="cat-tag">' + esc(p.category) + '</span>' : '<span class="prod-sku">Uncategorised</span>';
+
+      tr.innerHTML =
+        '<td><div class="prod-name">' + esc(p.name) + '</div>' + skuHtml + '</td>' +
+        '<td>' + catHtml + '</td>' +
+        '<td class="num">' + fmtK(p.cost) + '</td>' +
+        '<td class="center">' +
+          '<div class="stock-ctl">' +
+            '<button class="step-btn minus" data-act="minus" data-id="' + p.id + '" title="Reduce stock" aria-label="Reduce stock">&minus;</button>' +
+            '<button class="step-btn plus" data-act="plus" data-id="' + p.id + '" title="Add stock" aria-label="Add stock">+</button>' +
+          '</div>' +
+        '</td>' +
+        '<td class="num"><span class="qty-num">' + fmtNum(p.quantity) + '</span>' + status + '</td>' +
+        '<td class="num">' + fmtK(p.quantity * p.cost) + '</td>' +
+        '<td class="center">' +
+          '<div class="row-actions">' +
+            '<button class="icon-btn" data-act="edit" data-id="' + p.id + '" title="Edit" aria-label="Edit product">' +
+              '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>' +
+            '</button>' +
+            '<button class="icon-btn del" data-act="delete" data-id="' + p.id + '" title="Delete" aria-label="Delete product">' +
+              '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>' +
+            '</button>' +
+          '</div>' +
+        '</td>';
+      body.appendChild(tr);
+    });
+  }
+
+  function renderAll() {
+    renderStats();
+    renderCategories();
+    renderTable();
+  }
+
+  // ---------- Product modal ----------
+  function openProductModal(id) {
+    editingId = id || null;
+    var p = id ? findProduct(id) : null;
+    el("modalTitle").textContent = p ? "Edit Product" : "Add Product";
+    el("saveProduct").textContent = p ? "Save Changes" : "Save Product";
+
+    el("in-name").value = p ? p.name : "";
+    el("in-sku").value = p ? (p.sku || "") : "";
+    el("in-category").value = p ? (p.category || "") : "";
+    el("in-qty").value = p ? p.quantity : "";
+    el("in-cost").value = p ? p.cost : "";
+    el("in-reorder").value = p ? p.reorder : "";
+
+    clearErrors();
+    openOverlay("productOverlay");
+    setTimeout(function () { el("in-name").focus(); }, 60);
+  }
+
+  function clearErrors() {
+    ["f-name", "f-qty", "f-cost"].forEach(function (fid) {
+      el(fid).classList.remove("invalid");
+    });
+  }
+
+  function submitProduct(e) {
+    e.preventDefault();
+    clearErrors();
+
+    var name = el("in-name").value.trim();
+    var sku = el("in-sku").value.trim();
+    var category = el("in-category").value.trim();
+    var qtyRaw = el("in-qty").value;
+    var costRaw = el("in-cost").value;
+    var reorderRaw = el("in-reorder").value;
+
+    var qty = qtyRaw === "" ? 0 : Math.floor(Number(qtyRaw));
+    var cost = costRaw === "" ? 0 : Number(costRaw);
+    var reorder = reorderRaw === "" ? 0 : Math.floor(Number(reorderRaw));
+
+    var ok = true;
+    if (!name) { el("f-name").classList.add("invalid"); ok = false; }
+    if (isNaN(qty) || qty < 0) { el("f-qty").classList.add("invalid"); ok = false; }
+    if (isNaN(cost) || cost < 0) { el("f-cost").classList.add("invalid"); ok = false; }
+    if (!ok) return;
+
+    if (isNaN(reorder) || reorder < 0) reorder = 0;
+
+    if (editingId) {
+      var p = findProduct(editingId);
+      if (p) {
+        p.name = name; p.sku = sku; p.category = category;
+        p.quantity = qty; p.cost = cost; p.reorder = reorder;
+      }
+      save(); renderAll(); closeOverlay("productOverlay");
+      toast("\"" + name + "\" updated.");
+    } else {
+      products.push({
+        id: uid(), name: name, sku: sku, category: category,
+        quantity: qty, cost: cost, reorder: reorder,
+        created: Date.now()
+      });
+      save(); renderAll(); closeOverlay("productOverlay");
+      toast("\"" + name + "\" added to stock.");
+    }
+    editingId = null;
+  }
+
+  function findProduct(id) {
+    for (var i = 0; i < products.length; i++) if (products[i].id === id) return products[i];
+    return null;
+  }
+
+  // ---------- Delete (with undo) ----------
+  var lastDeleted = null;
+  function deleteProduct(id) {
+    var idx = -1;
+    for (var i = 0; i < products.length; i++) if (products[i].id === id) { idx = i; break; }
+    if (idx === -1) return;
+    var p = products[idx];
+    if (!window.confirm('Delete "' + p.name + '"? This cannot be undone once the toast disappears.')) return;
+    lastDeleted = { item: p, index: idx };
+    products.splice(idx, 1);
+    save(); renderAll();
+    toast('"' + p.name + '" deleted.', "warn", true);
+  }
+  function undoDelete() {
+    if (!lastDeleted) return;
+    var at = Math.min(lastDeleted.index, products.length);
+    products.splice(at, 0, lastDeleted.item);
+    lastDeleted = null;
+    save(); renderAll();
+    toast("Delete undone.");
+  }
+
+  // ---------- Adjust stock ----------
+  function openAdjust(id, dir) {
+    var p = findProduct(id);
+    if (!p) return;
+    adjust = { id: id, dir: dir, reason: dir > 0 ? "Restock" : "Sale" };
+    el("adjustTitle").textContent = dir > 0 ? "Add Stock" : "Reduce Stock";
+    el("adjProdName").textContent = p.name;
+    el("adjCurrent").textContent = fmtNum(p.quantity);
+    el("adjAmount").value = 1;
+    // preselect reason
+    var opts = document.querySelectorAll("#reasonGrid .reason-opt");
+    opts.forEach(function (o) { o.classList.toggle("sel", o.getAttribute("data-reason") === adjust.reason); });
+    updatePreview();
+    openOverlay("adjustOverlay");
+    setTimeout(function () { el("adjAmount").focus(); el("adjAmount").select(); }, 60);
+  }
+
+  function updatePreview() {
+    var p = findProduct(adjust.id);
+    if (!p) return;
+    var amt = Math.floor(Number(el("adjAmount").value)) || 0;
+    if (amt < 0) amt = 0;
+    var next = p.quantity + adjust.dir * amt;
+    if (next < 0) next = 0;
+    var prev = el("adjPreview");
+    prev.textContent = fmtNum(next);
+    prev.classList.toggle("neg", next <= p.reorder);
+  }
+
+  function confirmAdjust() {
+    var p = findProduct(adjust.id);
+    if (!p) { closeOverlay("adjustOverlay"); return; }
+    var amt = Math.floor(Number(el("adjAmount").value)) || 0;
+    if (amt <= 0) { el("adjAmount").focus(); return; }
+    if (!adjust.reason) { toast("Please choose a reason.", "warn"); return; }
+
+    var before = p.quantity;
+    var next = p.quantity + adjust.dir * amt;
+    if (next < 0) {
+      next = 0;
+      amt = before;
+    }
+    p.quantity = next;
+    save(); renderAll();
+    closeOverlay("adjustOverlay");
+
+    var verb = adjust.dir > 0 ? "added" : "removed";
+    var moved = Math.abs(next - before);
+    var msg = p.name + ": " + moved + " " + verb + " (" + adjust.reason + "). Now " + fmtNum(next) + ".";
+    var type = (next <= p.reorder) ? "warn" : "ok";
+    toast(msg, type);
+  }
+
+  // ---------- CSV export ----------
+  function csvCell(v) {
+    var s = String(v == null ? "" : v);
+    if (/[",\n]/.test(s)) s = '"' + s.replace(/"/g, '""') + '"';
+    return s;
+  }
+  function exportCSV() {
+    if (products.length === 0) { toast("Nothing to export yet.", "warn"); return; }
+    var headers = ["Name", "SKU", "Category", "Quantity", "Unit Cost (K)", "Stock Value (K)", "Reorder Level", "Low Stock"];
+    var lines = [headers.map(csvCell).join(",")];
+    products.forEach(function (p) {
+      lines.push([
+        p.name,
+        p.sku || "",
+        p.category || "",
+        p.quantity,
+        (Number(p.cost) || 0).toFixed(2),
+        (p.quantity * p.cost).toFixed(2),
+        p.reorder,
+        p.quantity <= p.reorder ? "Yes" : "No"
+      ].map(csvCell).join(","));
+    });
+    var csv = "﻿" + lines.join("\r\n");
+    var blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    var d = new Date();
+    var stamp = d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+    a.href = url;
+    a.download = "diyama-stocktrack-" + stamp + ".csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+    toast("Exported " + products.length + " product" + (products.length === 1 ? "" : "s") + " to CSV.");
+  }
+  function pad(n) { return n < 10 ? "0" + n : "" + n; }
+
+  // ---------- Overlay helpers ----------
+  function openOverlay(id) { el(id).classList.add("open"); document.body.style.overflow = "hidden"; }
+  function closeOverlay(id) {
+    el(id).classList.remove("open");
+    if (!document.querySelector(".overlay.open")) document.body.style.overflow = "";
+  }
+
+  // ---------- Toast ----------
+  function toast(msg, type, withUndo) {
+    var wrap = el("toasts");
+    var t = document.createElement("div");
+    t.className = "toast" + (type ? " " + type : "");
+    var dot = document.createElement("span"); dot.className = "tdot";
+    var span = document.createElement("span"); span.textContent = msg;
+    t.appendChild(dot); t.appendChild(span);
+    if (withUndo) {
+      var u = document.createElement("button");
+      u.className = "undo"; u.textContent = "Undo";
+      u.onclick = function () { undoDelete(); remove(); };
+      t.appendChild(u);
+    }
+    wrap.appendChild(t);
+    var timer = setTimeout(remove, withUndo ? 6000 : 3200);
+    function remove() {
+      clearTimeout(timer);
+      if (t.parentNode) {
+        t.style.transition = "opacity .25s ease, transform .25s ease";
+        t.style.opacity = "0"; t.style.transform = "translateY(8px)";
+        setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 250);
+      }
+    }
+  }
+
+  // ---------- Events ----------
+  function bind() {
+    el("addBtn").addEventListener("click", function () { openProductModal(null); });
+    el("emptyAddBtn").addEventListener("click", function () { openProductModal(null); });
+    el("closeModal").addEventListener("click", function () { closeOverlay("productOverlay"); });
+    el("cancelModal").addEventListener("click", function () { closeOverlay("productOverlay"); });
+    el("productForm").addEventListener("submit", submitProduct);
+    el("exportBtn").addEventListener("click", exportCSV);
+
+    el("searchInput").addEventListener("input", renderTable);
+    el("categoryFilter").addEventListener("change", renderTable);
+
+    // table delegation
+    el("productBody").addEventListener("click", function (e) {
+      var btn = e.target.closest("[data-act]");
+      if (!btn) return;
+      var id = btn.getAttribute("data-id");
+      var act = btn.getAttribute("data-act");
+      if (act === "plus") openAdjust(id, 1);
+      else if (act === "minus") openAdjust(id, -1);
+      else if (act === "edit") openProductModal(id);
+      else if (act === "delete") deleteProduct(id);
+    });
+
+    // adjust modal
+    el("closeAdjust").addEventListener("click", function () { closeOverlay("adjustOverlay"); });
+    el("cancelAdjust").addEventListener("click", function () { closeOverlay("adjustOverlay"); });
+    el("confirmAdjust").addEventListener("click", confirmAdjust);
+    el("adjAmount").addEventListener("input", updatePreview);
+    el("reasonGrid").addEventListener("click", function (e) {
+      var opt = e.target.closest(".reason-opt");
+      if (!opt) return;
+      adjust.reason = opt.getAttribute("data-reason");
+      document.querySelectorAll("#reasonGrid .reason-opt").forEach(function (o) {
+        o.classList.toggle("sel", o === opt);
+      });
+    });
+
+    // overlay backdrop click
+    document.querySelectorAll(".overlay").forEach(function (ov) {
+      ov.addEventListener("mousedown", function (e) {
+        if (e.target === ov) closeOverlay(ov.id);
+      });
+    });
+
+    // esc to close
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") {
+        var open = document.querySelector(".overlay.open");
+        if (open) closeOverlay(open.id);
+      }
+    });
+  }
+
+  // ---------- Init ----------
+  function seedIfFirstRun() {
+    if (localStorage.getItem(STORE_KEY) !== null) return;
+    // gentle first-run sample so the dashboard is not blank; user can delete
+    products = [
+      { id: uid(), name: "Maize Meal 25kg", sku: "MM-25", category: "Groceries", quantity: 42, cost: 285.00, reorder: 15, created: Date.now() },
+      { id: uid(), name: "Cooking Oil 2L", sku: "CO-2L", category: "Groceries", quantity: 8, cost: 92.50, reorder: 10, created: Date.now() },
+      { id: uid(), name: "Bar Soap", sku: "", category: "Household", quantity: 60, cost: 12.00, reorder: 20, created: Date.now() },
+      { id: uid(), name: "Airtime Voucher K10", sku: "AT-10", category: "Airtime", quantity: 3, cost: 9.20, reorder: 25, created: Date.now() }
+    ];
+    save();
+  }
+
+  load();
+  if (products.length === 0) seedIfFirstRun();
+  bind();
+  renderAll();
+})();
+</script>
+</body>
+</html>

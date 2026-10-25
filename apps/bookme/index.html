@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Diyama BookMe · Simple appointment booking</title>
+<meta name="description" content="Diyama BookMe is a clean, offline-friendly appointment booking tool for salons, clinics and consultants. Set your services and hours, take bookings, and send WhatsApp confirmations in seconds." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231f5c4d'/%3E%3Ctext x='50' y='70' font-size='58' text-anchor='middle' fill='%23e8a838' font-family='Georgia,serif' font-weight='700'%3ED%3C/text%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --teal:#1f5c4d; --teal-dark:#16453a; --teal-soft:#e7f0ed;
+  --gold:#e8a838; --gold-soft:#fbf1dd;
+  --ink:#1e2b30; --muted:#6b7674;
+  --surface:#faf8f4; --card:#ffffff; --border:#e8e4dc;
+  --danger:#d64545; --ok:#2e9e6b;
+  --shadow:0 10px 30px -12px rgba(31,92,77,.15);
+  --shadow-lg:0 18px 44px -16px rgba(31,92,77,.28);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:'DM Sans',system-ui,-apple-system,sans-serif;
+  color:var(--ink); background:var(--surface); font-size:16px; line-height:1.55;
+  min-height:100vh;
+  background-image:
+    radial-gradient(60vw 60vw at 100% 0%, rgba(232,168,56,.10), transparent 60%),
+    radial-gradient(60vw 60vw at 0% 100%, rgba(31,92,77,.10), transparent 60%);
+  background-attachment:fixed;
+}
+h1,h2,h3,h4{font-family:'Playfair Display',Georgia,serif;color:var(--ink);margin:0;line-height:1.2}
+a{color:var(--teal);text-decoration:none}
+a:hover{text-decoration:underline}
+button{font-family:inherit}
+
+/* Header */
+header.site{
+  position:sticky;top:0;z-index:50;
+  background:rgba(255,255,255,.78);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.hwrap{max-width:1040px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.wordmark{display:flex;align-items:center;gap:12px;text-decoration:none}
+.wordmark:hover{text-decoration:none}
+.wm-brand{font-family:'Playfair Display',serif;font-weight:800;font-size:24px;color:var(--teal);letter-spacing:-.01em}
+.wm-brand .dot{color:var(--gold)}
+.wm-div{width:1px;height:22px;background:var(--border)}
+.wm-app{font-family:'DM Sans',sans-serif;font-weight:600;font-size:15px;color:var(--muted);letter-spacing:.01em}
+.hback{font-size:13px;font-weight:600;color:var(--teal);white-space:nowrap;display:flex;align-items:center;gap:5px}
+.hback span.arrow{transition:transform .18s}
+.hback:hover span.arrow{transform:translateX(3px)}
+
+/* Layout */
+main{max-width:1040px;margin:0 auto;padding:26px 20px 60px}
+.hero{margin:6px 0 22px}
+.hero h1{font-size:30px;font-weight:800}
+.hero p{color:var(--muted);margin:8px 0 0;max-width:56ch}
+
+/* Tabs */
+.tabs{display:flex;gap:6px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:6px;box-shadow:var(--shadow);margin-bottom:24px;position:sticky;top:70px;z-index:40}
+.tab{flex:1;border:none;background:transparent;color:var(--muted);font-weight:600;font-size:14.5px;padding:11px 8px;border-radius:9px;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:7px}
+.tab:hover{color:var(--ink);background:var(--surface)}
+.tab.active{background:var(--teal);color:#fff}
+.tab .ic{font-size:16px}
+.tab .cnt{font-size:11px;font-weight:700;background:rgba(255,255,255,.22);padding:1px 7px;border-radius:20px}
+.tab:not(.active) .cnt{background:var(--gold-soft);color:var(--teal-dark)}
+
+/* Cards */
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:22px}
+.card + .card{margin-top:18px}
+.card-hd{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.card-hd h2{font-size:20px;font-weight:700}
+.card-hd .k{font-size:22px}
+.card-sub{color:var(--muted);font-size:13.5px;margin:-8px 0 16px}
+
+/* Forms */
+label.fld{display:block;margin-bottom:14px}
+label.fld .lb{display:block;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:6px}
+input,select{
+  width:100%;font-family:inherit;font-size:15px;color:var(--ink);
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:11px 13px;transition:box-shadow .18s,border-color .18s;
+}
+input:focus,select:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(31,92,77,.15)}
+input::placeholder{color:#a7afab}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.row > *{flex:1;min-width:120px}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;cursor:pointer;font-weight:600;font-size:15px;border-radius:10px;padding:12px 20px;transition:transform .18s,box-shadow .18s,background .18s;line-height:1}
+.btn:active{transform:translateY(0)!important}
+.btn-primary{background:var(--teal);color:#fff;box-shadow:0 6px 16px -8px rgba(31,92,77,.6)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 12px 24px -10px rgba(31,92,77,.7);background:var(--teal-dark)}
+.btn-accent{background:var(--gold);color:var(--ink);box-shadow:0 6px 16px -8px rgba(232,168,56,.6)}
+.btn-accent:hover{transform:translateY(-1px);box-shadow:0 12px 26px -10px rgba(232,168,56,.7)}
+.btn-outline{background:transparent;color:var(--teal);border:1px solid var(--teal)}
+.btn-outline:hover{background:var(--teal-soft);transform:translateY(-1px)}
+.btn-ghost{background:var(--surface);color:var(--muted);border:1px solid var(--border)}
+.btn-ghost:hover{color:var(--ink);border-color:var(--muted)}
+.btn-sm{padding:8px 14px;font-size:13.5px;border-radius:9px}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important;box-shadow:none}
+.btn-block{width:100%}
+
+/* Service list (setup) */
+.svc-item{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:10px;animation:fade .3s ease}
+.svc-item .info{flex:1;min-width:0}
+.svc-item .nm{font-weight:600}
+.svc-item .meta{font-size:12.5px;color:var(--muted)}
+.iconbtn{border:none;background:transparent;cursor:pointer;color:var(--muted);font-size:16px;padding:6px;border-radius:8px;transition:all .15s;line-height:1}
+.iconbtn:hover{background:#fff;color:var(--danger)}
+
+/* Slots */
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:9px;margin-top:6px}
+.slot{border:1px solid var(--border);background:var(--surface);color:var(--ink);border-radius:10px;padding:11px 6px;font-weight:600;font-size:14px;cursor:pointer;transition:all .16s;text-align:center}
+.slot:hover{border-color:var(--teal);color:var(--teal);transform:translateY(-1px)}
+.slot.sel{background:var(--teal);color:#fff;border-color:var(--teal);box-shadow:0 6px 14px -8px rgba(31,92,77,.7)}
+
+/* Booking rows (manage) */
+.daygroup{margin-bottom:20px}
+.dayhd{display:flex;align-items:baseline;gap:9px;margin:0 2px 10px;padding-bottom:8px;border-bottom:1px dashed var(--border)}
+.dayhd h3{font-size:16.5px;font-weight:700}
+.dayhd .n{font-size:12px;color:var(--muted)}
+.dayhd .today-badge{font-size:11px;font-weight:700;color:var(--teal-dark);background:var(--gold-soft);padding:2px 9px;border-radius:20px}
+.bk{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:13px 15px;margin-bottom:9px;box-shadow:var(--shadow);transition:transform .18s,box-shadow .18s;animation:fade .3s ease}
+.bk:hover{transform:translateY(-1px);box-shadow:var(--shadow-lg)}
+.bk.done{opacity:.62}
+.bk.done .bk-nm{text-decoration:line-through;text-decoration-color:var(--muted)}
+.bk-time{font-family:'Playfair Display',serif;font-weight:700;font-size:17px;color:var(--teal);min-width:64px;text-align:center;line-height:1.15}
+.bk-time small{display:block;font-family:'DM Sans',sans-serif;font-weight:500;font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.bk-main{flex:1;min-width:0}
+.bk-nm{font-weight:600}
+.bk-svc{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bk-acts{display:flex;gap:6px;flex-shrink:0}
+.tag{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.02em}
+.tag.done{background:#e4f4ec;color:var(--ok)}
+.tag.cancel{background:#fbe4e4;color:var(--danger)}
+
+/* Success card */
+.success{text-align:center;padding:14px 8px}
+.success .check{width:74px;height:74px;border-radius:50%;background:var(--teal-soft);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;animation:pop .4s cubic-bezier(.2,1.2,.4,1)}
+.success .check svg{width:38px;height:38px}
+.success h2{font-size:23px;margin-bottom:6px}
+.success .recap{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin:16px 0;text-align:left}
+.recap-row{display:flex;justify-content:space-between;gap:12px;padding:5px 0;font-size:14.5px}
+.recap-row .l{color:var(--muted)}
+.recap-row .v{font-weight:600;text-align:right}
+
+/* Empty states */
+.empty{text-align:center;padding:34px 18px;color:var(--muted)}
+.empty .em{font-size:40px;margin-bottom:10px;filter:grayscale(.15)}
+.empty h3{font-size:17px;font-weight:700;color:var(--ink);margin-bottom:5px}
+.empty p{font-size:14px;margin:0 auto;max-width:34ch}
+
+/* Filter pill */
+.filterbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.pill{border:1px solid var(--border);background:var(--card);color:var(--muted);font-weight:600;font-size:13px;padding:7px 14px;border-radius:20px;cursor:pointer;transition:all .16s}
+.pill:hover{border-color:var(--teal);color:var(--teal)}
+.pill.active{background:var(--teal);color:#fff;border-color:var(--teal)}
+
+/* stat chips */
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.stat{flex:1;min-width:96px;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:13px 15px;box-shadow:var(--shadow)}
+.stat .num{font-family:'Playfair Display',serif;font-weight:700;font-size:24px;color:var(--teal)}
+.stat .lbl{font-size:12px;color:var(--muted);font-weight:500}
+
+.divider-note{font-size:12.5px;color:var(--muted);text-align:center;margin:14px 0 0}
+.hint{font-size:12.5px;color:var(--muted);margin-top:-6px;margin-bottom:14px}
+.hidden{display:none!important}
+
+/* Toast */
+#toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:11px;font-size:14px;font-weight:500;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:all .28s;z-index:100;max-width:90vw;text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Footer */
+footer.site{border-top:1px solid var(--border);margin-top:20px}
+.fwrap{max-width:1040px;margin:0 auto;padding:26px 20px;text-align:center;color:var(--muted);font-size:13px}
+.fwrap .tag-line{font-weight:500}
+.fwrap .flinks{margin-top:7px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.fwrap .flinks a{font-weight:600;font-size:13px}
+
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(.4);opacity:0}100%{transform:scale(1);opacity:1}}
+.panel{animation:fade .32s ease}
+
+@media(max-width:560px){
+  .hero h1{font-size:25px}
+  .tab .lbl{display:none}
+  .tab .ic{font-size:18px}
+  .bk-svc{white-space:normal}
+}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="hwrap">
+    <a class="wordmark" href="https://www.diyama.online" target="_blank" rel="noopener">
+      <span class="wm-brand">Diyama<span class="dot">.</span></span>
+      <span class="wm-div"></span>
+      <span class="wm-app">BookMe</span>
+    </a>
+    <a class="hback" href="https://www.diyama.online" target="_blank" rel="noopener">Back to Diyama <span class="arrow">&rarr;</span></a>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <h1 id="heroTitle">Appointments, sorted.</h1>
+    <p>Set up your services and hours once, then take bookings and send WhatsApp confirmations in seconds. Everything stays on this device.</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="book"><span class="ic">&#128197;</span><span class="lbl">Book</span></button>
+    <button class="tab" data-tab="manage"><span class="ic">&#128203;</span><span class="lbl">Manage</span> <span class="cnt" id="manageCnt">0</span></button>
+    <button class="tab" data-tab="setup"><span class="ic">&#9881;</span><span class="lbl">Setup</span></button>
+  </div>
+
+  <!-- BOOK -->
+  <section class="panel" id="panel-book"></section>
+
+  <!-- MANAGE -->
+  <section class="panel hidden" id="panel-manage"></section>
+
+  <!-- SETUP -->
+  <section class="panel hidden" id="panel-setup"></section>
+</main>
+
+<footer class="site">
+  <div class="fwrap">
+    <div class="tag-line">Built by Diyama Solutions &middot; Clarity in Action.</div>
+    <div class="flinks">
+      <a href="https://www.diyama.online" target="_blank" rel="noopener">diyama.online</a>
+      <a href="https://wa.me/260966138238" target="_blank" rel="noopener">Chat on WhatsApp</a>
+    </div>
+  </div>
+</footer>
+
+<div id="toast"></div>
+
+<script>
+"use strict";
+/* ---------------- State & storage ---------------- */
+const LS_KEY = "diyama_bookme_v1";
+const DEFAULT_STATE = {
+  business: "",
+  hours: { start: "09:00", end: "17:00" },
+  services: [], // {id, name, duration, price}
+  bookings: []  // {id, serviceId, serviceName, duration, price, date, time, name, phone, status}
+};
+let state = load();
+
+function load(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(!raw) return structuredClone(DEFAULT_STATE);
+    const p = JSON.parse(raw);
+    return Object.assign(structuredClone(DEFAULT_STATE), p);
+  }catch(e){ return structuredClone(DEFAULT_STATE); }
+}
+function save(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+
+/* ---------------- Helpers ---------------- */
+const $ = (s,el=document) => el.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function money(n){ return "K" + Number(n||0).toLocaleString("en-ZM",{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function todayStr(){ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; }
+function toMin(hhmm){ const [h,m]=hhmm.split(":").map(Number); return h*60+m; }
+function fromMin(mins){ const h=Math.floor(mins/60), m=mins%60; return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`; }
+function fmtTime(hhmm){
+  let [h,m]=hhmm.split(":").map(Number);
+  const ap = h>=12 ? "PM":"AM"; let hh = h%12; if(hh===0) hh=12;
+  return `${hh}:${String(m).padStart(2,"0")} ${ap}`;
+}
+function fmtDate(ds){
+  const d = new Date(ds+"T00:00:00");
+  return d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+}
+function fmtDateShort(ds){
+  const d = new Date(ds+"T00:00:00");
+  return d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"});
+}
+function normalizePhone(raw){
+  let p = String(raw).replace(/[^\d+]/g,"");
+  if(p.startsWith("+")) return p.slice(1);
+  if(p.startsWith("00")) return p.slice(2);
+  if(p.startsWith("0")) return "26"+p; // Zambia local 0xx -> 260xx
+  return p;
+}
+let toastTimer;
+function toast(msg){
+  const t = $("#toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(()=>t.classList.remove("show"), 2600);
+}
+
+/* ---------------- Tabs ---------------- */
+let activeTab = "book";
+function setTab(name){
+  activeTab = name;
+  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active", b.dataset.tab===name));
+  ["book","manage","setup"].forEach(n=>{
+    $("#panel-"+n).classList.toggle("hidden", n!==name);
+  });
+  render();
+}
+document.querySelectorAll(".tab").forEach(b=> b.addEventListener("click", ()=>setTab(b.dataset.tab)));
+
+/* ---------------- SETUP panel ---------------- */
+function renderSetup(){
+  const el = $("#panel-setup");
+  el.innerHTML = `
+    <div class="card">
+      <div class="card-hd"><span class="k">&#127970;</span><h2>Your business</h2></div>
+      <label class="fld"><span class="lb">Business name</span>
+        <input id="s-biz" placeholder="e.g. Lusaka Glow Salon" value="${esc(state.business)}" maxlength="60">
+      </label>
+      <div class="row">
+        <label class="fld"><span class="lb">Opening time</span>
+          <input id="s-start" type="time" value="${esc(state.hours.start)}">
+        </label>
+        <label class="fld"><span class="lb">Closing time</span>
+          <input id="s-end" type="time" value="${esc(state.hours.end)}">
+        </label>
+      </div>
+      <button class="btn btn-primary btn-block" id="s-save">Save business details</button>
+    </div>
+
+    <div class="card">
+      <div class="card-hd"><span class="k">&#9986;</span><h2>Services</h2></div>
+      <p class="card-sub">Add each service you offer, with how long it takes and the price. Slots are generated from the duration.</p>
+      <div id="svc-list"></div>
+      <div class="row" style="align-items:flex-end">
+        <label class="fld" style="flex:2;min-width:150px"><span class="lb">Service name</span>
+          <input id="ns-name" placeholder="e.g. Haircut &amp; style" maxlength="50">
+        </label>
+        <label class="fld" style="min-width:110px"><span class="lb">Minutes</span>
+          <input id="ns-dur" type="number" min="5" step="5" placeholder="45">
+        </label>
+        <label class="fld" style="min-width:110px"><span class="lb">Price (K)</span>
+          <input id="ns-price" type="number" min="0" step="0.01" placeholder="150">
+        </label>
+      </div>
+      <button class="btn btn-accent btn-block" id="ns-add">+ Add service</button>
+    </div>
+  `;
+
+  // services list
+  const list = $("#svc-list");
+  if(state.services.length === 0){
+    list.innerHTML = `<div class="empty" style="padding:22px 10px">
+      <div class="em">&#128296;</div><h3>No services yet</h3>
+      <p>Add your first service below to start taking bookings.</p></div>`;
+  } else {
+    list.innerHTML = state.services.map(s=>`
+      <div class="svc-item">
+        <div class="info">
+          <div class="nm">${esc(s.name)}</div>
+          <div class="meta">${s.duration} min &middot; ${money(s.price)}</div>
+        </div>
+        <button class="iconbtn" title="Remove service" data-del="${s.id}">&#10005;</button>
+      </div>`).join("");
+  }
+
+  $("#s-save").onclick = ()=>{
+    const biz = $("#s-biz").value.trim();
+    const st = $("#s-start").value, en = $("#s-end").value;
+    if(!biz){ toast("Please enter your business name."); return; }
+    if(!st || !en){ toast("Please set opening and closing times."); return; }
+    if(toMin(en) <= toMin(st)){ toast("Closing time must be after opening time."); return; }
+    state.business = biz; state.hours = {start:st, end:en}; save();
+    toast("Business details saved.");
+    updateHero(); render();
+  };
+  $("#ns-add").onclick = ()=>{
+    const name = $("#ns-name").value.trim();
+    const dur = parseInt($("#ns-dur").value,10);
+    const price = parseFloat($("#ns-price").value);
+    if(!name){ toast("Enter a service name."); return; }
+    if(!dur || dur < 5){ toast("Enter a duration of at least 5 minutes."); return; }
+    if(isNaN(price) || price < 0){ toast("Enter a valid price."); return; }
+    state.services.push({id:uid(), name, duration:dur, price});
+    save(); toast("Service added.");
+    render();
+    // refocus for quick entry
+    setTimeout(()=>{ const n=$("#ns-name"); if(n) n.focus(); }, 30);
+  };
+  list.querySelectorAll("[data-del]").forEach(b=>{
+    b.onclick = ()=>{
+      state.services = state.services.filter(s=>s.id!==b.dataset.del);
+      save(); toast("Service removed."); render();
+    };
+  });
+}
+
+/* ---------------- BOOK panel ---------------- */
+let bookSel = { serviceId:"", date: todayStr(), time:"" };
+let lastConfirmed = null;
+
+function bookedTimesFor(serviceless_date){
+  return state.bookings
+    .filter(b=> b.date===serviceless_date && b.status!=="cancelled")
+    .map(b=>({start: toMin(b.time), end: toMin(b.time)+b.duration}));
+}
+function generateSlots(service, date){
+  const startM = toMin(state.hours.start), endM = toMin(state.hours.end);
+  const dur = service.duration;
+  const taken = bookedTimesFor(date);
+  const slots = [];
+  const isToday = date === todayStr();
+  const nowM = new Date().getHours()*60 + new Date().getMinutes();
+  for(let t=startM; t+dur<=endM; t+=dur){
+    if(isToday && t < nowM) continue; // no past slots today
+    const s=t, e=t+dur;
+    const clash = taken.some(b=> s < b.end && e > b.start);
+    if(!clash) slots.push(fromMin(t));
+  }
+  return slots;
+}
+
+function renderBook(){
+  const el = $("#panel-book");
+
+  if(state.services.length === 0){
+    el.innerHTML = `<div class="card"><div class="empty">
+      <div class="em">&#128198;</div>
+      <h3>Let us set the stage first</h3>
+      <p>Add at least one service and your working hours to start taking bookings.</p>
+      <button class="btn btn-primary" id="go-setup" style="margin-top:16px">Go to Setup</button>
+    </div></div>`;
+    $("#go-setup").onclick = ()=>setTab("setup");
+    return;
+  }
+
+  // if just confirmed, show success card
+  if(lastConfirmed){
+    renderSuccess(el); return;
+  }
+
+  if(!bookSel.serviceId) bookSel.serviceId = state.services[0].id;
+  const svc = state.services.find(s=>s.id===bookSel.serviceId) || state.services[0];
+
+  el.innerHTML = `
+    <div class="card">
+      <div class="card-hd"><span class="k">&#128140;</span><h2>New booking</h2></div>
+      <div class="row">
+        <label class="fld"><span class="lb">Service</span>
+          <select id="b-svc">
+            ${state.services.map(s=>`<option value="${s.id}" ${s.id===bookSel.serviceId?"selected":""}>${esc(s.name)} · ${s.duration} min · ${money(s.price)}</option>`).join("")}
+          </select>
+        </label>
+        <label class="fld"><span class="lb">Date</span>
+          <input id="b-date" type="date" min="${todayStr()}" value="${esc(bookSel.date)}">
+        </label>
+      </div>
+
+      <div style="margin:8px 0 4px"><span class="lb" style="font-size:13px;font-weight:600">Available times</span></div>
+      <div id="slot-area"></div>
+
+      <div id="cust-area" class="${bookSel.time?'':'hidden'}" style="margin-top:18px">
+        <div class="row">
+          <label class="fld"><span class="lb">Customer name</span>
+            <input id="b-name" placeholder="e.g. Chanda Mwale" maxlength="60">
+          </label>
+          <label class="fld"><span class="lb">Phone (WhatsApp)</span>
+            <input id="b-phone" type="tel" placeholder="e.g. 0966 123 456" maxlength="24">
+          </label>
+        </div>
+        <button class="btn btn-primary btn-block" id="b-confirm">Confirm booking</button>
+      </div>
+    </div>
+  `;
+
+  $("#b-svc").onchange = e=>{ bookSel.serviceId = e.target.value; bookSel.time=""; renderBook(); };
+  $("#b-date").onchange = e=>{ bookSel.date = e.target.value || todayStr(); bookSel.time=""; renderBook(); };
+
+  // slots
+  const area = $("#slot-area");
+  const slots = generateSlots(svc, bookSel.date);
+  if(slots.length === 0){
+    area.innerHTML = `<div class="empty" style="padding:24px 10px">
+      <div class="em">&#128564;</div><h3>No open times here</h3>
+      <p>Every slot for this day is booked or in the past. Try another date.</p></div>`;
+  } else {
+    area.innerHTML = `<div class="slots">${slots.map(t=>`
+      <button class="slot ${t===bookSel.time?'sel':''}" data-t="${t}">${fmtTime(t)}</button>`).join("")}</div>`;
+    area.querySelectorAll(".slot").forEach(b=>{
+      b.onclick = ()=>{
+        bookSel.time = b.dataset.t;
+        area.querySelectorAll(".slot").forEach(x=>x.classList.remove("sel"));
+        b.classList.add("sel");
+        const c = $("#cust-area"); c.classList.remove("hidden");
+        setTimeout(()=>{ $("#b-name").focus(); c.scrollIntoView({behavior:"smooth",block:"nearest"}); },40);
+      };
+    });
+  }
+
+  const cf = $("#b-confirm");
+  if(cf) cf.onclick = ()=>{
+    const name = $("#b-name").value.trim();
+    const phoneRaw = $("#b-phone").value.trim();
+    if(!bookSel.time){ toast("Pick a time slot first."); return; }
+    if(!name){ toast("Enter the customer name."); return; }
+    if(normalizePhone(phoneRaw).length < 9){ toast("Enter a valid phone number."); return; }
+    // guard against double-book (race / same session)
+    const clash = state.bookings.some(b=> b.date===bookSel.date && b.time===bookSel.time && b.status!=="cancelled" &&
+      (toMin(bookSel.time) < toMin(b.time)+b.duration && toMin(bookSel.time)+svc.duration > toMin(b.time)));
+    if(clash){ toast("Sorry, that slot was just taken. Pick another."); bookSel.time=""; renderBook(); return; }
+
+    const booking = {
+      id: uid(), serviceId: svc.id, serviceName: svc.name, duration: svc.duration, price: svc.price,
+      date: bookSel.date, time: bookSel.time, name, phone: normalizePhone(phoneRaw),
+      phoneDisplay: phoneRaw, status: "confirmed", createdAt: Date.now()
+    };
+    state.bookings.push(booking); save();
+    lastConfirmed = booking;
+    bookSel.time = "";
+    updateManageCount();
+    renderBook();
+    window.scrollTo({top:0, behavior:"smooth"});
+  };
+}
+
+function waLink(b){
+  const biz = state.business || "our business";
+  const msg =
+`Hi ${b.name}, your booking at ${biz} is confirmed.
+
+Service: ${b.serviceName}
+Date: ${fmtDate(b.date)}
+Time: ${fmtTime(b.time)}
+
+We look forward to seeing you. Reply here if anything changes.`;
+  return `https://wa.me/${b.phone}?text=${encodeURIComponent(msg)}`;
+}
+
+function renderSuccess(el){
+  const b = lastConfirmed;
+  el.innerHTML = `
+    <div class="card">
+      <div class="success">
+        <div class="check">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#1f5c4d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <h2>Booking confirmed</h2>
+        <p style="color:var(--muted);margin:0">for ${esc(b.name)}</p>
+        <div class="recap">
+          <div class="recap-row"><span class="l">Service</span><span class="v">${esc(b.serviceName)}</span></div>
+          <div class="recap-row"><span class="l">When</span><span class="v">${esc(fmtDateShort(b.date))}, ${esc(fmtTime(b.time))}</span></div>
+          <div class="recap-row"><span class="l">Duration</span><span class="v">${b.duration} min</span></div>
+          <div class="recap-row"><span class="l">Price</span><span class="v">${money(b.price)}</span></div>
+          <div class="recap-row"><span class="l">Phone</span><span class="v">${esc(b.phoneDisplay||b.phone)}</span></div>
+        </div>
+        <a class="btn btn-accent btn-block" href="${waLink(b)}" target="_blank" rel="noopener">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2zm5.8 14.18c-.24.68-1.42 1.3-1.95 1.34-.5.05-1.13.07-1.82-.11-.42-.13-.96-.31-1.65-.61-2.9-1.25-4.79-4.17-4.94-4.37-.14-.19-1.18-1.57-1.18-3 0-1.42.75-2.12 1.01-2.41.27-.29.58-.36.78-.36.19 0 .39 0 .56.01.18.01.42-.07.66.5.24.58.82 2 .89 2.15.07.14.12.31.02.5-.09.19-.14.31-.27.48-.14.16-.29.36-.41.48-.14.14-.28.29-.12.57.16.29.72 1.18 1.54 1.91 1.06.95 1.95 1.24 2.24 1.38.29.14.45.12.62-.07.16-.19.71-.83.9-1.11.19-.29.38-.24.64-.14.27.09 1.68.79 1.97.94.29.14.48.21.55.33.07.12.07.68-.17 1.35z"/></svg>
+          Send WhatsApp confirmation
+        </a>
+        <div style="display:flex;gap:10px;margin-top:12px">
+          <button class="btn btn-outline" style="flex:1" id="sc-new">Book another</button>
+          <button class="btn btn-ghost" style="flex:1" id="sc-manage">View bookings</button>
+        </div>
+        <p class="divider-note">Saved on this device. You can resend the message any time from Manage.</p>
+      </div>
+    </div>`;
+  $("#sc-new").onclick = ()=>{ lastConfirmed=null; bookSel.time=""; renderBook(); };
+  $("#sc-manage").onclick = ()=>{ lastConfirmed=null; setTab("manage"); };
+}
+
+/* ---------------- MANAGE panel ---------------- */
+let manageFilter = "upcoming"; // upcoming | today | all
+
+function renderManage(){
+  const el = $("#panel-manage");
+  const all = state.bookings.slice();
+
+  const today = todayStr();
+  const active = all.filter(b=>b.status!=="cancelled" && b.status!=="done");
+  const upcomingActive = active.filter(b=> b.date >= today);
+  const todayCount = active.filter(b=> b.date===today).length;
+  const doneCount = all.filter(b=>b.status==="done").length;
+
+  // stats
+  const stats = `
+    <div class="stats">
+      <div class="stat"><div class="num">${upcomingActive.length}</div><div class="lbl">Upcoming</div></div>
+      <div class="stat"><div class="num">${todayCount}</div><div class="lbl">Today</div></div>
+      <div class="stat"><div class="num">${doneCount}</div><div class="lbl">Completed</div></div>
+    </div>`;
+
+  const bar = `
+    <div class="filterbar">
+      <button class="pill ${manageFilter==='upcoming'?'active':''}" data-f="upcoming">Upcoming</button>
+      <button class="pill ${manageFilter==='today'?'active':''}" data-f="today">Today</button>
+      <button class="pill ${manageFilter==='all'?'active':''}" data-f="all">All</button>
+    </div>`;
+
+  // filter set
+  let list;
+  if(manageFilter==="today") list = all.filter(b=> b.date===today);
+  else if(manageFilter==="upcoming") list = all.filter(b=> b.date>=today && b.status!=="cancelled" && b.status!=="done");
+  else list = all.slice();
+
+  let body;
+  if(all.length === 0){
+    body = `<div class="card"><div class="empty">
+      <div class="em">&#128237;</div><h3>No bookings yet</h3>
+      <p>When you confirm a booking it will appear here, grouped by day.</p>
+      <button class="btn btn-primary" id="mg-book" style="margin-top:16px">Take a booking</button>
+    </div></div>`;
+  } else if(list.length === 0){
+    const label = manageFilter==="today" ? "today" : "in this view";
+    body = `<div class="card"><div class="empty">
+      <div class="em">&#127793;</div><h3>Nothing ${esc(label)}</h3>
+      <p>Try a different filter to see more of your bookings.</p></div>`;
+  } else {
+    // group by date
+    const groups = {};
+    list.forEach(b=>{ (groups[b.date] = groups[b.date]||[]).push(b); });
+    const dates = Object.keys(groups).sort();
+    body = dates.map(d=>{
+      const items = groups[d].sort((a,b)=> a.time.localeCompare(b.time));
+      const isToday = d===today;
+      return `
+      <div class="daygroup">
+        <div class="dayhd">
+          <h3>${esc(fmtDate(d))}</h3>
+          <span class="n">${items.length} booking${items.length>1?'s':''}</span>
+          ${isToday?'<span class="today-badge">Today</span>':''}
+        </div>
+        ${items.map(b=>renderBookingRow(b)).join("")}
+      </div>`;
+    }).join("");
+  }
+
+  el.innerHTML = stats + bar + body;
+
+  el.querySelectorAll(".pill").forEach(p=> p.onclick = ()=>{ manageFilter=p.dataset.f; renderManage(); });
+  const mb = $("#mg-book"); if(mb) mb.onclick = ()=>setTab("book");
+  el.querySelectorAll("[data-done]").forEach(b=> b.onclick = ()=>updateStatus(b.dataset.done,"done"));
+  el.querySelectorAll("[data-cancel]").forEach(b=> b.onclick = ()=>{
+    updateStatus(b.dataset.cancel,"cancelled");
+  });
+  el.querySelectorAll("[data-restore]").forEach(b=> b.onclick = ()=>updateStatus(b.dataset.restore,"confirmed"));
+  el.querySelectorAll("[data-wa]").forEach(b=> {
+    const bk = state.bookings.find(x=>x.id===b.dataset.wa);
+    if(bk) b.onclick = ()=> window.open(waLink(bk),"_blank","noopener");
+  });
+}
+
+function renderBookingRow(b){
+  const statusTag = b.status==="done" ? '<span class="tag done">Done</span>'
+    : b.status==="cancelled" ? '<span class="tag cancel">Cancelled</span>' : '';
+  let acts = "";
+  if(b.status==="confirmed"){
+    acts = `
+      <button class="iconbtn" title="Resend WhatsApp" data-wa="${b.id}">&#128172;</button>
+      <button class="btn btn-outline btn-sm" data-done="${b.id}">Done</button>
+      <button class="btn btn-ghost btn-sm" data-cancel="${b.id}">Cancel</button>`;
+  } else {
+    acts = `<button class="btn btn-ghost btn-sm" data-restore="${b.id}">Reopen</button>`;
+  }
+  return `
+    <div class="bk ${b.status==='done'?'done':''}">
+      <div class="bk-time">${esc(fmtTime(b.time).replace(' ','')).replace(/(AM|PM)/,'<small>$1</small>')}</div>
+      <div class="bk-main">
+        <div class="bk-nm">${esc(b.name)} ${statusTag}</div>
+        <div class="bk-svc">${esc(b.serviceName)} &middot; ${b.duration} min &middot; ${money(b.price)} &middot; ${esc(b.phoneDisplay||b.phone)}</div>
+      </div>
+      <div class="bk-acts">${acts}</div>
+    </div>`;
+}
+
+function updateStatus(id, status){
+  const b = state.bookings.find(x=>x.id===id);
+  if(!b) return;
+  b.status = status; save();
+  const msg = status==="done"?"Marked as done.":status==="cancelled"?"Booking cancelled.":"Booking reopened.";
+  toast(msg);
+  updateManageCount(); renderManage();
+}
+
+/* ---------------- Shared render ---------------- */
+function updateManageCount(){
+  const today = todayStr();
+  const n = state.bookings.filter(b=> b.date>=today && b.status!=="cancelled" && b.status!=="done").length;
+  $("#manageCnt").textContent = n;
+}
+function updateHero(){
+  $("#heroTitle").textContent = state.business ? state.business : "Appointments, sorted.";
+}
+function render(){
+  if(activeTab==="setup") renderSetup();
+  else if(activeTab==="book") renderBook();
+  else if(activeTab==="manage") renderManage();
+  updateManageCount();
+}
+
+/* ---------------- Init ---------------- */
+updateHero();
+updateManageCount();
+render();
+// If no services set up yet, nudge toward setup on first load
+if(state.services.length===0 && !state.business){
+  // keep on Book (which shows the setup nudge)
+}
+</script>
+</body>
+</html>
