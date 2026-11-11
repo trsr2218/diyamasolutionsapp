@@ -141,7 +141,7 @@ const About = () => (
                 variants={fadeUp}
                 className={`group relative overflow-hidden rounded-2xl bg-ink ring-1 ring-foreground/10 ${i % 5 === 0 ? "col-span-2 aspect-[16/9]" : "aspect-[4/3]"}`}
               >
-                <img src={ph.src} alt={ph.alt} loading="lazy" className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]" />
+                <img src={ph.src} alt={ph.alt} loading="lazy" className="w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.04]" />
                 <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent opacity-80" />
               </motion.figure>
             ))}

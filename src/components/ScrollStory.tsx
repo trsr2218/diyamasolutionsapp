@@ -84,7 +84,7 @@ const ScrollStory = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                  className="absolute inset-0 w-full h-full object-cover"
+                  className="absolute inset-0 w-full h-full object-cover object-top"
                 />
               </AnimatePresence>
               <div className="absolute inset-x-0 bottom-0 p-5 flex items-end justify-between gap-4">

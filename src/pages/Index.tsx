@@ -92,9 +92,9 @@ const Index = () => {
           <img
             src={heroPerson}
             alt=""
-            className="w-full h-full object-cover object-[70%_30%] opacity-[0.5] animate-kenburns"
+            className="w-full h-full object-cover object-[72%_25%] opacity-[0.68] animate-kenburns"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/30" />
+          <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/75 to-ink/10" />
           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-ink/70" />
         </div>
         <div className="absolute inset-0 bg-grid opacity-40" />
@@ -310,7 +310,7 @@ const Index = () => {
                     src={ph.src}
                     alt={ph.alt}
                     loading="lazy"
-                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                    className="w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent opacity-80" />
                 </motion.figure>
