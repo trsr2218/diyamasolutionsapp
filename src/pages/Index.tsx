@@ -24,6 +24,7 @@ import Seo from "@/components/Seo";
 import { pageSeo } from "@/seo/pageSeo";
 import { heroPerson } from "@/data/people";
 import BoardStrip from "@/components/BoardStrip";
+import BuilderShowcase from "@/components/BuilderShowcase";
 
 /* Homepage, rebuilt November 2026 around the pivot to systems and automation.
  *
@@ -373,47 +374,12 @@ const Index = () => {
       {/* BeOn Tech, coming soon */}
       <BeOnTeaser />
 
-      {/* Design your own site, then the free tools */}
+      {/* The builder, launched: it runs on the page rather than being described */}
+      <BuilderShowcase />
+
+      {/* The free tools */}
       <section className="section-padding bg-background">
         <div className="container-wide mx-auto">
-          <motion.div variants={fadeUp} {...inView} className="relative overflow-hidden rounded-2xl bg-ink text-white p-7 sm:p-10 mb-5 grid lg:grid-cols-[1.2fr_0.8fr] gap-8 items-center">
-            <div className="absolute inset-0 bg-grid opacity-50" />
-            <div className="absolute -top-24 -right-16 w-[26rem] h-[26rem] rounded-full bg-accent/20 blur-3xl pointer-events-none" />
-            <div className="relative">
-              <p className="eyebrow text-accent mb-4">New: design it yourself</p>
-              <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-display font-bold leading-[1.05] tracking-[-0.02em] mb-4">
-                Design your own website, watch it take shape, then order it from us.
-              </h2>
-              <p className="text-white/65 text-lg leading-relaxed mb-7 max-w-xl">
-                Pick a style, your colour, your pages and what the site must do. The mock-up updates
-                as you go and the starting price comes straight from our price list.
-              </p>
-              <Link to="/build" className="btn-accent group inline-flex items-center gap-2 font-semibold">
-                Start designing <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
-              </Link>
-            </div>
-            <div className="relative hidden lg:block">
-              <div className="glass rounded-xl p-4 space-y-2.5 rotate-[-3deg] hover:rotate-0 transition-transform duration-500">
-                <div className="flex items-center justify-between text-[11px] text-white/60">
-                  <span className="font-semibold text-white">Your Business</span>
-                  <span className="flex gap-2"><span>Home</span><span>Menu</span><span>Contact</span></span>
-                </div>
-                <div className="h-14 rounded-lg bg-gradient-to-r from-accent/40 to-transparent flex items-center px-3">
-                  <span className="h-2 w-2/3 rounded bg-white/70" />
-                </div>
-                <div className="grid grid-cols-3 gap-2">
-                  {[0, 1, 2].map((i) => (
-                    <span key={i} className="h-12 rounded-lg bg-white/10 border border-white/10 block" />
-                  ))}
-                </div>
-                <div className="flex gap-1.5">
-                  {["#F2B134", "#0F9B8E", "#E0343C", "#2F6FED", "#8B5CF6"].map((c) => (
-                    <span key={c} className="w-5 h-5 rounded-full border border-white/30" style={{ background: c }} />
-                  ))}
-                </div>
-              </div>
-            </div>
-          </motion.div>
           <motion.div variants={stagger} {...inView} className="grid md:grid-cols-2 gap-5">
             <motion.div variants={fadeUp} className="card-elevated p-7 sm:p-9 flex flex-col">
               <div className="flex items-center gap-4 mb-5">
