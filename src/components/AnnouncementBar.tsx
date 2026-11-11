@@ -22,8 +22,8 @@ const adverts = [
     to: "/build",
     icon: Sparkles,
     text: (
-      <span>
-        <strong className="font-semibold">Design your own website.</strong> Describe it, drag it, take it live
+      <span className="truncate">
+        <strong className="font-semibold">Design your own website.</strong> <span className="hidden sm:inline">Describe it, drag it, take it live</span>
       </span>
     ),
   },

@@ -269,7 +269,7 @@ async function askDiyamaAi(text: string): Promise<Partial<Design>> {
   const end = out.lastIndexOf("}");
   if (start < 0 || end < start) throw new Error("no json");
   const j = JSON.parse(out.slice(start, end + 1)) as Record<string, unknown>;
-  const str = (v: unknown, max: number) => (typeof v === "string" ? v.replace(/[20142013]/g, ",").trim().slice(0, max) : "");
+  const str = (v: unknown, max: number) => (typeof v === "string" ? v.replace(/[—–]/g, ",").trim().slice(0, max) : "");
   const pick = (v: unknown, list: { id: string }[]) => (typeof v === "string" && ids(list).includes(v) ? v : undefined);
   const sections = only(j.sections, ids(sectionOptions)).slice(0, 8);
   if (sections[0] !== "offer") sections.unshift("offer");
@@ -559,7 +559,7 @@ const SiteBuilder = () => {
       </section>
 
       <section className="section-padding bg-background">
-        <div className="container-wide mx-auto grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-8 lg:gap-12 items-start">
+        <div className="container-wide mx-auto grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-8 lg:gap-12 items-start">
           {/* Controls */}
           <div className="space-y-8">
             {/* Diyama AI assist */}
@@ -918,7 +918,7 @@ const SiteBuilder = () => {
                   {/* nav */}
                   <div className="flex items-center justify-between px-5 py-3.5 text-xs" style={{ borderBottom: `1px solid ${style.muted}33` }}>
                     <span className="font-bold text-sm truncate max-w-[45%]">{name}</span>
-                    <div className={`gap-3 ${phone ? "hidden" : "flex"}`} style={{ color: style.muted }}>
+                    <div className={`gap-3 ${phone ? "hidden" : "hidden sm:flex"}`} style={{ color: style.muted }}>
                       {navPages.slice(0, 5).map((p) => (
                         <span key={p}>{p}</span>
                       ))}
@@ -1018,7 +1018,7 @@ const Block = ({ id, label, muted, onRemove, children }: { id: string; label: st
       whileDrag={{ scale: 1.02, boxShadow: "0 18px 40px rgba(0,0,0,0.35)", zIndex: 5 }}
       className="relative group rounded-lg"
     >
-      <div className="absolute -left-1 top-1 bottom-1 w-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10">
+      <div className="absolute -left-1 top-1 bottom-1 w-6 flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity z-10">
         <span
           onPointerDown={(e) => controls.start(e)}
           className="cursor-grab active:cursor-grabbing touch-none rounded-md p-0.5"
@@ -1032,7 +1032,7 @@ const Block = ({ id, label, muted, onRemove, children }: { id: string; label: st
       <button
         type="button"
         onClick={onRemove}
-        className="absolute -right-1 -top-1 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow"
+        className="absolute -right-1 -top-1 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity z-10 shadow"
         title={`Remove ${label}`}
         aria-label={`Remove ${label}`}
       >
