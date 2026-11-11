@@ -1,4 +1,4 @@
-import{c as w,r as d,j as e,P as k,m as i,D as E,n as S,i as C,L,A as W,S as q,p as $,o as D,q as G}from"./index-BMl6odxz.js";import{W as O}from"./WhatsAppFallback-BX5wocBJ.js";import{S as z,a as T}from"./supabaseEnv-2un-2RAE.js";/**
+import{c as w,r as d,j as e,P as k,m as i,D as E,o as S,k as C,L,A as W,S as q,p as $,q as D,v as G}from"./index-Ek-yucYw.js";import{W as O}from"./WhatsAppFallback-3im4BZGt.js";import{S as z,a as T}from"./supabaseEnv-2un-2RAE.js";/**
  * @license lucide-react v0.462.0 - ISC
  *
  * This source code is licensed under the ISC license.
