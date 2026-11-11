@@ -131,6 +131,12 @@ const SITE_CARE_PAYMENTS = lowest('4. Keeping it live', { expect: 385, pattern: 
 /* Section 3b, added 11 November 2026 when Ernest set these three figures. */
 const FRONT_DESK_SETUP = lowest('3b. Systems and automation', { expect: 2750, pattern: /\*\*K([\d,]+) set up, then K[\d,]+\/month\*\*/ });
 const FRONT_DESK_MONTHLY = lowest('3b. Systems and automation', { expect: 1100, pattern: /\*\*K[\d,]+ set up, then K([\d,]+)\/month\*\*/ });
+/* Section 3c, added 12 November 2026: the two hosted packages sold from /build. */
+const DIYAMA_ADDRESS_SETUP = lowest('3c. Hosted on Diyama, from the site builder', { expect: 825, pattern: /Diyama address\*\*[^|]*\|[^|]*\| \*\*K([\d,]+) set up, then K[\d,]+\/month\*\*/ });
+const DIYAMA_ADDRESS_MONTHLY = lowest('3c. Hosted on Diyama, from the site builder', { expect: 220, pattern: /Diyama address\*\*[^|]*\|[^|]*\| \*\*K[\d,]+ set up, then K([\d,]+)\/month\*\*/ });
+const PARTNER_PAGE_SETUP = lowest('3c. Hosted on Diyama, from the site builder', { expect: 550, pattern: /Partner page on Diyama\*\*[^|]*\|[^|]*\| \*\*K([\d,]+) set up, then K[\d,]+\/month\*\*/ });
+const PARTNER_PAGE_MONTHLY = lowest('3c. Hosted on Diyama, from the site builder', { expect: 110, pattern: /Partner page on Diyama\*\*[^|]*\|[^|]*\| \*\*K[\d,]+ set up, then K([\d,]+)\/month\*\*/ });
+
 const AUTOMATION_SPRINT = lowest('3b. Systems and automation', { expect: 5500, pattern: /Automation Sprint\*\*[^|]*\|[^|]*\| \*\*K([\d,]+)\*\*/ });
 
 const CARDS = [
@@ -233,6 +239,10 @@ export const sitePrices = {
   secondLanguage: ${SECOND_LANGUAGE},
   siteCareMonthly: ${SITE_CARE},
   siteCarePaymentsMonthly: ${SITE_CARE_PAYMENTS},
+  diyamaAddressSetup: ${DIYAMA_ADDRESS_SETUP},
+  diyamaAddressMonthly: ${DIYAMA_ADDRESS_MONTHLY},
+  partnerPageSetup: ${PARTNER_PAGE_SETUP},
+  partnerPageMonthly: ${PARTNER_PAGE_MONTHLY},
 };
 `;
 

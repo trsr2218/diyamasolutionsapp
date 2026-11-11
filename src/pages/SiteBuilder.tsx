@@ -18,7 +18,7 @@ import { sitePrices } from "@/data/pricing";
  *
  * Ernest, 11 November 2026: "a provision where users create their own website
  * template and choose to order it from us". Then, 12 November: build it drag and
- * drop or with Diyama AI assist, and when they love it let them order it for a
+ * drop or with Diyama AI assist. When they love it they order it for a
  * subdomain, as a page among the people we advertise, or as a full build on their
  * own domain, with packages.
  *
@@ -30,9 +30,10 @@ import { sitePrices } from "@/data/pricing";
  * RULES. Every figure comes from the generated pricing file (section 3 of the price
  * list), never typed here. The estimate is a starting figure and the page says so;
  * the final price is the written quote. The two hosted packages (a Diyama address,
- * a page on Diyama) have no price on the price list yet, so they say "priced in your
- * written quote" until Ernest sets one. The design is saved in the visitor's own
- * browser so it survives a refresh, and nothing is sent until they press the button. */
+ * a partner page on Diyama) are section 3c of the price list, approved 12 November
+ * 2026; they carry no logins, calendar, payments or shop, those need a full build.
+ * The design is saved in the visitor's own browser so it survives a refresh;
+ * nothing is sent until they press the button. */
 
 const kinds = [
   { id: "restaurant", label: "Restaurant or food", cards: ["Our menu", "Today's specials", "Order on WhatsApp"], hero: "Good food, made fresh every day." },
@@ -109,14 +110,14 @@ const liveOptions = [
     id: "sub",
     label: "A Diyama address",
     icon: Link2,
-    blurb: "Your site live at a Diyama address, hosted and cared for by us, for a monthly fee instead of a build.",
+    blurb: "Your design built as it looks, live at a Diyama address, hosted and cared for by us. A small set-up fee and a monthly fee instead of a build price.",
     address: (slug: string) => `${slug || "yourbusiness"}.diyama.online`,
   },
   {
     id: "page",
-    label: "A page on Diyama",
+    label: "A partner page on Diyama",
     icon: LayoutTemplate,
-    blurb: "One page for your business on diyama.online, listed with the brands we advertise and pushed on our pages every week.",
+    blurb: "One page for your business on diyama.online, listed with the brands we advertise and included in our monthly partners post.",
     address: (slug: string) => `diyama.online/partners/${slug || "yourbusiness"}`,
   },
 ];
@@ -268,7 +269,7 @@ async function askDiyamaAi(text: string): Promise<Partial<Design>> {
   const end = out.lastIndexOf("}");
   if (start < 0 || end < start) throw new Error("no json");
   const j = JSON.parse(out.slice(start, end + 1)) as Record<string, unknown>;
-  const str = (v: unknown, max: number) => (typeof v === "string" ? v.replace(/[—–]/g, ",").trim().slice(0, max) : "");
+  const str = (v: unknown, max: number) => (typeof v === "string" ? v.replace(/[20142013]/g, ",").trim().slice(0, max) : "");
   const pick = (v: unknown, list: { id: string }[]) => (typeof v === "string" && ids(list).includes(v) ? v : undefined);
   const sections = only(j.sections, ids(sectionOptions)).slice(0, 8);
   if (sections[0] !== "offer") sections.unshift("offer");
@@ -311,6 +312,13 @@ const SiteBuilder = () => {
   const accent = accents.find((a) => a.id === d.accent)?.hex ?? accents[0].hex;
   const live = liveOptions.find((l) => l.id === d.live) ?? liveOptions[0];
   const est = useMemo(() => estimate(d), [d]);
+  /* The hosted packages carry none of these; they make it a full build on the customer's own domain. */
+  const hostedBlocked = d.live === "own" ? [] : [
+    d.features.includes("calendar") ? "Online booking calendar" : "",
+    d.features.includes("logins") ? "Customer logins" : "",
+    d.features.includes("payments") ? "Online payments" : "",
+    d.sections.includes("shop") || d.pages.includes("shop") ? "Online shop" : "",
+  ].filter(Boolean);
   const name = d.name.trim() || "Your Business";
   const tagline = d.tagline.trim() || kind.hero;
   const cards = d.cards.length === 3 ? d.cards : kind.cards;
@@ -350,7 +358,8 @@ const SiteBuilder = () => {
       About: d.about,
       Features: d.features.map((f) => featureOptions.find((o) => o.id === f)?.label ?? f).join(", ") || "none",
       "Go live as": `${live.label} (${live.address(slug)})`,
-      "Starting estimate": d.live === "own" ? `${fmtK(est.total)} (${est.tier.name}) plus Site Care ${fmtK(est.care)} a month` : "Priced in the written quote",
+      "Starting estimate": d.live === "own" ? `${fmtK(est.total)} (${est.tier.name}) plus Site Care ${fmtK(est.care)} a month` : d.live === "sub" ? `${fmtK(sitePrices.diyamaAddressSetup)} set up, then ${fmtK(sitePrices.diyamaAddressMonthly)} a month` : `${fmtK(sitePrices.partnerPageSetup)} set up, then ${fmtK(sitePrices.partnerPageMonthly)} a month`,
+      "Needs a full build": hostedBlocked.length ? hostedBlocked.join(", ") : undefined,
       "Designed with": d.byAi ? "Diyama AI, then edited by the visitor" : "By hand",
       Name: order.fullName,
       WhatsApp: order.whatsapp,
@@ -372,7 +381,7 @@ const SiteBuilder = () => {
         challenge: summary(),
         goal: kind.label,
         format: "WhatsApp Chat",
-        budget: d.live === "own" ? `${fmtK(est.total)} starting estimate, ${est.tier.name}` : `${live.label}, to be quoted`,
+        budget: d.live === "own" ? `${fmtK(est.total)} starting estimate, ${est.tier.name}` : d.live === "sub" ? `${fmtK(sitePrices.diyamaAddressSetup)} set up, ${fmtK(sitePrices.diyamaAddressMonthly)} a month` : `${fmtK(sitePrices.partnerPageSetup)} set up, ${fmtK(sitePrices.partnerPageMonthly)} a month`,
       });
       if (error) throw error;
       setSent(true);
@@ -755,7 +764,7 @@ const SiteBuilder = () => {
                         <span className="flex items-center justify-between gap-3">
                           <span className="font-display font-bold">{l.label}</span>
                           <span className={`text-xs font-semibold rounded-full px-2.5 py-1 shrink-0 ${on ? "bg-accent/20 text-foreground" : "bg-muted text-muted-foreground"}`}>
-                            {l.id === "own" ? `From ${fmtK(est.total)}` : "Priced in your quote"}
+                            {l.id === "own" ? `From ${fmtK(est.total)}` : l.id === "sub" ? `${fmtK(sitePrices.diyamaAddressSetup)} + ${fmtK(sitePrices.diyamaAddressMonthly)}/mo` : `${fmtK(sitePrices.partnerPageSetup)} + ${fmtK(sitePrices.partnerPageMonthly)}/mo`}
                           </span>
                         </span>
                         <span className="block text-sm text-muted-foreground mt-1 leading-relaxed">{l.blurb}</span>
@@ -794,20 +803,31 @@ const SiteBuilder = () => {
                 </>
               ) : (
                 <>
-                  <p className="eyebrow text-accent mb-3">{live.label}</p>
-                  <p className="font-display text-3xl font-extrabold leading-tight mb-3">
-                    {d.live === "sub" ? "Live at a Diyama address, cared for by us." : "One page, seen by everyone we reach."}
+                  <p className="eyebrow text-accent mb-3">{live.label}, from our price list</p>
+                  <div className="flex items-end gap-3 mb-1">
+                    <motion.span key={d.live} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="font-display text-5xl font-extrabold text-gold-gradient leading-none">
+                      {fmtK(d.live === "sub" ? sitePrices.diyamaAddressSetup : sitePrices.partnerPageSetup)}
+                    </motion.span>
+                    <span className="text-white/60 text-sm pb-1">to set up</span>
+                  </div>
+                  <p className="font-display text-2xl font-bold leading-tight mb-4">
+                    then {fmtK(d.live === "sub" ? sitePrices.diyamaAddressMonthly : sitePrices.partnerPageMonthly)} a month
                   </p>
                   <ul className="text-sm text-white/70 space-y-1.5 mb-5">
                     {(d.live === "sub"
-                      ? ["Your design, built as it looks here", `Live at ${live.address(slug)}`, "Hosting, SSL and security handled by Diyama", "A monthly fee, quoted in writing, instead of a build price", "Move to your own domain later, your design comes with you"]
-                      : ["Your design, built as one page", `Live at ${live.address(slug)}`, "Listed with the brands Diyama advertises", "Shared on our pages, where thousands already look", "Upgrade to a full site whenever you are ready"]
+                      ? ["Your design, built as it looks here", `Live at ${live.address(slug)}`, "Site Care and hosting in the monthly fee, from month one", "One round of changes, your content in one batch", "Move to your own domain later, your design and your set-up fee come with you"]
+                      : ["Your design, built as one page", `Live at ${live.address(slug)}`, "Listed with the brands Diyama advertises", "In our monthly partners post, one small change a month", "Upgrade to a full site whenever you are ready, set-up fee credited"]
                     ).map((t) => (
                       <li key={t} className="flex items-start gap-2.5"><Check size={15} className="text-accent shrink-0 mt-0.5" /><span>{t}</span></li>
                     ))}
                   </ul>
+                  {hostedBlocked.length > 0 && (
+                    <p className="text-xs text-accent leading-relaxed mb-3">
+                      {hostedBlocked.join(", ")} {hostedBlocked.length > 1 ? "need" : "needs"} a full build on your own domain. Pick that above, or drop {hostedBlocked.length > 1 ? "them" : "it"} and this package stands.
+                    </p>
+                  )}
                   <p className="text-xs text-white/50 leading-relaxed">
-                    This package is priced in your written quote, which we send on WhatsApp before any work begins. Nothing is paid here.
+                    Set-up before it goes live, the monthly fee in advance. The written quote comes on WhatsApp before any work begins. Nothing is paid here.
                   </p>
                 </>
               )}

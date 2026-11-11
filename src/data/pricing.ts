@@ -140,4 +140,8 @@ export const sitePrices = {
   secondLanguage: 660,
   siteCareMonthly: 165,
   siteCarePaymentsMonthly: 385,
+  diyamaAddressSetup: 825,
+  diyamaAddressMonthly: 220,
+  partnerPageSetup: 550,
+  partnerPageMonthly: 110,
 };
