@@ -1,27 +1,37 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, Reorder, useDragControls } from "framer-motion";
 import {
   ArrowRight, Check, CheckCircle, Loader2, MessageCircle, Monitor, Smartphone, Send, Star, MapPin, Calendar, ShoppingBag, Sparkles,
+  GripVertical, X, Plus, Globe, Link2, LayoutTemplate, Clock, Users, Wand2, type LucideIcon,
 } from "lucide-react";
 import PageTransition from "@/components/PageTransition";
 import Seo from "@/components/Seo";
 import WhatsAppFallback from "@/components/WhatsAppFallback";
 import { pageSeo } from "@/seo/pageSeo";
 import { supabase } from "@/integrations/supabase/client";
+import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from "@/lib/supabaseEnv";
 import { formToMessage, whatsappLink } from "@/lib/whatsapp";
 import { sitePrices } from "@/data/pricing";
 
 /* Design your own website, watch it take shape, order it.
  *
  * Ernest, 11 November 2026: "a provision where users create their own website
- * template and choose to order it from us". The visitor picks a style, colour,
- * pages and features, sees a live mock-up of their site, gets an honest starting
- * price from the price list and sends the design to Diyama in one tap.
+ * template and choose to order it from us". Then, 12 November: build it drag and
+ * drop or with Diyama AI assist, and when they love it let them order it for a
+ * subdomain, as a page among the people we advertise, or as a full build on their
+ * own domain, with packages.
+ *
+ * So the page has three parts. The visitor describes the business and Diyama AI
+ * drafts the whole design, or they pick everything by hand. The mock-up is made of
+ * sections they drag into the order they want, add and remove. Then they choose how
+ * it goes live and send the design to Diyama in one tap.
  *
  * RULES. Every figure comes from the generated pricing file (section 3 of the price
  * list), never typed here. The estimate is a starting figure and the page says so;
- * the final price is the written quote. The design is saved in the visitor's own
+ * the final price is the written quote. The two hosted packages (a Diyama address,
+ * a page on Diyama) have no price on the price list yet, so they say "priced in your
+ * written quote" until Ernest sets one. The design is saved in the visitor's own
  * browser so it survives a refresh, and nothing is sent until they press the button. */
 
 const kinds = [
@@ -60,10 +70,24 @@ const pageOptions = [
   { id: "blog", label: "News or blog" },
 ];
 
+/* The blocks the visitor drags around. The hero is always first and is not a block. */
+const sectionOptions: { id: string; label: string; blurb: string; icon: LucideIcon }[] = [
+  { id: "offer", label: "What you offer", blurb: "Three cards", icon: LayoutTemplate },
+  { id: "about", label: "About you", blurb: "A short story", icon: Users },
+  { id: "menu", label: "Menu or price list", blurb: "Items with prices", icon: ShoppingBag },
+  { id: "gallery", label: "Photo gallery", blurb: "Your best pictures", icon: Sparkles },
+  { id: "reviews", label: "Customer reviews", blurb: "Real words from customers", icon: Star },
+  { id: "booking", label: "Booking", blurb: "Customers book you", icon: Calendar },
+  { id: "shop", label: "Shop", blurb: "Products with prices", icon: ShoppingBag },
+  { id: "team", label: "Your team", blurb: "Faces and names", icon: Users },
+  { id: "hours", label: "Opening hours", blurb: "When you are open", icon: Clock },
+  { id: "map", label: "Map and directions", blurb: "Find us on Google Maps", icon: MapPin },
+  { id: "cta", label: "Call to action", blurb: "A banner that asks", icon: Send },
+  { id: "contact", label: "Contact form", blurb: "Messages land on WhatsApp", icon: MessageCircle },
+];
+
 const featureOptions = [
   { id: "whatsapp", label: "WhatsApp button", blurb: "One tap to chat with you" },
-  { id: "map", label: "Google map", blurb: "Directions to your door" },
-  { id: "reviews", label: "Customer reviews", blurb: "Real reviews shown on the site" },
   { id: "calendar", label: "Online booking calendar", blurb: "Customers pick a date and time" },
   { id: "logins", label: "Customer logins", blurb: "A members area or customer accounts" },
   { id: "payments", label: "Online payments", blurb: "Card or mobile money on the site" },
@@ -71,32 +95,93 @@ const featureOptions = [
   { id: "rush", label: "Rush, live in 48 hours", blurb: "Adds 30% to the build price" },
 ];
 
+/* The three ways the design can go live. Only the full build has a price on the price
+   list. The other two are quoted until Ernest sets their figures. */
+const liveOptions = [
+  {
+    id: "own",
+    label: "Your own domain",
+    icon: Globe,
+    blurb: "The full build, live on your own address. Hosting, domain and SSL are free for the first twelve months.",
+    address: (slug: string) => `www.${slug || "yourbusiness"}.com`,
+  },
+  {
+    id: "sub",
+    label: "A Diyama address",
+    icon: Link2,
+    blurb: "Your site live at a Diyama address, hosted and cared for by us, for a monthly fee instead of a build.",
+    address: (slug: string) => `${slug || "yourbusiness"}.diyama.online`,
+  },
+  {
+    id: "page",
+    label: "A page on Diyama",
+    icon: LayoutTemplate,
+    blurb: "One page for your business on diyama.online, listed with the brands we advertise and pushed on our pages every week.",
+    address: (slug: string) => `diyama.online/partners/${slug || "yourbusiness"}`,
+  },
+];
+
 interface Design {
   name: string;
   tagline: string;
+  about: string;
+  cards: string[];
   kind: string;
   style: string;
   accent: string;
   pages: string[];
+  sections: string[];
   features: string[];
+  live: string;
+  byAi: boolean;
 }
 
 const defaultDesign: Design = {
   name: "",
   tagline: "",
+  about: "",
+  cards: [],
   kind: "restaurant",
   style: "bold",
   accent: "gold",
   pages: ["about", "services", "contact"],
-  features: ["whatsapp", "map"],
+  sections: ["offer", "about", "map"],
+  features: ["whatsapp"],
+  live: "own",
+  byAi: false,
 };
 
 const STORAGE = "diyama-site-design";
 
+const ids = (list: { id: string }[]) => list.map((x) => x.id);
+const only = (arr: unknown, allowed: string[]) =>
+  Array.isArray(arr) ? arr.filter((x): x is string => typeof x === "string" && allowed.includes(x)).filter((x, i, a) => a.indexOf(x) === i) : [];
+
+/* Designs saved before sections existed carried gallery, reviews, booking, shop and
+   map as pages or features. Carry them over so nobody's saved design breaks. */
+const migrate = (raw: Partial<Design> & { features?: string[]; pages?: string[] }): Design => {
+  const d: Design = { ...defaultDesign, ...raw };
+  if (!Array.isArray(raw.sections)) {
+    const s = ["offer"];
+    if ((raw.pages ?? []).includes("about")) s.push("about");
+    if ((raw.pages ?? []).includes("gallery")) s.push("gallery");
+    if ((raw.features ?? []).includes("reviews")) s.push("reviews");
+    if ((raw.pages ?? []).includes("booking") || (raw.features ?? []).includes("calendar")) s.push("booking");
+    if ((raw.pages ?? []).includes("shop")) s.push("shop");
+    if ((raw.features ?? []).includes("map")) s.push("map");
+    d.sections = s;
+  }
+  d.sections = only(d.sections, ids(sectionOptions));
+  d.features = only(d.features, ids(featureOptions));
+  d.pages = only(d.pages, ids(pageOptions));
+  if (!ids(liveOptions).includes(d.live)) d.live = "own";
+  return d;
+};
+
 const load = (): Design => {
   try {
     const raw = localStorage.getItem(STORAGE);
-    if (raw) return { ...defaultDesign, ...JSON.parse(raw) };
+    if (raw) return migrate(JSON.parse(raw));
   } catch {
     /* private window or blocked storage: start fresh */
   }
@@ -105,20 +190,21 @@ const load = (): Design => {
 
 const fmtK = (n: number) => "K" + n.toLocaleString("en-US");
 
-/* The estimate, following section 3 of the price list tier by tier. */
+/* The estimate for a full build, following section 3 of the price list tier by tier. */
 const estimate = (d: Design) => {
   const has = (f: string) => d.features.includes(f);
+  const sec = (s: string) => d.sections.includes(s);
   const pages = d.pages.filter((p) => p !== "shop");
   let tier: { name: string; price: number };
   if (has("payments")) tier = { name: "Booking and payments site", price: sitePrices.bookingPayments };
   else if (has("calendar") || has("logins")) tier = { name: "Advanced web app", price: sitePrices.advancedApp };
-  else if (pages.length > 3 || pages.includes("gallery") || pages.includes("booking") || pages.includes("blog") || has("reviews"))
+  else if (pages.length > 3 || pages.includes("booking") || pages.includes("blog") || sec("gallery") || sec("reviews") || sec("booking") || sec("menu") || sec("team"))
     tier = { name: "Business web app", price: sitePrices.businessApp };
   else if (pages.length > 0) tier = { name: "Starter site", price: sitePrices.starter };
   else tier = { name: "Landing page", price: sitePrices.landing };
 
   const extras: { name: string; price: number }[] = [];
-  if (d.pages.includes("shop")) extras.push({ name: "Online shop, up to 30 products", price: sitePrices.shopExtra });
+  if (d.pages.includes("shop") || sec("shop")) extras.push({ name: "Online shop, up to 30 products", price: sitePrices.shopExtra });
   if (has("language")) extras.push({ name: "Second language version", price: sitePrices.secondLanguage });
   const subtotal = tier.price + extras.reduce((a, e) => a + e.price, 0);
   const rush = has("rush") ? Math.ceil((subtotal * 0.3) / 5) * 5 : 0;
@@ -127,6 +213,81 @@ const estimate = (d: Design) => {
   return { tier, extras, rush, total, care };
 };
 
+/* Diyama AI drafts the design from a sentence or two. It answers through the same
+   chat function the /ai page uses; the reply is streamed, gathered and read as JSON.
+   Anything it gets wrong is dropped, never guessed. */
+const aiPrompt = (text: string) =>
+  [
+    "A visitor on diyama.online/build wants a website designed from this description of their business.",
+    "Reply with ONLY a JSON object, no prose, no markdown fences, with exactly these keys:",
+    `name: the business name, under 40 characters.`,
+    `tagline: one line for the top of the site, under 70 characters, no dashes.`,
+    `kind: one of ${ids(kinds).join(", ")}.`,
+    `style: one of ${ids(styles).join(", ")}.`,
+    `accent: one of ${ids(accents).join(", ")}.`,
+    `pages: an array from ${ids(pageOptions).join(", ")}.`,
+    `sections: an array in display order from ${ids(sectionOptions).join(", ")}, starting with offer, four to seven items.`,
+    `features: an array from whatsapp, calendar, logins, payments, language.`,
+    `cards: three short labels under 22 characters each for what they offer.`,
+    `about: two sentences about the business, under 180 characters, no dashes.`,
+    "",
+    "Description:",
+    text,
+  ].join("\n");
+
+async function askDiyamaAi(text: string): Promise<Partial<Design>> {
+  const resp = await fetch(`${SUPABASE_URL}/functions/v1/chat`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}` },
+    body: JSON.stringify({ messages: [{ role: "user", content: aiPrompt(text) }] }),
+  });
+  if (!resp.ok || !resp.body) throw new Error("no answer");
+  const reader = resp.body.getReader();
+  const decoder = new TextDecoder();
+  let buf = "";
+  let out = "";
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buf += decoder.decode(value, { stream: true });
+    let nl: number;
+    while ((nl = buf.indexOf("\n")) !== -1) {
+      const line = buf.slice(0, nl).replace(/\r$/, "");
+      buf = buf.slice(nl + 1);
+      if (!line.startsWith("data: ")) continue;
+      const json = line.slice(6).trim();
+      if (json === "[DONE]") break;
+      try {
+        out += JSON.parse(json).choices?.[0]?.delta?.content ?? "";
+      } catch {
+        /* a partial line, wait for the rest */
+      }
+    }
+  }
+  const start = out.indexOf("{");
+  const end = out.lastIndexOf("}");
+  if (start < 0 || end < start) throw new Error("no json");
+  const j = JSON.parse(out.slice(start, end + 1)) as Record<string, unknown>;
+  const str = (v: unknown, max: number) => (typeof v === "string" ? v.replace(/[—–]/g, ",").trim().slice(0, max) : "");
+  const pick = (v: unknown, list: { id: string }[]) => (typeof v === "string" && ids(list).includes(v) ? v : undefined);
+  const sections = only(j.sections, ids(sectionOptions)).slice(0, 8);
+  if (sections[0] !== "offer") sections.unshift("offer");
+  const cards = Array.isArray(j.cards) ? j.cards.filter((c): c is string => typeof c === "string").map((c) => c.trim().slice(0, 22)).filter(Boolean).slice(0, 3) : [];
+  return {
+    name: str(j.name, 40),
+    tagline: str(j.tagline, 80),
+    about: str(j.about, 200),
+    cards: cards.length === 3 ? cards : [],
+    kind: pick(j.kind, kinds),
+    style: pick(j.style, styles),
+    accent: pick(j.accent, accents),
+    pages: only(j.pages, ids(pageOptions)),
+    sections: sections.filter((s, i, a) => a.indexOf(s) === i),
+    features: only(j.features, ["whatsapp", "calendar", "logins", "payments", "language"]),
+    byAi: true,
+  };
+}
+
 const SiteBuilder = () => {
   const [d, setD] = useState<Design>(load);
   const [device, setDevice] = useState<"desktop" | "phone">("desktop");
@@ -134,6 +295,8 @@ const SiteBuilder = () => {
   const [loading, setLoading] = useState(false);
   const [failed, setFailed] = useState(false);
   const [sent, setSent] = useState(false);
+  const [brief, setBrief] = useState("");
+  const [ai, setAi] = useState<"idle" | "thinking" | "done" | "failed">("idle");
 
   useEffect(() => {
     try {
@@ -146,12 +309,33 @@ const SiteBuilder = () => {
   const kind = kinds.find((k) => k.id === d.kind) ?? kinds[0];
   const style = styles.find((s) => s.id === d.style) ?? styles[0];
   const accent = accents.find((a) => a.id === d.accent)?.hex ?? accents[0].hex;
+  const live = liveOptions.find((l) => l.id === d.live) ?? liveOptions[0];
   const est = useMemo(() => estimate(d), [d]);
   const name = d.name.trim() || "Your Business";
   const tagline = d.tagline.trim() || kind.hero;
+  const cards = d.cards.length === 3 ? d.cards : kind.cards;
+  const about = d.about.trim() || `${name} is a ${kind.label.toLowerCase().replace(" or ", " and ")} business in Zambia. Honest prices, quick replies and work we stand behind.`;
+  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "");
 
   const toggle = (key: "pages" | "features", id: string) =>
     setD((x) => ({ ...x, [key]: x[key].includes(id) ? x[key].filter((v) => v !== id) : [...x[key], id] }));
+  const addSection = (id: string) => setD((x) => (x.sections.includes(id) ? x : { ...x, sections: [...x.sections, id] }));
+  const removeSection = (id: string) => setD((x) => ({ ...x, sections: x.sections.filter((s) => s !== id) }));
+
+  const runAi = async () => {
+    if (brief.trim().length < 8) return;
+    setAi("thinking");
+    try {
+      const draft = await askDiyamaAi(brief.trim());
+      setD((x) => ({
+        ...x,
+        ...Object.fromEntries(Object.entries(draft).filter(([, v]) => v !== undefined && v !== "" && !(Array.isArray(v) && v.length === 0))),
+      }));
+      setAi("done");
+    } catch {
+      setAi("failed");
+    }
+  };
 
   const summary = () =>
     formToMessage("Website design from diyama.online/build", {
@@ -161,8 +345,13 @@ const SiteBuilder = () => {
       Style: style.label,
       Colour: d.accent,
       Pages: ["Home", ...d.pages.map((p) => pageOptions.find((o) => o.id === p)?.label ?? p)].join(", "),
+      "Sections, in order": ["Hero", ...d.sections.map((s) => sectionOptions.find((o) => o.id === s)?.label ?? s)].join(", "),
+      "What you offer": cards.join(", "),
+      About: d.about,
       Features: d.features.map((f) => featureOptions.find((o) => o.id === f)?.label ?? f).join(", ") || "none",
-      "Starting estimate": `${fmtK(est.total)} (${est.tier.name}) plus Site Care ${fmtK(est.care)} a month`,
+      "Go live as": `${live.label} (${live.address(slug)})`,
+      "Starting estimate": d.live === "own" ? `${fmtK(est.total)} (${est.tier.name}) plus Site Care ${fmtK(est.care)} a month` : "Priced in the written quote",
+      "Designed with": d.byAi ? "Diyama AI, then edited by the visitor" : "By hand",
       Name: order.fullName,
       WhatsApp: order.whatsapp,
       Email: order.email,
@@ -179,11 +368,11 @@ const SiteBuilder = () => {
         company: name,
         email: order.email,
         whatsapp: order.whatsapp || null,
-        topic: "Website designed in the site builder",
+        topic: `Website designed in the site builder, ${live.label.toLowerCase()}`,
         challenge: summary(),
         goal: kind.label,
         format: "WhatsApp Chat",
-        budget: `${fmtK(est.total)} starting estimate, ${est.tier.name}`,
+        budget: d.live === "own" ? `${fmtK(est.total)} starting estimate, ${est.tier.name}` : `${live.label}, to be quoted`,
       });
       if (error) throw error;
       setSent(true);
@@ -197,6 +386,139 @@ const SiteBuilder = () => {
   const navPages = ["Home", ...d.pages.map((p) => pageOptions.find((o) => o.id === p)?.label ?? p)];
   const has = (f: string) => d.features.includes(f);
   const font = style.serif ? "Georgia, 'Times New Roman', serif" : "'Plus Jakarta Sans', 'Inter', system-ui, sans-serif";
+  const phone = device === "phone";
+  const notYet = sectionOptions.filter((s) => !d.sections.includes(s.id));
+
+  /* One block of the mock-up, keyed by section id. */
+  const renderSection = (id: string) => {
+    switch (id) {
+      case "offer":
+        return (
+          <div className={`grid gap-2.5 ${phone ? "grid-cols-1" : "grid-cols-3"}`}>
+            {cards.map((c, i) => (
+              <div key={c + i} className="p-3.5" style={{ background: style.card, borderRadius: style.radius }}>
+                <span className="block w-7 h-7 mb-2.5 rounded-md" style={{ background: `${accent}33` }}>
+                  <span className="block w-3 h-3 m-2 rounded-sm" style={{ background: accent }} />
+                </span>
+                <p className="text-xs font-semibold">{c}</p>
+                <p className="text-[10px] mt-1" style={{ color: style.muted }}>{["Clear prices, no surprises.", "Updated every week.", "Reply within the hour."][i]}</p>
+              </div>
+            ))}
+          </div>
+        );
+      case "about":
+        return (
+          <div className={`grid gap-3 items-center ${phone ? "grid-cols-1" : "grid-cols-[1fr_1.4fr]"}`}>
+            <div className="aspect-[4/3]" style={{ borderRadius: style.radius, background: `linear-gradient(135deg, ${accent}99, ${style.card})` }} />
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.16em] mb-1.5" style={{ color: accent }}>About {name}</p>
+              <p className="text-[11px] leading-relaxed" style={{ color: style.muted }}>{about}</p>
+            </div>
+          </div>
+        );
+      case "menu":
+        return (
+          <div className="p-3.5 space-y-2" style={{ background: style.card, borderRadius: style.radius }}>
+            <p className="text-[10px] uppercase tracking-[0.16em]" style={{ color: style.muted }}>{d.kind === "restaurant" ? "Menu" : "Price list"}</p>
+            {[["Most popular", "K85"], ["The classic", "K120"], ["The full works", "K240"]].map(([n, p]) => (
+              <div key={n} className="flex items-center justify-between text-[11px] border-b last:border-0 pb-1.5 last:pb-0" style={{ borderColor: `${style.muted}33` }}>
+                <span className="font-medium">{n}</span>
+                <span className="font-semibold" style={{ color: accent }}>{p}</span>
+              </div>
+            ))}
+          </div>
+        );
+      case "gallery":
+        return (
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.16em] mb-2" style={{ color: style.muted }}>Gallery</p>
+            <div className="grid grid-cols-4 gap-1.5">
+              {[0, 1, 2, 3].map((i) => (
+                <div key={i} className="aspect-square" style={{ borderRadius: style.radius, background: `linear-gradient(${135 + i * 40}deg, ${accent}${["cc", "99", "77", "55"][i]}, ${style.card})` }} />
+              ))}
+            </div>
+          </div>
+        );
+      case "reviews":
+        return (
+          <div className="p-3.5 flex items-start gap-3" style={{ background: style.card, borderRadius: style.radius }}>
+            <span className="flex gap-0.5 shrink-0" style={{ color: accent }}>{[0, 1, 2, 3, 4].map((i) => <Star key={i} size={11} fill="currentColor" />)}</span>
+            <p className="text-[11px]" style={{ color: style.muted }}>"Quick, friendly and exactly as promised." A happy customer, Lusaka</p>
+          </div>
+        );
+      case "booking":
+        return (
+          <div className="p-3.5 flex items-center justify-between gap-3" style={{ background: style.card, borderRadius: style.radius }}>
+            <span className="flex items-center gap-2 text-xs font-semibold"><Calendar size={14} style={{ color: accent }} /> {has("calendar") ? "Pick a date and time" : "Book on WhatsApp"}</span>
+            <span className="rounded-md px-2.5 py-1 text-[10px] font-semibold" style={{ background: accent, color: "#0b0b0b" }}>{has("payments") ? "Book and pay" : "Book"}</span>
+          </div>
+        );
+      case "shop":
+        return (
+          <div>
+            <div className="flex items-center gap-2 mb-2 text-[10px] uppercase tracking-[0.16em]" style={{ color: style.muted }}><ShoppingBag size={11} /> Shop</div>
+            <div className="grid grid-cols-3 gap-2">
+              {["K120", "K85", "K240"].map((p, i) => (
+                <div key={p} className="p-2.5" style={{ background: style.card, borderRadius: style.radius }}>
+                  <div className="aspect-[4/3] mb-2" style={{ borderRadius: style.radius, background: `${accent}${["44", "66", "33"][i]}` }} />
+                  <p className="text-[10px] font-semibold">Item {i + 1}</p>
+                  <p className="text-[10px]" style={{ color: accent }}>{p}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      case "team":
+        return (
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.16em] mb-2" style={{ color: style.muted }}>The team</p>
+            <div className="grid grid-cols-3 gap-2">
+              {["Owner", "Manager", "Front desk"].map((r, i) => (
+                <div key={r} className="p-3 text-center" style={{ background: style.card, borderRadius: style.radius }}>
+                  <span className="block w-9 h-9 mx-auto mb-2 rounded-full" style={{ background: `linear-gradient(${120 + i * 60}deg, ${accent}, ${style.muted})` }} />
+                  <p className="text-[10px] font-semibold">{r}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      case "hours":
+        return (
+          <div className="p-3.5 flex items-start gap-3" style={{ background: style.card, borderRadius: style.radius }}>
+            <Clock size={14} className="shrink-0 mt-0.5" style={{ color: accent }} />
+            <div className="text-[11px] space-y-0.5" style={{ color: style.muted }}>
+              <p><span className="font-medium" style={{ color: style.fg }}>Monday to Friday</span> 08:00 to 17:00</p>
+              <p><span className="font-medium" style={{ color: style.fg }}>Saturday</span> 09:00 to 13:00</p>
+            </div>
+          </div>
+        );
+      case "map":
+        return (
+          <div className="h-16 relative overflow-hidden flex items-center justify-center" style={{ borderRadius: style.radius, background: `repeating-linear-gradient(0deg, ${style.card} 0 10px, ${style.muted}22 10px 11px), repeating-linear-gradient(90deg, ${style.card} 0 10px, ${style.muted}22 10px 11px)` }}>
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-md" style={{ background: style.bg }}><MapPin size={12} style={{ color: accent }} /> Find us on Google Maps</span>
+          </div>
+        );
+      case "cta":
+        return (
+          <div className="p-4 flex items-center justify-between gap-3" style={{ background: accent, color: "#0b0b0b", borderRadius: style.radius }}>
+            <p className="text-xs font-bold">Ready when you are.</p>
+            <span className="rounded-md px-3 py-1.5 text-[10px] font-semibold" style={{ background: "#0b0b0b", color: "#fff" }}>{has("whatsapp") ? "WhatsApp us" : "Get in touch"}</span>
+          </div>
+        );
+      case "contact":
+        return (
+          <div className="p-3.5 space-y-1.5" style={{ background: style.card, borderRadius: style.radius }}>
+            <p className="text-[10px] uppercase tracking-[0.16em] mb-1" style={{ color: style.muted }}>Send us a message</p>
+            {["Your name", "Your phone", "How can we help?"].map((f) => (
+              <div key={f} className="text-[10px] px-2.5 py-1.5" style={{ border: `1px solid ${style.muted}44`, borderRadius: style.radius, color: style.muted }}>{f}</div>
+            ))}
+            <span className="inline-block rounded-md px-3 py-1.5 text-[10px] font-semibold" style={{ background: accent, color: "#0b0b0b" }}>Send</span>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <PageTransition>
@@ -212,15 +534,15 @@ const SiteBuilder = () => {
           <div className="container-wide mx-auto">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl">
               <p className="eyebrow text-accent mb-5">
-                <span className="inline-block w-8 h-px bg-accent" /> Design it yourself
+                <span className="inline-block w-8 h-px bg-accent" /> Design it yourself, or let Diyama AI start
               </p>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-extrabold leading-[1.02] tracking-[-0.03em] mb-5">
-                Design your website. Watch it take shape. <span className="text-gold-gradient whitespace-nowrap">Order it.</span>
+                Design your website. Drag it into shape. <span className="text-gold-gradient whitespace-nowrap">Take it live.</span>
               </h1>
               <p className="text-lg text-white/70 leading-relaxed max-w-2xl">
-                Pick a style, your colour, your pages and what the site must do. The mock-up on the
-                right updates as you go, the starting price comes straight from our price list and
-                the design reaches us in one tap. We build the real thing.
+                Describe your business and Diyama AI drafts the site, or pick every piece yourself. Drag the
+                sections into the order you want. When you love it, choose how it goes live: on your own domain,
+                at a Diyama address, or as a page among the brands we advertise.
               </p>
             </motion.div>
           </div>
@@ -231,6 +553,41 @@ const SiteBuilder = () => {
         <div className="container-wide mx-auto grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-8 lg:gap-12 items-start">
           {/* Controls */}
           <div className="space-y-8">
+            {/* Diyama AI assist */}
+            <div className="rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 via-card to-accent/10 p-5 sm:p-6 relative overflow-hidden">
+              <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-accent/20 blur-3xl pointer-events-none" />
+              <div className="flex items-center gap-2.5 mb-2">
+                <span className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-[hsl(173_70%_32%)] text-primary-foreground flex items-center justify-center shadow-md"><Wand2 size={15} /></span>
+                <h2 className="font-display text-xl font-bold">Let Diyama AI design it</h2>
+              </div>
+              <p className="text-sm text-muted-foreground mb-3">Tell it about your business in a sentence or two. It picks the name, the look, the pages and the sections. You can change anything after.</p>
+              <textarea
+                value={brief}
+                onChange={(e) => setBrief(e.target.value)}
+                rows={3}
+                maxLength={600}
+                placeholder="e.g. Kalulu Hardware in Kitwe. We sell building materials and tools, deliver in town and want people to order on WhatsApp."
+                className="w-full rounded-lg border bg-card px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+              />
+              <div className="flex flex-wrap items-center gap-3 mt-3">
+                <button type="button" onClick={runAi} disabled={ai === "thinking" || brief.trim().length < 8} className="btn-primary inline-flex items-center gap-2 disabled:opacity-60">
+                  {ai === "thinking" ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />} {ai === "thinking" ? "Designing" : "Design it for me"}
+                </button>
+                <AnimatePresence mode="wait">
+                  {ai === "done" && (
+                    <motion.span key="done" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="inline-flex items-center gap-1.5 text-sm text-primary font-medium">
+                      <CheckCircle size={15} /> Drafted. Look right, then adjust anything below.
+                    </motion.span>
+                  )}
+                  {ai === "failed" && (
+                    <motion.span key="failed" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-sm text-muted-foreground">
+                      Diyama AI is not answering right now. Pick the pieces yourself below, it takes two minutes.
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
+
             <Step n="1" title="Your business">
               <div className="grid sm:grid-cols-2 gap-4">
                 <label className="block">
@@ -247,7 +604,7 @@ const SiteBuilder = () => {
                   <span className="text-sm font-medium">What kind of business?</span>
                   <select
                     value={d.kind}
-                    onChange={(e) => setD({ ...d, kind: e.target.value })}
+                    onChange={(e) => setD({ ...d, kind: e.target.value, cards: [] })}
                     className="mt-1.5 w-full rounded-lg border bg-card px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
                   >
                     {kinds.map((k) => (
@@ -262,6 +619,17 @@ const SiteBuilder = () => {
                     onChange={(e) => setD({ ...d, tagline: e.target.value })}
                     placeholder={kind.hero}
                     maxLength={80}
+                    className="mt-1.5 w-full rounded-lg border bg-card px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  />
+                </label>
+                <label className="block sm:col-span-2">
+                  <span className="text-sm font-medium">Your story, two sentences <span className="text-muted-foreground font-normal">(optional)</span></span>
+                  <textarea
+                    value={d.about}
+                    onChange={(e) => setD({ ...d, about: e.target.value })}
+                    placeholder={about}
+                    maxLength={200}
+                    rows={2}
                     className="mt-1.5 w-full rounded-lg border bg-card px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
                   />
                 </label>
@@ -301,9 +669,9 @@ const SiteBuilder = () => {
               </div>
             </Step>
 
-            <Step n="3" title="Pages">
-              <p className="text-sm text-muted-foreground mb-3">Home is always included. Tick what else you need.</p>
-              <div className="flex flex-wrap gap-2">
+            <Step n="3" title="Pages and sections">
+              <p className="text-sm text-muted-foreground mb-3">Home is always included. Tick the pages you need.</p>
+              <div className="flex flex-wrap gap-2 mb-5">
                 {pageOptions.map((p) => {
                   const on = d.pages.includes(p.id);
                   return (
@@ -314,6 +682,31 @@ const SiteBuilder = () => {
                       className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm transition-all ${on ? "bg-primary text-primary-foreground border-primary shadow-md" : "bg-card hover:border-primary/40"}`}
                     >
                       {on && <Check size={14} />} {p.label}
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="text-sm text-muted-foreground mb-3">
+                Sections of the home page. Add what you want here, then <span className="font-medium text-foreground">drag them into order on the mock-up</span>.
+              </p>
+              <div className="grid sm:grid-cols-2 gap-2">
+                {sectionOptions.map((s) => {
+                  const on = d.sections.includes(s.id);
+                  return (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() => (on ? removeSection(s.id) : addSection(s.id))}
+                      className={`text-left rounded-xl border px-3.5 py-2.5 transition-all flex items-center gap-3 ${on ? "border-primary bg-primary/5 ring-1 ring-primary/20" : "bg-card hover:border-primary/40"}`}
+                    >
+                      <span className={`w-7 h-7 rounded-md flex items-center justify-center shrink-0 ${on ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+                        <s.icon size={14} />
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block text-sm font-medium">{s.label}</span>
+                        <span className="block text-[11px] text-muted-foreground">{s.blurb}</span>
+                      </span>
+                      <span className="ml-auto text-muted-foreground">{on ? <X size={14} /> : <Plus size={14} />}</span>
                     </button>
                   );
                 })}
@@ -344,28 +737,80 @@ const SiteBuilder = () => {
               </div>
             </Step>
 
+            <Step n="5" title="How it goes live">
+              <div className="grid gap-3">
+                {liveOptions.map((l) => {
+                  const on = d.live === l.id;
+                  return (
+                    <button
+                      key={l.id}
+                      type="button"
+                      onClick={() => setD({ ...d, live: l.id })}
+                      className={`text-left rounded-2xl border p-4 sm:p-5 transition-all flex gap-4 ${on ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-md" : "bg-card hover:border-primary/40"}`}
+                    >
+                      <span className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${on ? "bg-gradient-to-br from-primary to-[hsl(173_70%_32%)] text-primary-foreground shadow-md" : "bg-muted text-muted-foreground"}`}>
+                        <l.icon size={20} />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="flex items-center justify-between gap-3">
+                          <span className="font-display font-bold">{l.label}</span>
+                          <span className={`text-xs font-semibold rounded-full px-2.5 py-1 shrink-0 ${on ? "bg-accent/20 text-foreground" : "bg-muted text-muted-foreground"}`}>
+                            {l.id === "own" ? `From ${fmtK(est.total)}` : "Priced in your quote"}
+                          </span>
+                        </span>
+                        <span className="block text-sm text-muted-foreground mt-1 leading-relaxed">{l.blurb}</span>
+                        <span className="block text-xs mt-2 font-mono text-primary">{l.address(slug)}</span>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </Step>
+
             {/* Estimate */}
             <div className="rounded-2xl bg-ink text-white p-6 sm:p-7 relative overflow-hidden">
               <div className="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-accent/20 blur-3xl pointer-events-none" />
-              <p className="eyebrow text-accent mb-3">Starting price, from our price list</p>
-              <div className="flex items-end gap-3 mb-4">
-                <motion.span key={est.total} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="font-display text-5xl font-extrabold text-gold-gradient leading-none">
-                  {fmtK(est.total)}
-                </motion.span>
-                <span className="text-white/60 text-sm pb-1">once, {est.tier.name.toLowerCase()}</span>
-              </div>
-              <ul className="text-sm text-white/70 space-y-1.5 mb-5">
-                <li className="flex justify-between gap-4"><span>{est.tier.name}</span><span className="tabular-nums">{fmtK(est.tier.price)}</span></li>
-                {est.extras.map((x) => (
-                  <li key={x.name} className="flex justify-between gap-4"><span>{x.name}</span><span className="tabular-nums">{fmtK(x.price)}</span></li>
-                ))}
-                {est.rush > 0 && <li className="flex justify-between gap-4"><span>Rush delivery, 30%</span><span className="tabular-nums">{fmtK(est.rush)}</span></li>}
-                <li className="flex justify-between gap-4 border-t border-white/10 pt-2 mt-2"><span>Site Care, keeps it secure and online</span><span className="tabular-nums">{fmtK(est.care)} a month</span></li>
-              </ul>
-              <p className="text-xs text-white/50 leading-relaxed">
-                Hosting, domain and SSL are included for the first 12 months. Half to start, half when it goes live.
-                This is a starting figure. The final price comes in writing before any work begins.
-              </p>
+              {d.live === "own" ? (
+                <>
+                  <p className="eyebrow text-accent mb-3">Starting price, from our price list</p>
+                  <div className="flex items-end gap-3 mb-4">
+                    <motion.span key={est.total} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="font-display text-5xl font-extrabold text-gold-gradient leading-none">
+                      {fmtK(est.total)}
+                    </motion.span>
+                    <span className="text-white/60 text-sm pb-1">once, {est.tier.name.toLowerCase()}</span>
+                  </div>
+                  <ul className="text-sm text-white/70 space-y-1.5 mb-5">
+                    <li className="flex justify-between gap-4"><span>{est.tier.name}</span><span className="tabular-nums">{fmtK(est.tier.price)}</span></li>
+                    {est.extras.map((x) => (
+                      <li key={x.name} className="flex justify-between gap-4"><span>{x.name}</span><span className="tabular-nums">{fmtK(x.price)}</span></li>
+                    ))}
+                    {est.rush > 0 && <li className="flex justify-between gap-4"><span>Rush delivery, 30%</span><span className="tabular-nums">{fmtK(est.rush)}</span></li>}
+                    <li className="flex justify-between gap-4 border-t border-white/10 pt-2 mt-2"><span>Site Care, keeps it secure and online</span><span className="tabular-nums">{fmtK(est.care)} a month</span></li>
+                  </ul>
+                  <p className="text-xs text-white/50 leading-relaxed">
+                    Hosting, domain and SSL are included for the first 12 months. Half to start, half when it goes live.
+                    This is a starting figure. The final price comes in writing before any work begins.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="eyebrow text-accent mb-3">{live.label}</p>
+                  <p className="font-display text-3xl font-extrabold leading-tight mb-3">
+                    {d.live === "sub" ? "Live at a Diyama address, cared for by us." : "One page, seen by everyone we reach."}
+                  </p>
+                  <ul className="text-sm text-white/70 space-y-1.5 mb-5">
+                    {(d.live === "sub"
+                      ? ["Your design, built as it looks here", `Live at ${live.address(slug)}`, "Hosting, SSL and security handled by Diyama", "A monthly fee, quoted in writing, instead of a build price", "Move to your own domain later, your design comes with you"]
+                      : ["Your design, built as one page", `Live at ${live.address(slug)}`, "Listed with the brands Diyama advertises", "Shared on our pages, where thousands already look", "Upgrade to a full site whenever you are ready"]
+                    ).map((t) => (
+                      <li key={t} className="flex items-start gap-2.5"><Check size={15} className="text-accent shrink-0 mt-0.5" /><span>{t}</span></li>
+                    ))}
+                  </ul>
+                  <p className="text-xs text-white/50 leading-relaxed">
+                    This package is priced in your written quote, which we send on WhatsApp before any work begins. Nothing is paid here.
+                  </p>
+                </>
+              )}
             </div>
 
             {/* Order */}
@@ -382,9 +827,9 @@ const SiteBuilder = () => {
               ) : (
                 <form onSubmit={submit} className="space-y-4">
                   <div>
-                    <p className="eyebrow text-primary mb-2">Step 5</p>
+                    <p className="eyebrow text-primary mb-2">Step 6</p>
                     <h3 className="font-display text-2xl font-bold">Order this design</h3>
-                    <p className="text-sm text-muted-foreground mt-1">Nothing is paid here. We send the written quote and build your demo first.</p>
+                    <p className="text-sm text-muted-foreground mt-1">Going live as <span className="font-medium text-foreground">{live.label.toLowerCase()}</span>. Nothing is paid here. We send the written quote and build your demo first.</p>
                   </div>
                   <div className="grid sm:grid-cols-2 gap-4">
                     <label className="block">
@@ -421,7 +866,7 @@ const SiteBuilder = () => {
           {/* Live preview */}
           <div className="lg:sticky lg:top-24">
             <div className="flex items-center justify-between mb-3">
-              <p className="eyebrow text-primary">Your site, live</p>
+              <p className="eyebrow text-primary">Your site, live. Drag the blocks.</p>
               <div className="inline-flex rounded-lg border bg-card p-0.5">
                 {(["desktop", "phone"] as const).map((v) => (
                   <button
@@ -442,29 +887,32 @@ const SiteBuilder = () => {
                 <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
                 <span className="ml-3 flex-1 rounded-md bg-background/80 text-[11px] text-muted-foreground px-2.5 py-1 truncate">
-                  www.{name.toLowerCase().replace(/[^a-z0-9]+/g, "")}.com
+                  {live.address(slug)}
                 </span>
+                {d.byAi && (
+                  <span className="hidden sm:inline-flex items-center gap-1 text-[10px] font-semibold text-primary bg-primary/10 rounded-full px-2 py-0.5"><Sparkles size={10} /> Diyama AI</span>
+                )}
               </div>
-              <motion.div layout transition={{ type: "spring", stiffness: 220, damping: 28 }} className={`mx-auto overflow-hidden rounded-xl shadow-inner ${device === "phone" ? "max-w-[22rem]" : "w-full"}`}>
+              <motion.div layout transition={{ type: "spring", stiffness: 220, damping: 28 }} className={`mx-auto overflow-hidden rounded-xl shadow-inner ${phone ? "max-w-[22rem]" : "w-full"}`}>
                 <div style={{ background: style.bg, color: style.fg, fontFamily: font }} className="text-left">
                   {/* nav */}
                   <div className="flex items-center justify-between px-5 py-3.5 text-xs" style={{ borderBottom: `1px solid ${style.muted}33` }}>
                     <span className="font-bold text-sm truncate max-w-[45%]">{name}</span>
-                    <div className={`gap-3 ${device === "phone" ? "hidden" : "flex"}`} style={{ color: style.muted }}>
+                    <div className={`gap-3 ${phone ? "hidden" : "flex"}`} style={{ color: style.muted }}>
                       {navPages.slice(0, 5).map((p) => (
                         <span key={p}>{p}</span>
                       ))}
                     </div>
                     <span className="rounded-md px-2.5 py-1 text-[11px] font-semibold" style={{ background: accent, color: "#0b0b0b" }}>
-                      {d.pages.includes("booking") ? "Book now" : "Contact us"}
+                      {d.pages.includes("booking") || d.sections.includes("booking") ? "Book now" : "Contact us"}
                     </span>
                   </div>
-                  {/* hero */}
+                  {/* hero, always first */}
                   <div className="relative px-5 pt-8 pb-7 overflow-hidden">
                     <div className="absolute -top-10 -right-10 w-44 h-44 rounded-full blur-3xl opacity-40" style={{ background: accent }} />
                     <p className="text-[10px] uppercase tracking-[0.18em] mb-2" style={{ color: accent }}>{kind.label}</p>
                     <AnimatePresence mode="wait">
-                      <motion.h2 key={tagline} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className={`font-extrabold leading-tight tracking-tight ${device === "phone" ? "text-2xl" : "text-3xl"}`}>
+                      <motion.h2 key={tagline} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className={`font-extrabold leading-tight tracking-tight ${phone ? "text-2xl" : "text-3xl"}`}>
                         {tagline}
                       </motion.h2>
                     </AnimatePresence>
@@ -476,73 +924,27 @@ const SiteBuilder = () => {
                         {has("whatsapp") ? "WhatsApp us" : "Get in touch"}
                       </span>
                       <span className="rounded-md px-3 py-1.5 text-[11px] font-medium" style={{ border: `1px solid ${style.muted}66`, borderRadius: style.radius }}>
-                        {kind.cards[0]}
+                        {cards[0]}
                       </span>
                     </div>
                   </div>
-                  {/* cards */}
-                  <div className={`px-5 pb-5 grid gap-2.5 ${device === "phone" ? "grid-cols-1" : "grid-cols-3"}`}>
-                    {kind.cards.map((c, i) => (
-                      <div key={c} className="p-3.5" style={{ background: style.card, borderRadius: style.radius }}>
-                        <span className="block w-7 h-7 mb-2.5 rounded-md" style={{ background: `${accent}33` }}>
-                          <span className="block w-3 h-3 m-2 rounded-sm" style={{ background: accent }} />
-                        </span>
-                        <p className="text-xs font-semibold">{c}</p>
-                        <p className="text-[10px] mt-1" style={{ color: style.muted }}>{["Clear prices, no surprises.", "Updated every week.", "Reply within the hour."][i]}</p>
-                      </div>
-                    ))}
-                  </div>
-                  <AnimatePresence initial={false}>
-                    {d.pages.includes("gallery") && (
-                      <motion.div key="gallery" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="px-5 pb-5 overflow-hidden">
-                        <p className="text-[10px] uppercase tracking-[0.16em] mb-2" style={{ color: style.muted }}>Gallery</p>
-                        <div className="grid grid-cols-4 gap-1.5">
-                          {[0, 1, 2, 3].map((i) => (
-                            <div key={i} className="aspect-square" style={{ borderRadius: style.radius, background: `linear-gradient(${135 + i * 40}deg, ${accent}${["cc", "99", "77", "55"][i]}, ${style.card})` }} />
-                          ))}
-                        </div>
-                      </motion.div>
-                    )}
-                    {has("reviews") && (
-                      <motion.div key="reviews" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="px-5 pb-5 overflow-hidden">
-                        <div className="p-3.5 flex items-start gap-3" style={{ background: style.card, borderRadius: style.radius }}>
-                          <span className="flex gap-0.5" style={{ color: accent }}>{[0, 1, 2, 3, 4].map((i) => <Star key={i} size={11} fill="currentColor" />)}</span>
-                          <p className="text-[11px]" style={{ color: style.muted }}>"Quick, friendly and exactly as promised." A happy customer, Lusaka</p>
-                        </div>
-                      </motion.div>
-                    )}
-                    {(d.pages.includes("booking") || has("calendar")) && (
-                      <motion.div key="booking" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="px-5 pb-5 overflow-hidden">
-                        <div className="p-3.5 flex items-center justify-between gap-3" style={{ background: style.card, borderRadius: style.radius }}>
-                          <span className="flex items-center gap-2 text-xs font-semibold"><Calendar size={14} style={{ color: accent }} /> {has("calendar") ? "Pick a date and time" : "Book on WhatsApp"}</span>
-                          <span className="rounded-md px-2.5 py-1 text-[10px] font-semibold" style={{ background: accent, color: "#0b0b0b" }}>{has("payments") ? "Book and pay" : "Book"}</span>
-                        </div>
-                      </motion.div>
-                    )}
-                    {d.pages.includes("shop") && (
-                      <motion.div key="shop" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="px-5 pb-5 overflow-hidden">
-                        <div className="flex items-center gap-2 mb-2 text-[10px] uppercase tracking-[0.16em]" style={{ color: style.muted }}><ShoppingBag size={11} /> Shop</div>
-                        <div className="grid grid-cols-3 gap-2">
-                          {["K120", "K85", "K240"].map((p, i) => (
-                            <div key={p} className="p-2.5" style={{ background: style.card, borderRadius: style.radius }}>
-                              <div className="aspect-[4/3] mb-2" style={{ borderRadius: style.radius, background: `${accent}${["44", "66", "33"][i]}` }} />
-                              <p className="text-[10px] font-semibold">Item {i + 1}</p>
-                              <p className="text-[10px]" style={{ color: accent }}>{p}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </motion.div>
-                    )}
-                    {has("map") && (
-                      <motion.div key="map" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="px-5 pb-5 overflow-hidden">
-                        <div className="h-16 relative overflow-hidden flex items-center justify-center" style={{ borderRadius: style.radius, background: `repeating-linear-gradient(0deg, ${style.card} 0 10px, ${style.muted}22 10px 11px), repeating-linear-gradient(90deg, ${style.card} 0 10px, ${style.muted}22 10px 11px)` }}>
-                          <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-md" style={{ background: style.bg }}><MapPin size={12} style={{ color: accent }} /> Find us on Google Maps</span>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+
+                  {/* the draggable blocks */}
+                  <Reorder.Group axis="y" values={d.sections} onReorder={(sections) => setD({ ...d, sections })} className="px-5 pb-2 space-y-3 list-none m-0">
+                    <AnimatePresence initial={false}>
+                      {d.sections.map((id) => (
+                        <Block key={id} id={id} label={sectionOptions.find((s) => s.id === id)?.label ?? id} muted={style.muted} onRemove={() => removeSection(id)}>
+                          {renderSection(id)}
+                        </Block>
+                      ))}
+                    </AnimatePresence>
+                  </Reorder.Group>
+                  {d.sections.length === 0 && (
+                    <p className="px-5 pb-5 text-[11px]" style={{ color: style.muted }}>Add sections below and they appear here.</p>
+                  )}
+
                   {/* footer */}
-                  <div className="px-5 py-3.5 flex items-center justify-between text-[10px]" style={{ borderTop: `1px solid ${style.muted}33`, color: style.muted }}>
+                  <div className="px-5 py-3.5 mt-2 flex items-center justify-between text-[10px]" style={{ borderTop: `1px solid ${style.muted}33`, color: style.muted }}>
                     <span>{name} · Zambia</span>
                     <span>{has("language") ? "English · Bemba" : "Built by Diyama"}</span>
                   </div>
@@ -551,6 +953,18 @@ const SiteBuilder = () => {
               {has("whatsapp") && (
                 <div className="flex justify-end -mt-9 mr-5 relative pointer-events-none">
                   <span className="w-9 h-9 rounded-full flex items-center justify-center shadow-lg" style={{ background: "#25D366", color: "#fff" }}><MessageCircle size={16} /></span>
+                </div>
+              )}
+
+              {/* add a section */}
+              {notYet.length > 0 && (
+                <div className="mt-4 flex flex-wrap items-center gap-1.5">
+                  <span className="text-[11px] font-semibold text-muted-foreground mr-1 inline-flex items-center gap-1"><Plus size={12} /> Add a block</span>
+                  {notYet.map((s) => (
+                    <button key={s.id} type="button" onClick={() => addSection(s.id)} className="inline-flex items-center gap-1 rounded-full border bg-card px-2.5 py-1 text-[11px] font-medium hover:border-primary/50 hover:text-primary transition-colors">
+                      <s.icon size={11} /> {s.label}
+                    </button>
+                  ))}
                 </div>
               )}
             </div>
@@ -566,6 +980,46 @@ const SiteBuilder = () => {
         </div>
       </section>
     </PageTransition>
+  );
+};
+
+/* One draggable block of the mock-up. The grip handle starts the drag so text in
+   the block can still be selected; the cross removes it. */
+const Block = ({ id, label, muted, onRemove, children }: { id: string; label: string; muted: string; onRemove: () => void; children: React.ReactNode }) => {
+  const controls = useDragControls();
+  return (
+    <Reorder.Item
+      value={id}
+      dragListener={false}
+      dragControls={controls}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.97 }}
+      whileDrag={{ scale: 1.02, boxShadow: "0 18px 40px rgba(0,0,0,0.35)", zIndex: 5 }}
+      className="relative group rounded-lg"
+    >
+      <div className="absolute -left-1 top-1 bottom-1 w-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10">
+        <span
+          onPointerDown={(e) => controls.start(e)}
+          className="cursor-grab active:cursor-grabbing touch-none rounded-md p-0.5"
+          style={{ color: muted, background: `${muted}22` }}
+          title={`Drag ${label}`}
+          aria-label={`Drag ${label}`}
+        >
+          <GripVertical size={13} />
+        </span>
+      </div>
+      <button
+        type="button"
+        onClick={onRemove}
+        className="absolute -right-1 -top-1 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow"
+        title={`Remove ${label}`}
+        aria-label={`Remove ${label}`}
+      >
+        <X size={11} />
+      </button>
+      {children}
+    </Reorder.Item>
   );
 };
 

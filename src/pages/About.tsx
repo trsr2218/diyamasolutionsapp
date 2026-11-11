@@ -6,7 +6,7 @@ import CountUp from "@/components/CountUp";
 import Seo from "@/components/Seo";
 import { pageSeo } from "@/seo/pageSeo";
 import { proofStats, proofAsAt } from "@/data/proof";
-import { peoplePhotos, peopleCaption } from "@/data/people";
+import BoardStrip from "@/components/BoardStrip";
 
 /* About, rebuilt 11 November 2026. Ernest's verdict on the old page was that it
  * looked like an old man made it. This one is built like the homepage: dark,
@@ -120,36 +120,8 @@ const About = () => (
       </div>
     </section>
 
-    {/* The faces from Diyama's own service graphics, never captioned as staff */}
-    <section className="section-padding bg-surface border-y overflow-hidden">
-      <div className="container-wide mx-auto">
-        <motion.div variants={stagger} {...inView}>
-          <motion.div variants={fadeUp} className="max-w-2xl mb-10">
-            <p className="eyebrow text-primary mb-4">The look we are known for</p>
-            <h2 className="text-3xl sm:text-5xl font-display font-bold leading-[1.08] mb-5">
-              The graphics that built our name.
-            </h2>
-            <p className="text-muted-foreground text-lg leading-relaxed">
-              Before the systems there were the posts. These are the faces from Diyama's own
-              service graphics, the designs our page is known for across Zambia.
-            </p>
-          </motion.div>
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-            {peoplePhotos.map((ph, i) => (
-              <motion.figure
-                key={ph.src}
-                variants={fadeUp}
-                className={`group relative overflow-hidden rounded-2xl bg-ink ring-1 ring-foreground/10 ${i % 5 === 0 ? "col-span-2 aspect-[16/9]" : "aspect-[4/3]"}`}
-              >
-                <img src={ph.src} alt={ph.alt} loading="lazy" className="w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.04]" />
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent opacity-80" />
-              </motion.figure>
-            ))}
-          </div>
-          <motion.p variants={fadeUp} className="text-xs text-muted-foreground mt-4">{peopleCaption}</motion.p>
-        </motion.div>
-      </div>
-    </section>
+    {/* The graphics that built the name: this week's boards from the Diyama page */}
+    <BoardStrip eyebrow="The look we are known for" title="The graphics that built our name." blurb="Before the systems there were the posts. These are this week's boards for the Diyama page, drawn in the look Zambia knows us for." tone="surface" />
 
     {/* Timeline */}
     <section className="relative overflow-hidden bg-ink text-white section-padding">

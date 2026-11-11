@@ -22,7 +22,8 @@ import AppOfTheDay from "@/components/AppOfTheDay";
 import DiyamaAvatar from "@/components/DiyamaAvatar";
 import Seo from "@/components/Seo";
 import { pageSeo } from "@/seo/pageSeo";
-import { peoplePhotos, peopleCaption, heroPerson } from "@/data/people";
+import { heroPerson } from "@/data/people";
+import BoardStrip from "@/components/BoardStrip";
 
 /* Homepage, rebuilt November 2026 around the pivot to systems and automation.
  *
@@ -278,48 +279,8 @@ const Index = () => {
         </div>
       </section>
 
-      {/* The faces of the brand: the people from Diyama's own service graphics. */}
-      <section className="section-padding bg-background overflow-hidden">
-        <div className="container-wide mx-auto">
-          <motion.div variants={stagger} {...inView}>
-            <motion.div variants={fadeUp} className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
-              <div className="max-w-2xl">
-                <p className="eyebrow text-primary mb-4">The look we are known for</p>
-                <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-display font-bold leading-tight mb-4">
-                  The faces from our graphics, from the first post to today.
-                </h2>
-                <p className="text-muted-foreground text-lg leading-relaxed">
-                  These are the designs that built the Diyama page. The same hand designs your
-                  posts, your site and your brand.
-                </p>
-              </div>
-              <Link to="/about" className="inline-flex items-center gap-1 text-primary font-medium text-sm hover:underline whitespace-nowrap">
-                About Diyama <ArrowRight size={14} />
-              </Link>
-            </motion.div>
-            <div className="grid grid-cols-2 md:grid-cols-4 md:grid-rows-2 gap-3 sm:gap-4">
-              {peoplePhotos.slice(0, 5).map((ph, i) => (
-                <motion.figure
-                  key={ph.src}
-                  variants={fadeUp}
-                  className={`group relative overflow-hidden rounded-2xl bg-ink ring-1 ring-foreground/10 ${
-                    i === 0 ? "col-span-2 row-span-2 aspect-[4/3] md:aspect-auto" : "aspect-[4/3]"
-                  }`}
-                >
-                  <img
-                    src={ph.src}
-                    alt={ph.alt}
-                    loading="lazy"
-                    className="w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent opacity-80" />
-                </motion.figure>
-              ))}
-            </div>
-            <motion.p variants={fadeUp} className="text-xs text-muted-foreground mt-4">{peopleCaption}</motion.p>
-          </motion.div>
-        </div>
-      </section>
+      {/* Fresh from the Diyama page: this week's boards, drawn by the graphics office. */}
+      <BoardStrip />
 
       {/* How we work, as a scroll story */}
       <ScrollStory />

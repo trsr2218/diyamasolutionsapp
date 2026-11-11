@@ -18,7 +18,7 @@ export const pageSeo: Record<string, PageSeoEntry> = {
   "/build": {
     title: "Design Your Own Website and Order It | Diyama Solutions",
     description:
-      "Pick a style, colour, pages and features, watch your website take shape live, get a starting price from our price list and send the design to Diyama in one tap.",
+      "Describe your business and Diyama AI drafts the site, or pick every piece yourself. Drag the sections into order, get a starting price from our price list, then take it live on your own domain, at a Diyama address or as a page on Diyama.",
   },
   "/pricing": {
     title: "Prices | Diyama Solutions",
