@@ -6,7 +6,7 @@
  * WHY GENERATED AND NOT TYPED
  * `Growth Plan/CARE-PLANS-OFFER.md` is the company's only price list, by a decision
  * of 9 August 2026. A website carrying its own copy of the numbers disagrees with it
- * within a month, and then a visitor is holding a figure nobody at Diyama recognises.
+ * within a month and then a visitor is holding a figure nobody at Diyama recognises.
  * Change a price in the one place the rules say it lives, run this, commit.
  *
  * WHY "FROM" PRICES AND NOT THE FULL LIST
@@ -16,7 +16,7 @@
  *
  *   VAT registration is unconfirmed. A published flat price with no VAT line is read
  *   as the price the customer pays, so if VAT were later found to apply the whole
- *   amount is retrospectively inclusive. A "from" price cannot be read that way, and
+ *   amount is retrospectively inclusive. A "from" price cannot be read that way and
  *   the page states plainly that the final figure comes in a written quote.
  *
  *   Two existing clients pay below list. Publishing exact figures has that
@@ -75,7 +75,7 @@ function firstTable(sectionName) {
 }
 
 /* Some sections lead with prose rather than a table. "Keeping it live" states its
-   entry price in a subheading, "Site Care, K150 a month", and reading the section
+   entry price in a subheading, "Site Care, K150 a month" and reading the section
    whole returned K50, the annual domain renewal expressed monthly. So those are
    matched on the actual sentence instead of scanned. */
 function fromPattern(sectionName, re) {
@@ -123,40 +123,40 @@ const AUTOMATION_SPRINT = lowest('3b. Systems and automation', { expect: 5500, p
 const CARDS = [
   {
     id: 'systems', title: 'Business systems and automation',
-    blurb: 'Software built around how your business actually runs: bookings, stock, approvals, reports, and the back office that ties them together.',
+    blurb: 'Software built around how your business actually runs: bookings, stock, approvals, reports and the back office that ties them together.',
     from: FRONT_DESK_SETUP, unit: 'to set up',
     points: ['Scoped with you first, quoted in writing', 'Works on the phones and computers you already have', 'Kept running by the people who built it'],
   },
   {
     id: 'lodges', title: 'Direct bookings for lodges',
-    blurb: 'A booking site, your Google profile set up properly, and a review engine, delivered together as one sprint.',
+    blurb: 'A booking site, your Google profile set up properly and a review engine, delivered together as one sprint.',
     from: LODGE_SPRINT, unit: 'once',
     points: ['Guests book with you, not through an agent', 'Found on Google Maps in your area', 'Reviews asked for, not hoped for'],
   },
   {
     id: 'social', title: 'Social media, run for you',
-    blurb: 'Posts written, graphics designed, and somebody watching the replies. You stop being the one who has to think of something to post.',
+    blurb: 'Posts written, graphics designed and somebody watching the replies. You stop being the one who has to think of something to post.',
     from: lowest('1. Social media management, monthly', { expect: 825 }), unit: 'a month',
     points: ['Facebook, Instagram or both', 'Custom graphics, not stock', 'A monthly report you can actually read'],
   },
   {
     id: 'web', title: 'A website or web app',
-    blurb: 'Built so a customer can see what you do, what it costs, and how to reach you, on a phone, in seconds.',
+    blurb: 'Built so a customer can see what you do, what it costs and how to reach you, on a phone, in seconds.',
     from: lowest('3. Websites and apps, one-off build', { expect: 1100 }), unit: 'once',
     points: ['Live in days, not months', 'Hosting, domain and SSL free for the first year', 'You see yours working before you pay'],
   },
   {
     id: 'care', title: 'Keeping it alive',
-    blurb: 'The part most people skip. Security, backups, uptime, and somebody local to call when it breaks.',
+    blurb: 'The part most people skip. Security, backups, uptime and somebody local to call when it breaks.',
     from: lowest('4. Keeping it live', { expect: 165, pattern: /Site Care, K([\d,]+) a month/ }), unit: 'a month',
     points: ['Security patched and backed up weekly', 'We know it is down before you do', 'Content updates included on the higher plan'],
   },
   {
-    id: 'found', title: 'Getting found, and reviews',
-    blurb: 'Google Business Profile set up properly, and a system that actually asks your happy customers to say so.',
+    id: 'found', title: 'Getting found and reviews',
+    blurb: 'Google Business Profile set up properly and a system that actually asks your happy customers to say so.',
     /* min 700 skips the K385 monthly review collection and the K660 extra location:
-       neither is a one-off entry price, and this card's unit is "once". */
-    from: lowest('6. Getting found, and reviews', { expect: 880, min: 700 }), unit: 'once',
+       neither is a one-off entry price and this card's unit is "once". */
+    from: lowest('6. Getting found and reviews', { expect: 880, min: 700 }), unit: 'once',
     points: ['Show up on the map, in your area', 'A review engine, not a hope', 'Business email on your own domain'],
   },
   {
@@ -167,7 +167,7 @@ const CARDS = [
   },
   {
     id: 'campaign', title: 'A campaign, for one month',
-    blurb: 'A launch, an event, an award. Daily presence, ads managed, and a promotion run properly and legally.',
+    blurb: 'A launch, an event, an award. Daily presence, ads managed and a promotion run properly and legally.',
     from: lowest('8. Campaigns, for an event, a launch or an award', { expect: 4400 }), unit: 'once',
     points: ['Two weeks or a full month', 'Your ad money stays on your own account', 'Every giveaway free to enter, with written rules'],
   },
@@ -195,7 +195,7 @@ export const priceCards: PriceCard[] = ${JSON.stringify(
    published figure could later be read as inclusive. A floor plus a written quote
    is both honest and safe. */
 export const priceNote =
-  "Every figure here is a starting price in Zambian Kwacha. What you pay depends on the size of the job, and you get it in writing before any work begins. A build is paid half to start and half when it goes live, and nothing appears on the invoice that was not on the quote.";
+  "Every figure here is a starting price in Zambian Kwacha. What you pay depends on the size of the job and you get it in writing before any work begins. A build is paid half to start and half when it goes live and nothing appears on the invoice that was not on the quote.";
 
 export const priceUpdated = "${new Date().toISOString().slice(0, 10)}";
 

@@ -7,6 +7,7 @@ import {
   Handshake, Hotel, Briefcase, type LucideIcon,
 } from "lucide-react";
 import { systems } from "@/data/systems";
+import SystemArt from "@/components/SystemArt";
 import { services, serviceCategories } from "@/data/services";
 
 // Home page quick actions deep-link here with ?intent=... so a visitor lands on
@@ -24,7 +25,7 @@ const intents: Record<string, { heading: string; blurb: string; serviceIds: stri
   },
   "grow-visibility": {
     heading: "Grow online visibility",
-    blurb: "Get found by the right people across search, maps, and social.",
+    blurb: "Get found by the right people across search, maps and social.",
     serviceIds: ["digital-marketing", "social-media", "google-maps-reviews", "web-development", "lodge-hospitality"],
   },
 };
@@ -114,12 +115,14 @@ const Services = () => {
           </div>
           <div className="grid md:grid-cols-2 gap-5">
             {systems.map((sys) => (
-              <motion.article key={sys.id} id={sys.id} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="card-elevated p-7 flex flex-col scroll-mt-24">
+              <motion.article key={sys.id} id={sys.id} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="card-glow flex flex-col scroll-mt-24">
+                <SystemArt id={sys.id} />
+                <div className="p-7 flex flex-col flex-1">
                 <div className="flex items-start justify-between gap-4 mb-5">
-                  <span className="w-12 h-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0">
+                  <span className="w-12 h-12 -mt-14 rounded-xl bg-gradient-to-br from-primary to-[hsl(173_70%_32%)] text-primary-foreground flex items-center justify-center shrink-0 ring-4 ring-card shadow-lg relative z-10">
                     <sys.icon size={22} />
                   </span>
-                  <span className="text-xs font-medium text-muted-foreground text-right leading-snug max-w-[13rem] pt-1">{sys.price}</span>
+                  <span className="text-xs font-semibold text-foreground bg-accent/15 border border-accent/30 rounded-full px-3 py-1 text-right leading-snug">{sys.price}</span>
                 </div>
                 <h3 className="font-display text-xl font-bold mb-1.5">{sys.name}</h3>
                 <p className="text-primary font-medium mb-3">{sys.line}</p>
@@ -134,6 +137,7 @@ const Services = () => {
                 <p className="text-xs text-muted-foreground mt-auto pt-4 border-t">
                   <span className="font-semibold text-foreground">For:</span> {sys.whoFor}
                 </p>
+                </div>
               </motion.article>
             ))}
           </div>

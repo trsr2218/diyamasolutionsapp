@@ -1,9 +1,9 @@
 /**
  * The numbers on the homepage, each with where it came from.
  *
- * Every figure is a floor read from Diyama's own records on the date below, and is
+ * Every figure is a floor read from Diyama's own records on the date below and is
  * about Diyama's own systems, not a client's results. No client is named and no
- * commenter is quoted. Recount before changing one, and keep the date honest:
+ * commenter is quoted. Recount before changing one and keep the date honest:
  *
  *   posts    `workforce/engine/published.jsonl`, rows not marked deleted: 2,928
  *            (first row 23 August 2026), across 12 distinct pages

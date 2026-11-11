@@ -1,7 +1,7 @@
 /**
  * Per-route SEO copy for static pages.
  * Titles follow "<Specific Page Title> | Diyama Solutions".
- * Descriptions are ~150 characters, natural, and keyword-aware without stuffing.
+ * Descriptions are ~150 characters, natural and keyword-aware without stuffing.
  */
 
 export interface PageSeoEntry {
@@ -27,27 +27,27 @@ export const pageSeo: Record<string, PageSeoEntry> = {
   "/apps": {
     title: "Free Business Apps for African Businesses | Diyama Solutions",
     description:
-      "Try free business apps built by Diyama: invoicing, quotations, QR codes, bookings, Zambian payroll, stock, expenses, loyalty, and more. No signup to start.",
+      "Try free business apps built by Diyama: invoicing, quotations, QR codes, bookings, Zambian payroll, stock, expenses, loyalty and more. No signup to start.",
   },
   "/clients": {
     title: "Our Clients & Work | Diyama Solutions",
     description:
-      "See the real businesses we work with across Zambia and Africa, from food brands and tourism operators to music artists, transport, and DAOs.",
+      "See the real businesses we work with across Zambia and Africa, from food brands and tourism operators to music artists, transport and DAOs.",
   },
   "/partners": {
     title: "Partners & Collaborations | Diyama Solutions",
     description:
-      "Meet the partners and collaborators Diyama Solutions works with to help African businesses grow through shared tools, expertise, and networks.",
+      "Meet the partners and collaborators Diyama Solutions works with to help African businesses grow through shared tools, expertise and networks.",
   },
   "/ai": {
     title: "Diyama AI, Your Free Business Advisor | Diyama Solutions",
     description:
-      "Chat with Diyama AI, a free business advisor for marketing, growth, pricing, and operations. Get practical guidance for your business, no signup needed.",
+      "Chat with Diyama AI, a free business advisor for marketing, growth, pricing and operations. Get practical guidance for your business, no signup needed.",
   },
   "/business-fit": {
     title: "Free AI Business Fit Assessment | Diyama Solutions",
     description:
-      "Answer a few questions and let Diyama AI build a free business kit with quick wins, blind spots, and a suggested service bundle for your business.",
+      "Answer a few questions and let Diyama AI build a free business kit with quick wins, blind spots and a suggested service bundle for your business.",
   },
   "/consultations": {
     title: "Book a Business Consultation | Diyama Solutions",
@@ -57,7 +57,7 @@ export const pageSeo: Record<string, PageSeoEntry> = {
   "/learn": {
     title: "Learn: Free Business Growth Guides | Diyama Solutions",
     description:
-      "Free guides on marketing, customer growth, Google Maps, tourism, restaurants, and the creator economy, written for business owners in Zambia and Africa.",
+      "Free guides on marketing, customer growth, Google Maps, tourism, restaurants and the creator economy, written for business owners in Zambia and Africa.",
   },
   "/affiliate": {
     title: "Affiliate & Referral Program | Diyama Solutions",
@@ -77,11 +77,11 @@ export const pageSeo: Record<string, PageSeoEntry> = {
   "/privacy": {
     title: "Privacy Policy | Diyama Solutions",
     description:
-      "How Diyama Solutions collects, uses, and protects your information across our forms, apps, and AI conversations. Read our full privacy policy.",
+      "How Diyama Solutions collects, uses and protects your information across our forms, apps and AI conversations. Read our full privacy policy.",
   },
   "/terms": {
     title: "Terms of Service | Diyama Solutions",
     description:
-      "The terms that govern your use of Diyama Solutions services, apps, the Diyama AI assistant, reviews, and the affiliate program.",
+      "The terms that govern your use of Diyama Solutions services, apps, the Diyama AI assistant, reviews and the affiliate program.",
   },
 };

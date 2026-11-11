@@ -10,7 +10,7 @@ import diyamaLogo from "@/assets/logo-mark.webp";
  * full, distracting, overwhelming" and was likely reducing the actions we
  * actually want people to take. A quiet bar lets the Book Consultation
  * button win. Nothing was removed from the site: Partners, Clients, About
- * and Contact moved into a menu, and the footer still lists every page.
+ * and Contact moved into a menu and the footer still lists every page.
  *
  * Home is gone on purpose. The logo is the home link, as it is everywhere.
  */

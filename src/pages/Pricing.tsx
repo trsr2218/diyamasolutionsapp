@@ -142,7 +142,7 @@ const Pricing = () => (
           </h2>
           <p className="text-muted-foreground mb-7 max-w-xl mx-auto leading-relaxed">
             Send us your page, or just tell us what the business does. We will tell you what
-            we would actually do first, and roughly what it costs.
+            we would actually do first and roughly what it costs.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a

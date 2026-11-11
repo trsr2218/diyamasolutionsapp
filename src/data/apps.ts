@@ -18,7 +18,7 @@ import loyaltyShot from "@/assets/apps/app-loyalty.webp";
  * Emptied on 11 August 2026, restored on 14 August 2026, both on Ernest's instruction.
  * The reason the range was pulled was that the payroll app computed Zambian PAYE and NAPSA
  * on out of date bands, so its payslips were wrong. That was corrected on 12 August 2026
- * (25% band, K9,900 threshold, 37.5% above, NAPSA cap K1,861.80), and all thirteen entries
+ * (25% band, K9,900 threshold, 37.5% above, NAPSA cap K1,861.80) and all thirteen entries
  * below were confirmed reachable before the range went back up.
  *
  * Before adding an entry, open its url and check it works. Nothing goes on this list that is
@@ -59,14 +59,14 @@ export const apps: DiyamaApp[] = [
     name: "Diyama POS",
     tagline: "Point of sale built for African businesses",
     description:
-      "A modern point of sale and inventory system for shops, restaurants, and small businesses. Track sales, manage stock, and see your numbers clearly from any device.",
+      "A modern point of sale and inventory system for shops, restaurants and small businesses. Track sales, manage stock and see your numbers clearly from any device.",
     category: "Business Systems",
     url: "https://pos.diyama.online",
     status: "live",
     image: posShot,
     domain: "pos.diyama.online",
     freeOffer: "Try the full system free with sample data, no signup needed to explore.",
-    fullOffer: "Your own business account, unlimited products and sales records, reports, and priority support.",
+    fullOffer: "Your own business account, unlimited products and sales records, reports and priority support.",
     tags: ["POS", "Inventory", "Retail", "Restaurants"],
     featured: true,
     audience: "back-office",
@@ -76,7 +76,7 @@ export const apps: DiyamaApp[] = [
     name: "Diyama Invoicer",
     tagline: "Professional invoices in minutes",
     description:
-      "Create clean, branded invoices, add your items, and download a polished PDF ready to send. Your invoices are saved so you can reopen or duplicate them anytime.",
+      "Create clean, branded invoices, add your items and download a polished PDF ready to send. Your invoices are saved so you can reopen or duplicate them anytime.",
     category: "Business Systems",
     url: "/apps/invoicer",
     status: "live",
@@ -127,7 +127,7 @@ export const apps: DiyamaApp[] = [
     name: "Diyama BookMe",
     tagline: "Let customers book you, effortlessly",
     description:
-      "Set your services and hours, and take bookings with automatic time slots. Every booking comes with a one tap WhatsApp confirmation for your customer.",
+      "Set your services and hours and take bookings with automatic time slots. Every booking comes with a one tap WhatsApp confirmation for your customer.",
     category: "Business Systems",
     url: "/apps/bookme",
     status: "live",
@@ -144,7 +144,7 @@ export const apps: DiyamaApp[] = [
     name: "Diyama BioLink",
     tagline: "One link for your whole business",
     description:
-      "Build a beautiful link in bio page with your links and socials, then share it anywhere. Perfect for Instagram, TikTok, and WhatsApp profiles.",
+      "Build a beautiful link in bio page with your links and socials, then share it anywhere. Perfect for Instagram, TikTok and WhatsApp profiles.",
     category: "Marketing",
     url: "/apps/biolink",
     status: "live",
@@ -161,7 +161,7 @@ export const apps: DiyamaApp[] = [
     name: "Diyama PaySlip",
     tagline: "Zambian payroll, calculated correctly",
     description:
-      "Work out PAYE, NAPSA, and NHIMA from a gross salary and download a clean payslip. Built around current Zambian bands, with everything adjustable.",
+      "Work out PAYE, NAPSA and NHIMA from a gross salary and download a clean payslip. Built around current Zambian bands, with everything adjustable.",
     category: "Business Systems",
     url: "/apps/payslip",
     status: "live",
@@ -178,14 +178,14 @@ export const apps: DiyamaApp[] = [
     name: "Diyama StockTrack",
     tagline: "Never run out, never overstock",
     description:
-      "Track your products, adjust stock as you sell and restock, and get low stock warnings at a glance. See your total stock value in one place.",
+      "Track your products, adjust stock as you sell and restock and get low stock warnings at a glance. See your total stock value in one place.",
     category: "Business Systems",
     url: "/apps/stocktrack",
     status: "live",
     image: stocktrackShot,
     domain: "stock.diyama.online",
     freeOffer: "Track inventory with low stock alerts, free.",
-    fullOffer: "Multi branch stock, suppliers, and reports connected together.",
+    fullOffer: "Multi branch stock, suppliers and reports connected together.",
     tags: ["Inventory", "Stock", "Retail"],
     featured: false,
     audience: "back-office",
@@ -195,7 +195,7 @@ export const apps: DiyamaApp[] = [
     name: "Diyama Expensa",
     tagline: "See exactly where your money goes",
     description:
-      "Log income and expenses, watch your monthly balance, and read simple charts that show where the money is going. Export anytime.",
+      "Log income and expenses, watch your monthly balance and read simple charts that show where the money is going. Export anytime.",
     category: "Business Systems",
     url: "/apps/expensa",
     status: "live",
@@ -229,7 +229,7 @@ export const apps: DiyamaApp[] = [
     name: "Diyama Loyalty",
     tagline: "Turn first time buyers into regulars",
     description:
-      "Create a digital stamp card for your cafe or shop, stamp customers on every visit, and delight them when they unlock a reward. Track every customer.",
+      "Create a digital stamp card for your cafe or shop, stamp customers on every visit and delight them when they unlock a reward. Track every customer.",
     category: "Marketing",
     url: "/apps/loyalty",
     status: "live",
@@ -246,14 +246,14 @@ export const apps: DiyamaApp[] = [
     name: "eClass Learning Platform",
     tagline: "E-learning and school management in one place",
     description:
-      "A complete e-learning platform for schools and training providers. Courses, classes, assignments, and student progress, all managed from a clean dashboard.",
+      "A complete e-learning platform for schools and training providers. Courses, classes, assignments and student progress, all managed from a clean dashboard.",
     category: "Education",
     url: null,
     status: "demo-on-request",
     image: eclassShot,
     domain: "eclass.diyama.online",
     freeOffer: "Request a free guided demo and explore the platform with a trial school account.",
-    fullOffer: "A dedicated platform for your institution with your branding, unlimited students, and ongoing support.",
+    fullOffer: "A dedicated platform for your institution with your branding, unlimited students and ongoing support.",
     tags: ["E-Learning", "Schools", "Training"],
     featured: false,
     audience: "back-office",
@@ -263,14 +263,14 @@ export const apps: DiyamaApp[] = [
     name: "World Clock Display",
     tagline: "A clean on-screen clock for offices and events",
     description:
-      "A simple, beautiful world clock you can put on any screen. Great for offices, studios, reception areas, and events that work across time zones.",
+      "A simple, beautiful world clock you can put on any screen. Great for offices, studios, reception areas and events that work across time zones.",
     category: "Tools",
     url: "https://worldclock.diyama.online",
     status: "live",
     image: worldClockShot,
     domain: "worldclock.diyama.online",
     freeOffer: "Use it free in your browser right now.",
-    fullOffer: "Custom branding, multiple saved timezone sets, and display configurations for your business.",
+    fullOffer: "Custom branding, multiple saved timezone sets and display configurations for your business.",
     tags: ["Utility", "Displays", "Free"],
     featured: false,
     audience: "storefront",

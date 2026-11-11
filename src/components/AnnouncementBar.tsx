@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, X } from "lucide-react";
 
 /* One quiet line above the navigation, on every page, pointing at the BeOn Tech
-   teaser on the homepage. A visitor can close it, and it stays closed for that
+   teaser on the homepage. A visitor can close it and it stays closed for that
    visit. Storage can be unavailable in a private window, so it is wrapped. */
 
 const KEY = "diyama-beon-bar-closed";
@@ -38,7 +38,7 @@ const AnnouncementBar = () => {
         </span>
         <Link to="/#beon" className="inline-flex items-center gap-1.5 hover:text-cyan-200 transition-colors">
           <span>
-            <strong className="font-semibold">BeOn Tech</strong>, a working brain for your computer
+            <strong className="font-semibold">BeOn Tech</strong> is switching on
           </span>
           <ArrowRight size={14} className="shrink-0" />
         </Link>

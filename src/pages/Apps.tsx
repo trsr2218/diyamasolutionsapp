@@ -253,7 +253,7 @@ const Apps = () => {
               </motion.div>
               <h2 className="font-display font-semibold text-xl mb-2">Need a custom app or system?</h2>
               <p className="text-sm text-muted-foreground mb-5">
-                We build POS systems, booking tools, learning platforms, and custom business software.
+                We build POS systems, booking tools, learning platforms and custom business software.
                 Tell us what your business needs and we will build it.
               </p>
               <motion.a

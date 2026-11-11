@@ -14,7 +14,7 @@ const fadeUp: Variants = {
  *
  * The pick itself lives in `@/lib/appOfTheDay`. This component only keeps it
  * current: the homepage is prerendered, so the static HTML carries whatever the
- * build day chose, and the first client render plus a timer at Lusaka midnight
+ * build day chose and the first client render plus a timer at Lusaka midnight
  * put the right app on screen without needing a redeploy.
  */
 const AppOfTheDay = () => {

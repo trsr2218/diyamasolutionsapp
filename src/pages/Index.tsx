@@ -11,6 +11,8 @@ import { priceCards } from "@/data/pricing";
 import { proofStats, proofAsAt } from "@/data/proof";
 import PageTransition from "@/components/PageTransition";
 import SystemConsole from "@/components/SystemConsole";
+import SystemArt from "@/components/SystemArt";
+import CountUp from "@/components/CountUp";
 import BeOnTeaser from "@/components/BeOnTeaser";
 import AppOfTheDay from "@/components/AppOfTheDay";
 import DiyamaAvatar from "@/components/DiyamaAvatar";
@@ -64,7 +66,7 @@ const steps = [
   {
     n: "03",
     title: "Run",
-    body: "We keep it secure, backed up and online, and somebody local answers when you call. The build gets you started. The care keeps you there.",
+    body: "We keep it secure, backed up and online and somebody local answers when you call. The build gets you started. The care keeps you there.",
   },
 ];
 
@@ -96,9 +98,10 @@ const Index = () => {
       {/* Hero */}
       <section className="relative overflow-hidden bg-ink text-white">
         <div className="absolute inset-0 bg-grid" />
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute -top-40 left-1/4 w-[38rem] h-[38rem] rounded-full bg-primary/25 blur-[120px]" />
-          <div className="absolute top-1/3 -right-40 w-[30rem] h-[30rem] rounded-full bg-accent/10 blur-[120px]" />
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="aurora animate-aurora-1 -top-40 left-[12%] w-[40rem] h-[40rem] bg-[hsl(173_80%_32%/0.55)]" />
+          <div className="aurora animate-aurora-2 top-[20%] -right-32 w-[34rem] h-[34rem] bg-[hsl(41_95%_55%/0.22)]" />
+          <div className="aurora animate-aurora-1 -bottom-48 left-[40%] w-[36rem] h-[36rem] bg-[hsl(205_95%_55%/0.22)]" />
         </div>
 
         <div className="relative z-10 px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 lg:pt-24 pb-14 sm:pb-16">
@@ -118,7 +121,7 @@ const Index = () => {
               <motion.p variants={fadeUp} className="text-lg sm:text-xl text-white/70 leading-relaxed mb-9 max-w-xl">
                 Diyama Solutions designs, builds and runs the software behind your bookings,
                 quotes, invoices, customer replies and daily posting. Built in Zambia, live in
-                days, and kept running by the people who built it.
+                days and kept running by the people who built it.
               </motion.p>
               <motion.div variants={fadeUp} className="flex flex-wrap gap-3 sm:gap-4">
                 <Link to="/consultations" className="btn-accent inline-flex items-center gap-2 font-semibold">
@@ -144,9 +147,29 @@ const Index = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.25, ease: "easeOut" }}
-              className="w-full max-w-lg mx-auto lg:max-w-none"
+              className="relative w-full max-w-lg mx-auto lg:max-w-none [perspective:1600px]"
             >
-              <SystemConsole />
+              <div className="lg:[transform:rotateY(-9deg)_rotateX(4deg)] lg:hover:[transform:rotateY(-3deg)_rotateX(1deg)] transition-transform duration-700 ease-out">
+                <SystemConsole />
+              </div>
+              <div className="hidden sm:flex glass absolute -left-4 lg:-left-10 -top-7 items-center gap-2.5 rounded-xl px-3.5 py-2.5 shadow-2xl shadow-black/40 animate-float">
+                <span className="w-8 h-8 rounded-lg bg-emerald-400/20 text-emerald-300 flex items-center justify-center">
+                  <Check size={16} />
+                </span>
+                <span className="text-left">
+                  <span className="block text-xs font-semibold text-white">Booking confirmed</span>
+                  <span className="block text-[11px] text-white/55">No one retyped it</span>
+                </span>
+              </div>
+              <div className="hidden sm:flex glass absolute -right-2 lg:-right-4 -bottom-7 items-center gap-2.5 rounded-xl px-3.5 py-2.5 shadow-2xl shadow-black/40 animate-float [animation-delay:2.5s]">
+                <span className="w-8 h-8 rounded-lg bg-accent/25 text-accent flex items-center justify-center">
+                  <ShieldCheck size={16} />
+                </span>
+                <span className="text-left">
+                  <span className="block text-xs font-semibold text-white">Backed up tonight</span>
+                  <span className="block text-[11px] text-white/55">Checked and online</span>
+                </span>
+              </div>
             </motion.div>
           </div>
         </div>
@@ -159,7 +182,7 @@ const Index = () => {
                 <motion.div key={s.label} variants={fadeUp}>
                   <dt className="sr-only">{s.label}</dt>
                   <dd>
-                    <span className="block font-display text-3xl sm:text-4xl font-extrabold text-white">{s.value}</span>
+                    <CountUp value={s.value} className="block font-display text-4xl sm:text-5xl font-extrabold text-gold-gradient" />
                     <span className="block text-sm text-white/55 mt-1.5 leading-snug max-w-[15rem]">{s.label}</span>
                   </dd>
                 </motion.div>
@@ -186,12 +209,14 @@ const Index = () => {
 
             <div className="grid md:grid-cols-2 gap-5">
               {systems.map((s) => (
-                <motion.article key={s.id} variants={fadeUp} className="card-elevated p-7 sm:p-8 flex flex-col">
+                <motion.article key={s.id} variants={fadeUp} className="card-glow flex flex-col">
+                  <SystemArt id={s.id} />
+                  <div className="p-7 sm:p-8 flex flex-col flex-1">
                   <div className="flex items-start justify-between gap-4 mb-5">
-                    <span className="w-12 h-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0">
+                    <span className="w-12 h-12 -mt-14 rounded-xl bg-gradient-to-br from-primary to-[hsl(173_70%_32%)] text-primary-foreground flex items-center justify-center shrink-0 ring-4 ring-card shadow-lg relative z-10">
                       <s.icon size={22} />
                     </span>
-                    <span className="text-xs font-medium text-muted-foreground text-right leading-snug max-w-[13rem] pt-1">
+                    <span className="text-xs font-semibold text-foreground bg-accent/15 border border-accent/30 rounded-full px-3 py-1 text-right leading-snug">
                       {s.price}
                     </span>
                   </div>
@@ -209,6 +234,7 @@ const Index = () => {
                   <p className="text-xs text-muted-foreground mt-auto pt-4 border-t">
                     <span className="font-semibold text-foreground">For:</span> {s.whoFor}
                   </p>
+                  </div>
                 </motion.article>
               ))}
             </div>
@@ -237,8 +263,9 @@ const Index = () => {
             </motion.div>
             <div className="grid md:grid-cols-3 gap-px bg-border rounded-xl overflow-hidden border">
               {steps.map((s) => (
-                <motion.div key={s.n} variants={fadeUp} className="bg-card p-7 sm:p-8">
-                  <span className="font-display text-sm font-bold text-accent tracking-widest">{s.n}</span>
+                <motion.div key={s.n} variants={fadeUp} className="bg-card p-7 sm:p-8 relative overflow-hidden group">
+                  <span className="absolute -right-3 -top-6 font-display text-[7rem] font-extrabold leading-none text-primary/[0.06] group-hover:text-accent/20 transition-colors duration-500 select-none">{s.n}</span>
+                  <span className="relative inline-flex w-11 h-11 rounded-full bg-gradient-to-br from-accent to-[hsl(30_95%_55%)] text-accent-foreground items-center justify-center font-display text-sm font-extrabold shadow-lg shadow-accent/30">{s.n}</span>
                   <h3 className="font-display text-2xl font-bold mt-3 mb-3">{s.title}</h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">{s.body}</p>
                 </motion.div>
@@ -251,6 +278,10 @@ const Index = () => {
       {/* We run on our own systems */}
       <section className="relative overflow-hidden bg-ink text-white section-padding">
         <div className="absolute inset-0 bg-grid opacity-60" />
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="aurora animate-aurora-2 -top-32 right-[10%] w-[32rem] h-[32rem] bg-[hsl(173_80%_32%/0.45)]" />
+          <div className="aurora animate-aurora-1 -bottom-40 left-[5%] w-[30rem] h-[30rem] bg-[hsl(41_95%_55%/0.16)]" />
+        </div>
         <div className="container-wide mx-auto relative z-10">
           <motion.div variants={stagger} {...inView}>
             <motion.div variants={fadeUp} className="max-w-2xl mb-12">
@@ -265,7 +296,7 @@ const Index = () => {
             </motion.div>
             <div className="grid md:grid-cols-3 gap-5">
               {ownSystems.map((o) => (
-                <motion.div key={o.title} variants={fadeUp} className="panel-dark p-7">
+                <motion.div key={o.title} variants={fadeUp} whileHover={{ y: -6 }} className="glass rounded-xl p-7 transition-colors duration-300 hover:border-accent/40">
                   <span className="w-11 h-11 rounded-lg bg-accent/15 text-accent border border-accent/25 flex items-center justify-center mb-5">
                     <o.icon size={20} />
                   </span>
@@ -385,7 +416,7 @@ const Index = () => {
               <h3 className="font-display text-2xl font-bold mb-2.5">Ask Diyama AI</h3>
               <p className="text-muted-foreground leading-relaxed mb-6 flex-grow">
                 A practical AI business advisor. Ask about pricing, marketing, operations or what
-                to fix first, and get a straight answer.
+                to fix first and get a straight answer.
               </p>
               <Link to="/ai" className="btn-primary inline-flex items-center gap-2 self-start">
                 <MessageSquare size={17} /> Start a conversation
@@ -405,7 +436,7 @@ const Index = () => {
               <h3 className="relative font-display text-2xl font-bold mb-2.5">Find your Business Fit</h3>
               <p className="relative text-white/75 leading-relaxed mb-6 flex-grow">
                 Answer a few questions and get a personal kit: what to prioritise, quick wins for
-                this week, and the services that fit where you are.
+                this week and the services that fit where you are.
               </p>
               <Link to="/business-fit" className="relative btn-accent inline-flex items-center gap-2 self-start font-semibold">
                 Build my free Business Kit <ArrowRight size={16} />

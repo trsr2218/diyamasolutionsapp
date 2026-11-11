@@ -24,7 +24,7 @@ import { apps, type DiyamaApp } from "@/data/apps";
  *
  * The homepage is prerendered at build time, so the value baked into the static
  * HTML is whatever the build day produced. `AppOfTheDay` recomputes on mount and
- * again at midnight, and the app mounts with `createRoot` rather than hydrating,
+ * again at midnight and the app mounts with `createRoot` rather than hydrating,
  * so the browser always ends up on the correct day.
  */
 

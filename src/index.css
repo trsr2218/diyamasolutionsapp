@@ -190,13 +190,64 @@
     border-color: hsl(var(--ink-line));
   }
 
+  /* Slow moving colour behind the dark bands. */
+  .aurora {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(90px);
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  /* A card whose edge lights up in teal and gold on hover. */
+  .card-glow {
+    @apply relative rounded-xl bg-card transition-all duration-300;
+    box-shadow: 0 1px 2px hsl(var(--foreground) / 0.06), 0 12px 32px -18px hsl(var(--foreground) / 0.25);
+  }
+  .card-glow::after {
+    content: "";
+    @apply absolute inset-0 rounded-xl pointer-events-none opacity-0 transition-opacity duration-300;
+    padding: 1.5px;
+    background: linear-gradient(135deg, hsl(var(--accent)), hsl(173 70% 45%), hsl(200 90% 60%));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+  .card-glow:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 30px 60px -24px hsl(173 64% 20% / 0.45), 0 12px 28px -14px hsl(var(--accent) / 0.25);
+  }
+  .card-glow:hover::after {
+    @apply opacity-100;
+  }
+
+  .glass {
+    @apply border backdrop-blur-md;
+    background: hsl(0 0% 100% / 0.07);
+    border-color: hsl(0 0% 100% / 0.14);
+  }
+
   .text-gold-gradient {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(120deg, hsl(41 92% 62%), hsl(36 85% 48%));
+    background-image: linear-gradient(110deg, hsl(41 95% 64%), hsl(30 95% 55%), hsl(41 95% 70%), hsl(36 85% 48%));
+    background-size: 220% 100%;
+    animation: sheen 7s ease-in-out infinite;
   }
 }
 
 @layer utilities {
+  .animate-flow {
+    animation: flow 1.8s linear infinite;
+  }
+  .animate-ring {
+    animation: ring 3.9s ease-out infinite;
+  }
+  .animate-aurora-1 {
+    animation: aurora-1 16s ease-in-out infinite;
+  }
+  .animate-aurora-2 {
+    animation: aurora-2 21s ease-in-out infinite;
+  }
   .animate-breathe {
     animation: breathe 4.5s ease-in-out infinite;
   }
@@ -257,11 +308,32 @@
   0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
+@keyframes sheen {
+  0%, 100% { background-position: 0% 50%; }
+  50%       { background-position: 100% 50%; }
+}
+@keyframes flow {
+  0%   { left: -1rem; }
+  100% { left: 100%; }
+}
+@keyframes ring {
+  0%   { transform: scale(0.85); opacity: 0.9; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+@keyframes aurora-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%       { transform: translate(8%, 12%) scale(1.15); }
+}
+@keyframes aurora-2 {
+  0%, 100% { transform: translate(0, 0) scale(1.1); }
+  50%       { transform: translate(-10%, -8%) scale(0.95); }
+}
 @keyframes breathe {
-  0%, 100% { opacity: 0.55; transform: scale(0.96); }
-  50%       { opacity: 1; transform: scale(1.04); }
+  0%, 100% { opacity: 0.82; transform: scale(0.97); }
+  50%       { opacity: 1; transform: scale(1.03); }
 }
 @media (prefers-reduced-motion: reduce) {
+  .animate-flow, .animate-ring, .animate-aurora-1, .animate-aurora-2, .text-gold-gradient,
   .animate-breathe, .animate-marquee, .animate-orb-1, .animate-orb-2, .animate-orb-3, .animate-float, .animate-pulse-glow {
     animation: none;
   }

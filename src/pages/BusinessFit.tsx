@@ -316,7 +316,7 @@ const BusinessFit = () => {
               Get your <span className="text-gradient-primary">free Business Kit</span>
             </h1>
             <p className="text-muted-foreground max-w-lg mx-auto">
-              Answer a few quick questions and Diyama builds you a personalized kit: recommendations, quick wins, and your next best move.
+              Answer a few quick questions and Diyama builds you a personalized kit: recommendations, quick wins and your next best move.
             </p>
           </motion.div>
 

@@ -19,7 +19,7 @@ export const articles: Article[] = [
     readTime: "5 min",
     tags: ["Marketing", "Basics"],
     content: `
-Digital marketing simply means reaching your customers through digital channels: search engines, social media, WhatsApp, email, and your website. If your customers spend time on their phones (and in Zambia, almost everyone does), digital marketing is how you show up where they already are.
+Digital marketing simply means reaching your customers through digital channels: search engines, social media, WhatsApp, email and your website. If your customers spend time on their phones (and in Zambia, almost everyone does), digital marketing is how you show up where they already are.
 
 ## Why it matters more than ever
 
@@ -28,8 +28,8 @@ Think about how you found the last three businesses you bought from. Chances are
 The businesses that treat this seriously get three advantages:
 
 - **They get found.** When someone searches "guest house in Livingstone" or "catering in Lusaka", businesses with a strong digital presence appear first.
-- **They build trust before the first conversation.** Reviews, photos, and consistent posting all answer the customer's silent question: is this business real and reliable?
-- **They spend less to earn more.** A well-run Facebook page or Google Business Profile costs little compared to billboards or radio, and you can measure exactly what works.
+- **They build trust before the first conversation.** Reviews, photos and consistent posting all answer the customer's silent question: is this business real and reliable?
+- **They spend less to earn more.** A well-run Facebook page or Google Business Profile costs little compared to billboards or radio and you can measure exactly what works.
 
 ## The core channels, in plain language
 
@@ -37,9 +37,9 @@ The businesses that treat this seriously get three advantages:
 
 **Social media (Facebook, Instagram, TikTok).** Where you build familiarity. Consistency beats brilliance: two decent posts a week, every week, outperforms one amazing post a quarter.
 
-**WhatsApp.** In Zambia and much of Africa, WhatsApp is where deals actually close. A WhatsApp Business account with a catalogue, quick replies, and a proper profile turns chats into sales.
+**WhatsApp.** In Zambia and much of Africa, WhatsApp is where deals actually close. A WhatsApp Business account with a catalogue, quick replies and a proper profile turns chats into sales.
 
-**Your website.** Your digital home base. Social media accounts can be suspended; your website is yours. It should clearly say what you do, who it is for, and how to contact you.
+**Your website.** Your digital home base. Social media accounts can be suspended; your website is yours. It should clearly say what you do, who it is for and how to contact you.
 
 **Email and SMS.** The channels you own. A simple list of past customers you message monthly can quietly become your most profitable asset.
 
@@ -47,14 +47,14 @@ The businesses that treat this seriously get three advantages:
 
 1. Claim and complete your Google Business Profile.
 2. Set up WhatsApp Business properly: profile, catalogue, welcome message.
-3. Pick ONE social platform where your customers actually are, and post consistently.
+3. Pick ONE social platform where your customers actually are and post consistently.
 4. Ask every happy customer for a Google review.
 
 Do those four things before you spend a single kwacha on ads. Ads amplify what already works; they cannot fix a weak foundation.
 
 ## The bottom line
 
-Digital marketing is not a luxury for big companies. It is the modern version of having a sign on a busy road, a good reputation in the neighbourhood, and a friendly person at the counter. Start small, stay consistent, and measure what happens.
+Digital marketing is not a luxury for big companies. It is the modern version of having a sign on a busy road, a good reputation in the neighbourhood and a friendly person at the counter. Start small, stay consistent and measure what happens.
 
 Want help building your digital foundation? That is exactly what we do. [Book a consultation](/consultations) and we will map out your first 90 days together.
 `,
@@ -68,7 +68,7 @@ Want help building your digital foundation? That is exactly what we do. [Book a 
     readTime: "7 min",
     tags: ["Growth", "Startup"],
     content: `
-Your first 100 customers are the hardest. You have no reviews, no word of mouth, and no track record. But they are also the most important: they teach you what people actually pay for, and they become the engine for everything after.
+Your first 100 customers are the hardest. You have no reviews, no word of mouth and no track record. But they are also the most important: they teach you what people actually pay for and they become the engine for everything after.
 
 Here is a practical playbook, ordered by what to do first.
 
@@ -76,7 +76,7 @@ Here is a practical playbook, ordered by what to do first.
 
 Your network is not "cheating". It is how almost every successful business starts.
 
-- Write a simple announcement: what you offer, who it helps, and one clear way to buy or book.
+- Write a simple announcement: what you offer, who it helps and one clear way to buy or book.
 - Send it personally (not as a broadcast) to 30 to 50 contacts. Personal messages get replies; broadcasts get ignored.
 - Ask each person one thing: "Do you know one person who needs this?" A referral request is easier to say yes to than a sales pitch.
 
@@ -124,7 +124,7 @@ Once you know your message works (people respond to it) and your offer converts 
 
 ## A realistic timeline
 
-With consistent effort (an hour or two a day), most service businesses can reach 100 customers in 3 to 6 months. It compounds: the first 10 are grind, the next 30 come from visibility, and the last 60 come increasingly from referrals and reviews.
+With consistent effort (an hour or two a day), most service businesses can reach 100 customers in 3 to 6 months. It compounds: the first 10 are grind, the next 30 come from visibility and the last 60 come increasingly from referrals and reviews.
 
 Stuck on any step? [Try our Business Fit tool](/business-fit) for a free personalized action plan, or [book a consultation](/consultations) and we will build your customer acquisition plan together.
 `,
@@ -138,13 +138,13 @@ Stuck on any step? [Try our Business Fit tool](/business-fit) for a free persona
     readTime: "8 min",
     tags: ["Google", "Local", "Reviews"],
     content: `
-When someone searches "lodge near me" or "restaurant in Lusaka", Google shows a map with three businesses at the top. Those three get the calls, the directions, and the bookings. This guide is about becoming one of them.
+When someone searches "lodge near me" or "restaurant in Lusaka", Google shows a map with three businesses at the top. Those three get the calls, the directions and the bookings. This guide is about becoming one of them.
 
 ## Step 1: Claim your Google Business Profile
 
 Go to [google.com/business](https://google.com/business) and search for your business. If it exists, claim it. If not, create it. Verification usually happens by phone, email, or a video walkthrough of your premises.
 
-This is free, and it is the single highest-return marketing action a local business can take.
+This is free and it is the single highest-return marketing action a local business can take.
 
 ## Step 2: Complete every field (seriously, every field)
 
@@ -154,36 +154,36 @@ Google rewards complete profiles. Fill in:
 - **Categories.** Your primary category matters most. Be specific: "Guest house" beats "Hotel" if that is what you are.
 - **Address and service area**, accurate to the pin. Walk outside and check the pin location on your phone.
 - **Hours.** Keep them updated, including holidays. Nothing kills trust like arriving at a "closed" open business.
-- **Phone and WhatsApp**, website, and booking links.
-- **Description.** 750 characters. Say what you offer, who it is for, and what makes you different.
+- **Phone and WhatsApp**, website and booking links.
+- **Description.** 750 characters. Say what you offer, who it is for and what makes you different.
 
 ## Step 3: Add photos weekly
 
 Profiles with regular photos get dramatically more clicks and direction requests.
 
-- Post real photos: your rooms, plates, team, and entrance.
+- Post real photos: your rooms, plates, team and entrance.
 - Add 2 or 3 new photos every week. Recency matters.
 - Get the basics right: good light, straight angles, no blur.
 
 ## Step 4: Build reviews systematically
 
-Reviews are the #1 ranking factor you can directly influence, and the #1 trust factor for customers.
+Reviews are the #1 ranking factor you can directly influence and the #1 trust factor for customers.
 
 - **Ask every happy customer**, at the moment they express satisfaction. Not later. Later never happens.
 - **Make it effortless.** Get your review link from your profile dashboard and save it as a WhatsApp quick reply.
 - **Respond to every review**, good and bad. Thank the good ones by name. Answer the bad ones calmly with facts and an offer to make it right. Future customers read your responses more carefully than the reviews themselves.
-- **Never buy fake reviews.** Google detects the patterns, and one purge can wipe out your profile's credibility.
+- **Never buy fake reviews.** Google detects the patterns and one purge can wipe out your profile's credibility.
 
 A steady rhythm (2 to 4 new reviews a month) beats a burst of 20 followed by silence.
 
 ## Step 5: Use posts and Q&A
 
-- **Posts**: share offers, events, and updates directly on your profile. Most competitors ignore this feature, which is exactly why you should not.
+- **Posts**: share offers, events and updates directly on your profile. Most competitors ignore this feature, which is exactly why you should not.
 - **Q&A**: ask and answer your own common questions ("Do you have parking?", "Do you take card payments?"). You are writing the FAQ customers see before they call.
 
 ## Step 6: Keep your information consistent everywhere
 
-Google cross-checks your name, address, and phone number across the internet. Make sure they match exactly on your website, Facebook page, and any directories. Inconsistency quietly hurts ranking.
+Google cross-checks your name, address and phone number across the internet. Make sure they match exactly on your website, Facebook page and any directories. Inconsistency quietly hurts ranking.
 
 ## What results to expect
 
@@ -191,7 +191,7 @@ Google cross-checks your name, address, and phone number across the internet. Ma
 - **Months 2 to 3:** rising visibility for category searches ("coffee shop Kabulonga"), more calls and direction requests.
 - **Months 4 to 6:** competing for the top 3 map results in your area, which is where the real volume lives.
 
-Track it all in the profile dashboard: searches, views, calls, and direction requests, month by month.
+Track it all in the profile dashboard: searches, views, calls and direction requests, month by month.
 
 Want us to set this up and run it for you? Google Business Profile setup and review engines are core Diyama services. [Get in touch](/contact) and we will take it off your plate.
 `,
@@ -199,7 +199,7 @@ Want us to set this up and run it for you? Google Business Profile setup and rev
   {
     id: "tourism-marketing-zambia",
     title: "Tourism Marketing in Zambia: What Actually Works",
-    excerpt: "Insights from real campaigns: what drives bookings for lodges, tours, and hospitality businesses in Zambia.",
+    excerpt: "Insights from real campaigns: what drives bookings for lodges, tours and hospitality businesses in Zambia.",
     category: "Tourism",
     level: "advanced",
     readTime: "10 min",
@@ -209,11 +209,11 @@ Zambian tourism businesses sit next to one of the world's great attractions, yet
 
 ## Understand your two very different customers
 
-**International travellers** plan months ahead, research heavily, and book online. They find you through Google, TripAdvisor, Booking.com, and travel blogs. They expect instant answers, clear prices, and reviews.
+**International travellers** plan months ahead, research heavily and book online. They find you through Google, TripAdvisor, Booking.com and travel blogs. They expect instant answers, clear prices and reviews.
 
-**Regional and local guests** (Zambian weekenders, Lusaka corporate retreats, cross-border visitors) plan days or weeks ahead and often book through WhatsApp or a phone call. They find you through Facebook, word of mouth, and drive-past visibility.
+**Regional and local guests** (Zambian weekenders, Lusaka corporate retreats, cross-border visitors) plan days or weeks ahead and often book through WhatsApp or a phone call. They find you through Facebook, word of mouth and drive-past visibility.
 
-Most lodges market to one group and wonder why the other never comes. You need both, and they need different funnels.
+Most lodges market to one group and wonder why the other never comes. You need both and they need different funnels.
 
 ## The five things that drive international bookings
 
@@ -223,43 +223,43 @@ Most lodges market to one group and wonder why the other never comes. You need b
 
 3. **Reviews, recent and answered.** A 4.5-star profile with reviews from last month outsells a 4.8-star profile whose last review is a year old. Build the review ask into your checkout routine.
 
-4. **Photography that sells the feeling.** Travellers buy sunsets, breakfasts overlooking the river, and smiling staff. Phone cameras are good enough if the light is right (shoot at golden hour). Update photos seasonally.
+4. **Photography that sells the feeling.** Travellers buy sunsets, breakfasts overlooking the river and smiling staff. Phone cameras are good enough if the light is right (shoot at golden hour). Update photos seasonally.
 
 5. **Fast responses.** International enquiries go cold in hours, not days. A WhatsApp Business auto-reply plus a target of answering within an hour will visibly lift conversion.
 
 ## The three things that drive regional bookings
 
-1. **Facebook presence with prices.** Zambian travellers scroll Facebook, and posts with clear packages ("Weekend rate: K1,200 per couple, breakfast included") outperform pretty pictures with "DM for prices" every time.
+1. **Facebook presence with prices.** Zambian travellers scroll Facebook and posts with clear packages ("Weekend rate: K1,200 per couple, breakfast included") outperform pretty pictures with "DM for prices" every time.
 
 2. **Occasion packages.** Valentine's, Easter, long weekends, year-end company parties. Regional demand is occasion-driven; build packages around the calendar and promote them two to three weeks ahead.
 
-3. **Partnerships.** Transport companies, event planners, churches, and corporates book in groups. One relationship with a Lusaka HR manager can be worth more than a month of ads.
+3. **Partnerships.** Transport companies, event planners, churches and corporates book in groups. One relationship with a Lusaka HR manager can be worth more than a month of ads.
 
 ## Fix the leaks before pouring in traffic
 
 Before spending on marketing, audit your funnel honestly:
 
 - Search your business on Google. Is the profile complete, with current photos and answered reviews?
-- Check your website on a phone. Do prices, WhatsApp contact, and booking steps work?
+- Check your website on a phone. Do prices, WhatsApp contact and booking steps work?
 - Message your own business as a customer. How long until a useful reply?
 
-In our audits of Zambian hospitality businesses, the most common revenue leaks are missing prices, slow enquiry responses, and booking forms that silently fail. These cost more bookings than any lack of advertising.
+In our audits of Zambian hospitality businesses, the most common revenue leaks are missing prices, slow enquiry responses and booking forms that silently fail. These cost more bookings than any lack of advertising.
 
 ## Low season is marketing season
 
-Use quiet months to build the assets that pay off in peak season: photography, review volume, email list of past guests, and content (a blog post like "5-day Livingstone itinerary" attracts planners months before they travel).
+Use quiet months to build the assets that pay off in peak season: photography, review volume, email list of past guests and content (a blog post like "5-day Livingstone itinerary" attracts planners months before they travel).
 
 ## Measure what matters
 
-Track four numbers monthly: enquiries, response time, bookings, and direct-vs-OTA share. If enquiries are up but bookings are flat, the leak is in your response process, not your marketing.
+Track four numbers monthly: enquiries, response time, bookings and direct-vs-OTA share. If enquiries are up but bookings are flat, the leak is in your response process, not your marketing.
 
-Diyama works hands-on with tourism businesses on exactly this: audits, booking funnels, review engines, and seasonal campaigns. [Book a consultation](/consultations) and bring your occupancy numbers; we will find the leaks together.
+Diyama works hands-on with tourism businesses on exactly this: audits, booking funnels, review engines and seasonal campaigns. [Book a consultation](/consultations) and bring your occupancy numbers; we will find the leaks together.
 `,
   },
   {
     id: "restaurant-growth-playbook",
     title: "The Restaurant Growth Playbook",
-    excerpt: "How restaurants can use digital marketing, reviews, and local visibility to fill more seats consistently.",
+    excerpt: "How restaurants can use digital marketing, reviews and local visibility to fill more seats consistently.",
     category: "Restaurant Growth",
     level: "beginner",
     readTime: "6 min",
@@ -271,7 +271,7 @@ A great menu does not fill seats by itself. Restaurants that stay busy in slow m
 
 Almost every group meal starts with someone checking their phone.
 
-- **Google Business Profile first.** Complete profile, current menu, prices, opening hours, and photos of actual plates. Restaurants appear in more "near me" searches than any other business type.
+- **Google Business Profile first.** Complete profile, current menu, prices, opening hours and photos of actual plates. Restaurants appear in more "near me" searches than any other business type.
 - **Reviews are your currency.** Ask happy tables for a review before they leave; a small table card with a QR code works. Respond to every review, especially the bad ones, with grace.
 - **Photos sell food.** Shoot in daylight near a window. Post new dishes weekly. Blurry dark food photos actively cost you customers.
 
@@ -323,7 +323,7 @@ Restaurants are one of Diyama's favourite clients to work with because results s
   {
     id: "creator-economy-explained",
     title: "The Creator Economy: How to Turn Content Into Income",
-    excerpt: "Understanding how creators build sustainable businesses, and how Diyama supports that journey.",
+    excerpt: "Understanding how creators build sustainable businesses and how Diyama supports that journey.",
     category: "Creator Economy",
     level: "beginner",
     readTime: "6 min",
@@ -349,7 +349,7 @@ Think of creator income as layers you stack over time, not options you choose be
 
 4. **Products and services.** Merchandise, courses, beat packs, presets, recipe books, coaching, performances. Your content is the marketing; the product is the business.
 
-5. **Ownership and royalties.** Music royalties, licensing your work, and newer onchain tools that let fans hold a stake in what you make. Slowest to build, most valuable long-term.
+5. **Ownership and royalties.** Music royalties, licensing your work and newer onchain tools that let fans hold a stake in what you make. Slowest to build, most valuable long-term.
 
 ## Own your audience relationship
 
@@ -359,7 +359,7 @@ The most important strategic move any creator makes: convert platform followers 
 - An email list
 - A community group you control
 
-Platforms change rules, suspend accounts, and kill reach overnight. Your list survives all of it. Every serious creator business is built on an owned audience with rented platforms feeding it.
+Platforms change rules, suspend accounts and kill reach overnight. Your list survives all of it. Every serious creator business is built on an owned audience with rented platforms feeding it.
 
 ## Treat it like a business (because it is one)
 
@@ -374,7 +374,7 @@ Platforms change rules, suspend accounts, and kill reach overnight. Your list su
 - **Months 6 to 12:** start the owned list, land the first small brand deals, test one paid offer.
 - **Year 2+:** stack layers. Recurring support, a flagship product, better brand deals, royalties.
 
-Diyama works with creators on exactly this journey: positioning, brand strategy, monetization design, and the boring business infrastructure (pricing, contracts, funnels) that turns talent into a living. [Book a consultation](/consultations) and bring your numbers.
+Diyama works with creators on exactly this journey: positioning, brand strategy, monetization design and the boring business infrastructure (pricing, contracts, funnels) that turns talent into a living. [Book a consultation](/consultations) and bring your numbers.
 `,
   },
   {
@@ -386,7 +386,7 @@ Diyama works with creators on exactly this journey: positioning, brand strategy,
     readTime: "9 min",
     tags: ["Web3", "Africa", "Opportunity"],
     content: `
-Strip away the jargon and "onchain" means one thing: financial and organizational tools that run on open networks instead of closed institutions. For African builders, that translates into concrete opportunities, and also concrete risks. This guide covers both, practically.
+Strip away the jargon and "onchain" means one thing: financial and organizational tools that run on open networks instead of closed institutions. For African builders, that translates into concrete opportunities and also concrete risks. This guide covers both, practically.
 
 ## Why this matters more in Africa than almost anywhere
 
@@ -406,9 +406,9 @@ This is why grassroots crypto adoption rankings consistently place African count
 
 3. **Creator monetization.** Musicians and artists can sell work directly to a global audience and earn royalties automatically through smart contracts. Small but real: the infrastructure now exists for fans anywhere to support creators here.
 
-4. **Community coordination (DAOs).** A DAO is a shared treasury with transparent rules. For diaspora investment groups, creative collectives, and savings clubs (think of a chilimba with a glass vault), the transparency solves real trust problems.
+4. **Community coordination (DAOs).** A DAO is a shared treasury with transparent rules. For diaspora investment groups, creative collectives and savings clubs (think of a chilimba with a glass vault), the transparency solves real trust problems.
 
-5. **Building the picks and shovels.** The ecosystem needs local exchanges, on/off ramps, education, and integration services. The businesses that quietly connect "crypto" to "kwacha in my mobile money" are among the most valuable being built on the continent.
+5. **Building the picks and shovels.** The ecosystem needs local exchanges, on/off ramps, education and integration services. The businesses that quietly connect "crypto" to "kwacha in my mobile money" are among the most valuable being built on the continent.
 
 ## The risks, stated plainly
 
@@ -421,18 +421,18 @@ This is why grassroots crypto adoption rankings consistently place African count
 
 1. **Learn with pocket money.** Set up a wallet, receive a few dollars of USDC, send some to a friend. An hour of doing teaches more than a month of YouTube.
 2. **Pick the use case that touches your life.** Getting paid? Paying someone? Community treasury? Start with the one that solves a problem you already have.
-3. **Join builder communities.** Local Web3 communities, hackathons, and online ecosystems are where opportunities (jobs, grants, partners) actually circulate.
-4. **Keep one foot in each world.** The winners in African Web3 are bilingual: fluent onchain, and equally fluent in mobile money, local banking, and how business really works here.
+3. **Join builder communities.** Local Web3 communities, hackathons and online ecosystems are where opportunities (jobs, grants, partners) actually circulate.
+4. **Keep one foot in each world.** The winners in African Web3 are bilingual: fluent onchain and equally fluent in mobile money, local banking and how business really works here.
 
 ## Where Diyama fits
 
-We help businesses and creators evaluate whether onchain tools solve a real problem for them (sometimes the honest answer is "not yet"), and when they do, we help design and launch: strategy, community, product, and go-to-market. [Book a consultation](/consultations) if you are weighing a move onchain and want a clear-eyed partner.
+We help businesses and creators evaluate whether onchain tools solve a real problem for them (sometimes the honest answer is "not yet") and when they do, we help design and launch: strategy, community, product and go-to-market. [Book a consultation](/consultations) if you are weighing a move onchain and want a clear-eyed partner.
 `,
   },
   {
     id: "how-diyama-thinks",
     title: "How Diyama Thinks: Our Approach to Business Growth",
-    excerpt: "A look inside our methodology: why we prioritize clarity, practical action, and genuine partnership.",
+    excerpt: "A look inside our methodology: why we prioritize clarity, practical action and genuine partnership.",
     category: "Diyama Way",
     level: "beginner",
     readTime: "5 min",
@@ -468,13 +468,13 @@ If it works, we scale it. If it does not, we learned something cheap instead of 
 
 You will notice our recommendations are often unglamorous: fix your Google profile, answer WhatsApp faster, put prices on the website, ask for reviews. We are comfortable with that.
 
-The flashy strategy that never ships loses to the boring action done weekly, every single time. Our job is to find the highest-return action available to you right now, whatever it looks like, and make sure it actually happens.
+The flashy strategy that never ships loses to the boring action done weekly, every single time. Our job is to find the highest-return action available to you right now, whatever it looks like and make sure it actually happens.
 
 ## Partnership, not dependency
 
 The consulting industry has a quiet incentive problem: if you stay confused, they stay paid. We would rather work ourselves out of the urgent jobs.
 
-That means we explain everything we do (no black boxes), we build systems your team can run, and we teach as we go. Clients stay with us for years, but by choice, not by dependency. The retainer should feel like a growth partner on your team, not a toll gate on your own business.
+That means we explain everything we do (no black boxes), we build systems your team can run and we teach as we go. Clients stay with us for years, but by choice, not by dependency. The retainer should feel like a growth partner on your team, not a toll gate on your own business.
 
 ## We tell you the truth
 
@@ -482,7 +482,7 @@ Sometimes the honest advice is "do not spend money on this yet", or "your produc
 
 ## Bring the challenge
 
-That is the whole philosophy: clarity first, small measured moves, practical over impressive, partnership over dependency, and honesty throughout.
+That is the whole philosophy: clarity first, small measured moves, practical over impressive, partnership over dependency and honesty throughout.
 
 If that sounds like how you want to grow, bring us the challenge. [Book a consultation](/consultations), or just [start a conversation with Diyama AI](/ai) and see how we think in real time.
 `,

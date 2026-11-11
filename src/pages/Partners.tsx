@@ -52,7 +52,7 @@ const Partners = () => {
               </motion.h1>
               <motion.p variants={fadeUp} className="text-lg opacity-85">
                 Companies that trust Diyama to advertise and market on their behalf. Explore them,
-                support them, and see our work in action.
+                support them and see our work in action.
               </motion.p>
             </motion.div>
           </div>

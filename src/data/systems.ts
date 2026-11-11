@@ -9,7 +9,7 @@ import { systemPrices } from "@/data/pricing";
  * Ernest set Front Desk and the Automation Sprint on 11 November 2026). Every figure
  * comes from the generated `pricing.ts`, never typed here.
  *
- * WORDING. Say "assistant", and "AI" only where a model actually answers. Never
+ * WORDING. Say "assistant" and "AI" only where a model actually answers. Never
  * promise bookings, revenue or hours saved. Promise what is delivered.
  */
 
@@ -31,7 +31,7 @@ export const systems: SystemOffer[] = [
     name: "Front Desk on WhatsApp",
     line: "Your WhatsApp answered properly, even when you are busy.",
     description:
-      "An assistant that answers your customers from an answer book you approve, keeps every enquiry in one list, and hands anything it does not know to a person.",
+      "An assistant that answers your customers from an answer book you approve, keeps every enquiry in one list and hands anything it does not know to a person.",
     whoFor: "Service businesses that take their bookings and orders on WhatsApp.",
     includes: ["Your prices, hours and common questions answered", "Every enquiry logged in one place", "Unknown questions passed to you, never guessed", "WhatsApp message fees passed on at cost"],
     price: `${systemPrices.frontDeskSetup} set up, then ${systemPrices.frontDeskMonthly} a month`,
@@ -42,7 +42,7 @@ export const systems: SystemOffer[] = [
     name: "Lodge Desk",
     line: "Direct bookings, on your own page.",
     description:
-      "A booking site, your Google Business Profile set up properly, and a review engine, built as one sprint so guests can find you and book with you directly.",
+      "A booking site, your Google Business Profile set up properly and a review engine, built as one sprint so guests can find you and book with you directly.",
     whoFor: "Lodges and guest houses that rely on online travel agents.",
     includes: ["Booking site with WhatsApp booking", "Google Business Profile, done properly", "Review engine with QR cards"],
     price: `Direct Booking Sprint, ${systemPrices.lodgeSprint}`,
@@ -53,7 +53,7 @@ export const systems: SystemOffer[] = [
     name: "Automation Sprint",
     line: "The repetitive work, handed to software.",
     description:
-      "We connect the tools you already use so an enquiry becomes a quote, a quote becomes an invoice, and a reminder goes out, without anybody retyping it.",
+      "We connect the tools you already use so an enquiry becomes a quote, a quote becomes an invoice and a reminder goes out, without anybody retyping it.",
     whoFor: "Teams with admin work that repeats every day, in Zambia or abroad.",
     includes: ["Your process mapped first", "Workflows built and tested with you", "Handover notes your staff can follow"],
     price: `${systemPrices.automationSprint}, up to three workflows`,

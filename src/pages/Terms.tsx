@@ -12,7 +12,7 @@ const Terms = () => {
           <h2 className="font-display text-xl font-semibold text-foreground">Acceptance of Terms</h2>
           <p>By accessing and using the Diyama Solutions platform, you agree to these terms. If you do not agree, please do not use our services.</p>
           <h2 className="font-display text-xl font-semibold text-foreground">Services</h2>
-          <p>Diyama Solutions provides business consulting, digital marketing, growth strategy, and related services. Service details, deliverables, and pricing are agreed upon before engagement begins.</p>
+          <p>Diyama Solutions provides business consulting, digital marketing, growth strategy and related services. Service details, deliverables and pricing are agreed upon before engagement begins.</p>
           <h2 className="font-display text-xl font-semibold text-foreground">AI Assistant</h2>
           <p>The Diyama AI assistant provides general business guidance. It is not a substitute for professional legal, financial, or medical advice. Use AI-generated recommendations at your own discretion.</p>
           <h2 className="font-display text-xl font-semibold text-foreground">Reviews & Content</h2>

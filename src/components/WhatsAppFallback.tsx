@@ -3,7 +3,7 @@ import { whatsappLink } from "@/lib/whatsapp";
 
 /**
  * Shown when a form cannot be saved. The backend has gone down before without
- * anyone noticing, and every lead in that window was lost. This makes sure a
+ * anyone noticing and every lead in that window was lost. This makes sure a
  * visitor who took the time to write to us can still reach a person in one tap,
  * with what they typed carried across.
  */
