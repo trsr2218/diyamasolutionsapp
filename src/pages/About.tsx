@@ -120,18 +120,18 @@ const About = () => (
       </div>
     </section>
 
-    {/* In the room: photographs from Diyama's own events only, no stock, no names */}
+    {/* The faces from Diyama's own service graphics, never captioned as staff */}
     <section className="section-padding bg-surface border-y overflow-hidden">
       <div className="container-wide mx-auto">
         <motion.div variants={stagger} {...inView}>
           <motion.div variants={fadeUp} className="max-w-2xl mb-10">
-            <p className="eyebrow text-primary mb-4">In the room</p>
+            <p className="eyebrow text-primary mb-4">The look we are known for</p>
             <h2 className="text-3xl sm:text-5xl font-display font-bold leading-[1.08] mb-5">
-              Real people, in Zambia, doing the work.
+              The graphics that built our name.
             </h2>
             <p className="text-muted-foreground text-lg leading-relaxed">
-              We host workshops, train the people we build for and sit at the same table as our
-              clients. Every photograph on this site is from one of our own events.
+              Before the systems there were the posts. These are the faces from Diyama's own
+              service graphics, the designs our page is known for across Zambia.
             </p>
           </motion.div>
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">

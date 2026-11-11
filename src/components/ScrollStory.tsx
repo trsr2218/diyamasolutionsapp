@@ -2,31 +2,31 @@ import { useRef, useState } from "react";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { peoplePhotos } from "@/data/people";
+import { storyPeople } from "@/data/people";
 
 /* How we work, told as a sticky scroll story: the text steps scroll past while one
  * photograph stays pinned and changes with each step. On phones it is a plain
  * stacked list, because a pinned panel on a small screen is a trap. The photographs
- * are real, from Diyama's own events, and the captions name the event only. */
+ * are the faces from Diyama's own service graphics; the caption says so. */
 
 const steps = [
   {
     n: "01",
     title: "Scope",
     body: "One conversation about how the work really gets done today. You get a written quote with everything itemised before anybody starts.",
-    photo: peoplePhotos[2],
+    photo: { src: storyPeople[0], alt: "Two men in suits talking, from a Diyama service graphic" },
   },
   {
     n: "02",
     title: "Build",
     body: "We build it around your business, on the phones and computers you already have. New to us? You see yours working before you pay.",
-    photo: peoplePhotos[6],
+    photo: { src: storyPeople[1], alt: "A man thinking at a desk, from a Diyama service graphic" },
   },
   {
     n: "03",
     title: "Run",
     body: "We keep it secure, backed up and online and somebody local answers when you call. The build gets you started. The care keeps you there.",
-    photo: peoplePhotos[0],
+    photo: { src: storyPeople[2], alt: "A man in a blue suit inside a golden ring, from a Diyama service graphic" },
   },
 ];
 
@@ -88,7 +88,7 @@ const ScrollStory = () => {
                 />
               </AnimatePresence>
               <div className="absolute inset-x-0 bottom-0 p-5 flex items-end justify-between gap-4">
-                <p className="text-xs text-white/75">Diyama workshop, Livingstone, May 2026</p>
+                <p className="text-xs text-white/75">From Diyama's own service graphics</p>
                 <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
                   {steps[active].n} {steps[active].title}
                 </span>

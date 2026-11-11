@@ -15,7 +15,6 @@ import LiveClock from "@/components/LiveClock";
 import RotatingWord from "@/components/RotatingWord";
 import CursorGlow from "@/components/CursorGlow";
 import ScrollStory from "@/components/ScrollStory";
-import heroPhoto from "@/assets/people/workshop-room.webp";
 import SystemArt from "@/components/SystemArt";
 import CountUp from "@/components/CountUp";
 import BeOnTeaser from "@/components/BeOnTeaser";
@@ -23,15 +22,15 @@ import AppOfTheDay from "@/components/AppOfTheDay";
 import DiyamaAvatar from "@/components/DiyamaAvatar";
 import Seo from "@/components/Seo";
 import { pageSeo } from "@/seo/pageSeo";
-import { peoplePhotos, peopleCaption } from "@/data/people";
+import { peoplePhotos, peopleCaption, heroPerson } from "@/data/people";
 
 /* Homepage, rebuilt November 2026 around the pivot to systems and automation.
  *
  * Three rules it is built on:
- *   1. No photograph of a person who does not exist. The only people on the page
- *      are real ones from Diyama's own events (see `assets/people/`), captioned
- *      with the event, never with a name or a job title. Other visuals are drawn
- *      product panels and real screenshots of real apps.
+ *   1. The people on the page are the faces from Diyama's own service graphics
+ *      (see `data/people.ts`), Ernest's choice on 11 November 2026, never captioned
+ *      as staff or clients. Other visuals are drawn product panels and real
+ *      screenshots of real apps.
  *   2. No number typed by hand. Prices come from the generated pricing file and
  *      proof figures from `data/proof.ts`, which records where each came from.
  *   3. Promise delivery, never an outcome. No bookings, revenue or hours saved.
@@ -91,9 +90,9 @@ const Index = () => {
       <section className="relative overflow-hidden bg-ink text-white">
         <div className="absolute inset-0">
           <img
-            src={heroPhoto}
+            src={heroPerson}
             alt=""
-            className="w-full h-full object-cover object-[60%_35%] opacity-[0.42] animate-kenburns"
+            className="w-full h-full object-cover object-[70%_30%] opacity-[0.5] animate-kenburns"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/30" />
           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-ink/70" />
@@ -279,19 +278,19 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Real people, real room. Photographs from Diyama's own events only. */}
+      {/* The faces of the brand: the people from Diyama's own service graphics. */}
       <section className="section-padding bg-background overflow-hidden">
         <div className="container-wide mx-auto">
           <motion.div variants={stagger} {...inView}>
             <motion.div variants={fadeUp} className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
               <div className="max-w-2xl">
-                <p className="eyebrow text-primary mb-4">In the room</p>
+                <p className="eyebrow text-primary mb-4">The look we are known for</p>
                 <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-display font-bold leading-tight mb-4">
-                  Real people. We sit with the businesses we build for.
+                  The faces from our graphics, from the first post to today.
                 </h2>
                 <p className="text-muted-foreground text-lg leading-relaxed">
-                  We host, train and work in the same rooms as our clients, across Zambia.
-                  Nothing here is stock. These are our own events.
+                  These are the designs that built the Diyama page. The same hand designs your
+                  posts, your site and your brand.
                 </p>
               </div>
               <Link to="/about" className="inline-flex items-center gap-1 text-primary font-medium text-sm hover:underline whitespace-nowrap">
