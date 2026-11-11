@@ -4,17 +4,19 @@ import { ArrowRight } from "lucide-react";
 import backToWork from "@/assets/boards/board-back-to-work.webp";
 import answerBook from "@/assets/boards/board-answer-book.webp";
 import frontDesk from "@/assets/boards/board-front-desk.webp";
+import handoverNotes from "@/assets/boards/board-handover-notes.webp";
 
 /* This week's boards from the Diyama page, drawn by the graphics office in the new
  * poster layout (12 November 2026, built to Ernest's own design language: one hero
  * per subject, a colour world per post). Shown on the homepage and on About in
- * place of the cropped poster people. Replace the three files in `assets/boards`
+ * place of the cropped poster people. Replace the files in `assets/boards`
  * when the week moves on; nothing else changes. */
 
 const boards = [
   { src: backToWork, alt: "Diyama board: We went quiet. We were building. A laptop and a phone on a dark desk.", world: "Gold" },
   { src: answerBook, alt: "Diyama board: Write down the ten questions you get every week. An open notebook and a pen.", world: "Sky" },
   { src: frontDesk, alt: "Diyama board: Your WhatsApp answered, even when you are busy. A phone beside a brass desk bell.", world: "Green" },
+  { src: handoverNotes, alt: "Diyama board: Software without handover notes is a dependency. A red ring binder with coloured tabs.", world: "Red" },
 ];
 
 const stagger: Variants = { hidden: {}, visible: { transition: { staggerChildren: 0.1 } } };
@@ -50,12 +52,12 @@ const BoardStrip = ({
             Get this for your page <ArrowRight size={14} />
           </Link>
         </motion.div>
-        <div className="grid sm:grid-cols-3 gap-4 sm:gap-5">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
           {boards.map((b, i) => (
             <motion.figure
               key={b.src}
               variants={fadeUp}
-              whileHover={{ y: -6, rotate: i === 1 ? 0 : i === 0 ? -0.6 : 0.6 }}
+              whileHover={{ y: -6, rotate: i % 2 === 0 ? -0.6 : 0.6 }}
               transition={{ type: "spring", stiffness: 260, damping: 22 }}
               className="group relative overflow-hidden rounded-2xl bg-ink ring-1 ring-foreground/10 shadow-xl shadow-black/10 aspect-[4/5]"
             >
