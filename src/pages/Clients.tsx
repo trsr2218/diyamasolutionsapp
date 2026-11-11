@@ -81,9 +81,7 @@ const Clients = () => {
                         <a href={client.publicLink} target="_blank" rel="noopener noreferrer" className="text-sm text-primary font-medium inline-flex items-center gap-1 hover:underline">
                           Visit <ExternalLink size={12} />
                         </a>
-                      ) : (
-                        <p className="text-xs text-muted-foreground/60 italic">Link pending verification</p>
-                      )}
+                      ) : null}
                     </div>
                   </div>
                 </motion.div>
