@@ -27,12 +27,12 @@ export const priceCards: PriceCard[] = [
   },
   {
     "id": "lodges",
-    "title": "Direct bookings for lodges",
-    "blurb": "A booking site, your Google profile set up properly and a review engine, delivered together as one sprint.",
+    "title": "Direct bookings, no commission",
+    "blurb": "A booking site, your Google profile set up properly and a review engine, delivered together as one sprint. For salons, clinics, car hire, tours, venues, lodges and any business that takes bookings.",
     "from": "K3,850",
     "unit": "once",
     "points": [
-      "Guests book with you, not through an agent",
+      "Customers book with you, not through an agent",
       "Found on Google Maps in your area",
       "Reviews asked for, not hoped for"
     ]
@@ -126,4 +126,18 @@ export const systemPrices = {
   frontDeskSetup: "K2,750",
   frontDeskMonthly: "K1,100",
   automationSprint: "K5,500",
+};
+
+/* The website builds as numbers, for the site builder's estimate. Rush delivery is
+   +30% on the build price and is applied by the page, not stored here. */
+export const sitePrices = {
+  landing: 1100,
+  starter: 1650,
+  businessApp: 2750,
+  advancedApp: 5500,
+  bookingPayments: 8250,
+  shopExtra: 2200,
+  secondLanguage: 660,
+  siteCareMonthly: 165,
+  siteCarePaymentsMonthly: 385,
 };

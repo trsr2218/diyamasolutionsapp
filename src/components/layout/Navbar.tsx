@@ -29,6 +29,7 @@ const navEntries: NavEntry[] = [
   {
     label: "Free Tools",
     children: [
+      { label: "Design your website", path: "/build", blurb: "Pick a style, see it live, order it" },
       { label: "Diyama AI", path: "/ai", blurb: "Ask a business question, get an answer now" },
       { label: "Business Fit", path: "/business-fit", blurb: "A 2 minute quiz, then your free Business Kit" },
     ],

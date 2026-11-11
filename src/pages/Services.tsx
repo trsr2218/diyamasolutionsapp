@@ -97,16 +97,16 @@ const Services = () => {
           <div className="container-wide mx-auto">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-2xl text-primary-foreground">
               <p className="eyebrow text-accent mb-5">What we do</p>
-              <h1 className="text-4xl sm:text-5xl font-display font-extrabold mb-4">Systems first. Everything else, still done properly.</h1>
+              <h1 className="text-4xl sm:text-5xl font-display font-extrabold mb-4">Everything your business needs, built and looked after.</h1>
               <p className="text-lg opacity-80">
-                We build and run business systems and automation. We also still do the marketing, design and web work our clients rely on.
+                Business systems and automation. Social media, websites, design, campaigns and consulting. One team in Zambia, every price in the open.
               </p>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* The four systems we lead with */}
+      {/* Systems and automation */}
       <section className="section-padding bg-background border-b">
         <div className="container-wide mx-auto">
           <div className="max-w-2xl mb-10">
@@ -151,7 +151,7 @@ const Services = () => {
         <div className="container-wide mx-auto">
           <div className="max-w-2xl mb-8">
             <p className="eyebrow text-primary mb-4">Growth, creative and web</p>
-            <h2 className="text-3xl sm:text-4xl font-display font-bold leading-tight">Every other service we offer.</h2>
+            <h2 className="text-3xl sm:text-4xl font-display font-bold leading-tight">Marketing, design and web, done properly.</h2>
           </div>
           {/* Intent banner: shown when arriving from a home page quick action */}
           {useIntent && (

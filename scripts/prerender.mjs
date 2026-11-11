@@ -32,7 +32,7 @@ const read = (p) => fs.readFileSync(path.join(root, p), "utf8");
 const articleIds = [...read("src/data/articles.ts").matchAll(/^\s{4}id:\s*"([^"]+)"/gm)].map((m) => m[1]);
 const routes = [
   "/", "/services", "/pricing", "/apps", "/clients", "/partners", "/ai", "/business-fit",
-  "/consultations", "/learn", "/affiliate", "/about", "/contact", "/privacy", "/terms",
+  "/consultations", "/learn", "/affiliate", "/about", "/contact", "/privacy", "/terms", "/build",
   ...articleIds.map((id) => `/learn/${id}`),
 ];
 

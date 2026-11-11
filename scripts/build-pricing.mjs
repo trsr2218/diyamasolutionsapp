@@ -113,7 +113,20 @@ const fmt = n => 'K' + n.toLocaleString('en-US');
    listed price, the custom system and the lodge sprint, so those are the only two
    figures shown. Anything else in that range is quoted, never guessed at here. */
 const CUSTOM_SYSTEM = lowest('3. Websites and apps, one-off build', { expect: 13200, pattern: /From K([\d,]+), quoted after a scoping session/ });
-const LODGE_SPRINT = lowest('9. For lodges and guest houses', { expect: 3850, pattern: /Direct Booking Sprint\*\*[^|]*\| \*\*K([\d,]+)\*\*/ });
+const LODGE_SPRINT = lowest('9. For lodges, car hire, tours and any business that takes bookings', { expect: 3850, pattern: /Direct Booking Sprint\*\*[^|]*\| \*\*K([\d,]+)\*\*/ });
+
+/* Section 3, the website builds, read row by row for the site builder page (/build).
+   Each row is matched by its bold name so a reordered table cannot swap prices. */
+const row3 = (name, expect) => lowest('3. Websites and apps, one-off build', { expect, pattern: new RegExp('\\*\\*' + name + '\\*\\*[^|]*\\|[^|]*\\| \\*\\*K([\\d,]+)\\*\\*') });
+const LANDING = row3('Landing page', 1100);
+const STARTER = row3('Starter site', 1650);
+const BUSINESS_APP = row3('Business web app', 2750);
+const ADVANCED_APP = row3('Advanced web app', 5500);
+const BOOKING_PAYMENTS = row3('Booking and payments site', 8250);
+const SHOP_EXTRA = lowest('3. Websites and apps, one-off build', { expect: 2200, pattern: /Online shop, up to 30 products with checkout \| K([\d,]+)/ });
+const SECOND_LANGUAGE = lowest('3. Websites and apps, one-off build', { expect: 660, pattern: /Second language version of the site \| K([\d,]+)/ });
+const SITE_CARE = lowest('4. Keeping it live', { expect: 165, pattern: /Site Care, K([\d,]+) a month, on every site/ });
+const SITE_CARE_PAYMENTS = lowest('4. Keeping it live', { expect: 385, pattern: /On a booking and payments site, Site Care is \*\*K([\d,]+)\/month\*\*/ });
 
 /* Section 3b, added 11 November 2026 when Ernest set these three figures. */
 const FRONT_DESK_SETUP = lowest('3b. Systems and automation', { expect: 2750, pattern: /\*\*K([\d,]+) set up, then K[\d,]+\/month\*\*/ });
@@ -128,10 +141,10 @@ const CARDS = [
     points: ['Scoped with you first, quoted in writing', 'Works on the phones and computers you already have', 'Kept running by the people who built it'],
   },
   {
-    id: 'lodges', title: 'Direct bookings for lodges',
-    blurb: 'A booking site, your Google profile set up properly and a review engine, delivered together as one sprint.',
+    id: 'lodges', title: 'Direct bookings, no commission',
+    blurb: 'A booking site, your Google profile set up properly and a review engine, delivered together as one sprint. For salons, clinics, car hire, tours, venues, lodges and any business that takes bookings.',
     from: LODGE_SPRINT, unit: 'once',
-    points: ['Guests book with you, not through an agent', 'Found on Google Maps in your area', 'Reviews asked for, not hoped for'],
+    points: ['Customers book with you, not through an agent', 'Found on Google Maps in your area', 'Reviews asked for, not hoped for'],
   },
   {
     id: 'social', title: 'Social media, run for you',
@@ -206,6 +219,20 @@ export const systemPrices = {
   frontDeskSetup: "${fmt(FRONT_DESK_SETUP)}",
   frontDeskMonthly: "${fmt(FRONT_DESK_MONTHLY)}",
   automationSprint: "${fmt(AUTOMATION_SPRINT)}",
+};
+
+/* The website builds as numbers, for the site builder's estimate. Rush delivery is
+   +30% on the build price and is applied by the page, not stored here. */
+export const sitePrices = {
+  landing: ${LANDING},
+  starter: ${STARTER},
+  businessApp: ${BUSINESS_APP},
+  advancedApp: ${ADVANCED_APP},
+  bookingPayments: ${BOOKING_PAYMENTS},
+  shopExtra: ${SHOP_EXTRA},
+  secondLanguage: ${SECOND_LANGUAGE},
+  siteCareMonthly: ${SITE_CARE},
+  siteCarePaymentsMonthly: ${SITE_CARE_PAYMENTS},
 };
 `;
 

@@ -18,6 +18,7 @@ const staticRoutes = [
   { loc: "/pricing", pri: "0.9", freq: "monthly" },
   { loc: "/apps", pri: "0.9", freq: "weekly" },
   { loc: "/business-fit", pri: "0.8", freq: "monthly" },
+  { loc: "/build", pri: "0.9", freq: "monthly" },
   { loc: "/ai", pri: "0.8", freq: "monthly" },
   { loc: "/clients", pri: "0.7", freq: "monthly" },
   { loc: "/partners", pri: "0.7", freq: "monthly" },

@@ -16,7 +16,7 @@
     }
   ],
   "rewrites": [
-    { "source": "/:page(services|pricing|clients|apps|partners|ai|business-fit|consultations|learn|affiliate|about|contact|privacy|terms)", "destination": "/index.html" },
+    { "source": "/:page(services|pricing|clients|apps|partners|ai|business-fit|consultations|learn|affiliate|about|contact|privacy|terms|build)", "destination": "/index.html" },
     { "source": "/learn/:slug([^/]+)", "destination": "/index.html" }
   ]
 }

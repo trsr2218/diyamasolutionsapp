@@ -61,8 +61,11 @@ export const apps: DiyamaApp[] = [
     description:
       "A modern point of sale and inventory system for shops, restaurants and small businesses. Track sales, manage stock and see your numbers clearly from any device.",
     category: "Business Systems",
-    url: "https://pos.diyama.online",
-    status: "live",
+    /* Hosted on the Vercel team that is paused for fair use until 15 November 2026
+       (technology/MEMORY.md). The link answered 402 on 11 November, so it is off the
+       page until the host is back. Restore the url and status "live" then. */
+    url: null,
+    status: "demo-on-request",
     image: posShot,
     domain: "pos.diyama.online",
     freeOffer: "Try the full system free with sample data, no signup needed to explore.",
@@ -78,7 +81,7 @@ export const apps: DiyamaApp[] = [
     description:
       "Create clean, branded invoices, add your items and download a polished PDF ready to send. Your invoices are saved so you can reopen or duplicate them anytime.",
     category: "Business Systems",
-    url: "/apps/invoicer",
+    url: "/apps/invoicer/",
     status: "live",
     image: invoicerShot,
     domain: "invoice.diyama.online",
@@ -95,7 +98,7 @@ export const apps: DiyamaApp[] = [
     description:
       "Turn a link, a WhatsApp chat, your WiFi, or a full contact card into a clean, downloadable QR code your customers can scan on the spot.",
     category: "Tools",
-    url: "/apps/qr-studio",
+    url: "/apps/qr-studio/",
     status: "live",
     image: qrStudioShot,
     domain: "qr.diyama.online",
@@ -112,7 +115,7 @@ export const apps: DiyamaApp[] = [
     description:
       "Build professional quotations with your terms and a clear validity date, then download a branded PDF. Saved quotes are ready to reopen or turn into invoices.",
     category: "Business Systems",
-    url: "/apps/quotation",
+    url: "/apps/quotation/",
     status: "live",
     image: quotationShot,
     domain: "quote.diyama.online",
@@ -129,7 +132,7 @@ export const apps: DiyamaApp[] = [
     description:
       "Set your services and hours and take bookings with automatic time slots. Every booking comes with a one tap WhatsApp confirmation for your customer.",
     category: "Business Systems",
-    url: "/apps/bookme",
+    url: "/apps/bookme/",
     status: "live",
     image: bookmeShot,
     domain: "booking.diyama.online",
@@ -146,7 +149,7 @@ export const apps: DiyamaApp[] = [
     description:
       "Build a beautiful link in bio page with your links and socials, then share it anywhere. Perfect for Instagram, TikTok and WhatsApp profiles.",
     category: "Marketing",
-    url: "/apps/biolink",
+    url: "/apps/biolink/",
     status: "live",
     image: biolinkShot,
     domain: "link.diyama.online",
@@ -163,7 +166,7 @@ export const apps: DiyamaApp[] = [
     description:
       "Work out PAYE, NAPSA and NHIMA from a gross salary and download a clean payslip. Built around current Zambian bands, with everything adjustable.",
     category: "Business Systems",
-    url: "/apps/payslip",
+    url: "/apps/payslip/",
     status: "live",
     image: payslipShot,
     domain: "payroll.diyama.online",
@@ -180,7 +183,7 @@ export const apps: DiyamaApp[] = [
     description:
       "Track your products, adjust stock as you sell and restock and get low stock warnings at a glance. See your total stock value in one place.",
     category: "Business Systems",
-    url: "/apps/stocktrack",
+    url: "/apps/stocktrack/",
     status: "live",
     image: stocktrackShot,
     domain: "stock.diyama.online",
@@ -197,7 +200,7 @@ export const apps: DiyamaApp[] = [
     description:
       "Log income and expenses, watch your monthly balance and read simple charts that show where the money is going. Export anytime.",
     category: "Business Systems",
-    url: "/apps/expensa",
+    url: "/apps/expensa/",
     status: "live",
     image: expensaShot,
     domain: "expense.diyama.online",
@@ -214,7 +217,7 @@ export const apps: DiyamaApp[] = [
     description:
       "Build a digital business card with a QR code and downloadable contact file, then share a link that lets anyone save your details instantly.",
     category: "Marketing",
-    url: "/apps/tapcard",
+    url: "/apps/tapcard/",
     status: "live",
     image: tapcardShot,
     domain: "card.diyama.online",
@@ -231,7 +234,7 @@ export const apps: DiyamaApp[] = [
     description:
       "Create a digital stamp card for your cafe or shop, stamp customers on every visit and delight them when they unlock a reward. Track every customer.",
     category: "Marketing",
-    url: "/apps/loyalty",
+    url: "/apps/loyalty/",
     status: "live",
     image: loyaltyShot,
     domain: "loyalty.diyama.online",
@@ -265,8 +268,9 @@ export const apps: DiyamaApp[] = [
     description:
       "A simple, beautiful world clock you can put on any screen. Great for offices, studios, reception areas and events that work across time zones.",
     category: "Tools",
-    url: "https://worldclock.diyama.online",
-    status: "live",
+    /* Same Vercel pause as Diyama POS, 402 on 11 November 2026. Restore when the host is back. */
+    url: null,
+    status: "demo-on-request",
     image: worldClockShot,
     domain: "worldclock.diyama.online",
     freeOffer: "Use it free in your browser right now.",

@@ -15,6 +15,11 @@ export const pageSeo: Record<string, PageSeoEntry> = {
     description:
       "Diyama Solutions builds and runs business systems, automation and software in Zambia: bookings, quotes, invoices, customer replies and daily posting.",
   },
+  "/build": {
+    title: "Design Your Own Website and Order It | Diyama Solutions",
+    description:
+      "Pick a style, colour, pages and features, watch your website take shape live, get a starting price from our price list and send the design to Diyama in one tap.",
+  },
   "/pricing": {
     title: "Prices | Diyama Solutions",
     description: "What our work costs, in the open. Custom systems from K13,200, websites from K1,100, social media from K825 a month. Starting prices in kwacha, full quote in writing before any work starts.",
@@ -22,7 +27,7 @@ export const pageSeo: Record<string, PageSeoEntry> = {
   "/services": {
     title: "Our Services | Diyama Solutions",
     description:
-      "Business systems and automation first: WhatsApp front desk, lodge bookings, workflow automation and office systems. Plus marketing, design and web.",
+      "Business systems, automation and software for any business in Zambia: WhatsApp front desk, direct bookings, workflow automation and office systems. Plus marketing, design and web.",
   },
   "/apps": {
     title: "Free Business Apps for African Businesses | Diyama Solutions",

@@ -10,7 +10,12 @@ import { systems } from "@/data/systems";
 import { priceCards } from "@/data/pricing";
 import { proofStats, proofAsAt } from "@/data/proof";
 import PageTransition from "@/components/PageTransition";
-import SystemConsole from "@/components/SystemConsole";
+import HeroChat from "@/components/HeroChat";
+import LiveClock from "@/components/LiveClock";
+import RotatingWord from "@/components/RotatingWord";
+import CursorGlow from "@/components/CursorGlow";
+import ScrollStory from "@/components/ScrollStory";
+import heroPhoto from "@/assets/people/workshop-room.webp";
 import SystemArt from "@/components/SystemArt";
 import CountUp from "@/components/CountUp";
 import BeOnTeaser from "@/components/BeOnTeaser";
@@ -18,12 +23,15 @@ import AppOfTheDay from "@/components/AppOfTheDay";
 import DiyamaAvatar from "@/components/DiyamaAvatar";
 import Seo from "@/components/Seo";
 import { pageSeo } from "@/seo/pageSeo";
+import { peoplePhotos, peopleCaption } from "@/data/people";
 
 /* Homepage, rebuilt November 2026 around the pivot to systems and automation.
  *
  * Three rules it is built on:
- *   1. No photograph of a person who does not exist. Visuals are drawn product
- *      panels and real screenshots of real apps.
+ *   1. No photograph of a person who does not exist. The only people on the page
+ *      are real ones from Diyama's own events (see `assets/people/`), captioned
+ *      with the event, never with a name or a job title. Other visuals are drawn
+ *      product panels and real screenshots of real apps.
  *   2. No number typed by hand. Prices come from the generated pricing file and
  *      proof figures from `data/proof.ts`, which records where each came from.
  *   3. Promise delivery, never an outcome. No bookings, revenue or hours saved.
@@ -41,7 +49,9 @@ const fadeUp: Variants = {
 
 const inView = { initial: "hidden", whileInView: "visible", viewport: { once: true, margin: "-70px" } } as const;
 
-/* The work Diyama has always done and still does. Prices are looked up by card id. */
+/* The marketing, design and web work, shown with the same weight as the systems.
+ * Ernest, 11 November 2026: most people met Diyama through this work, so it is
+ * never "everything else". Prices are looked up by card id. */
 const alsoIcons: Record<string, LucideIcon> = {
   social: Send,
   web: Globe,
@@ -51,24 +61,6 @@ const alsoIcons: Record<string, LucideIcon> = {
   campaign: Megaphone,
 };
 const alsoDo = priceCards.filter((c) => c.id in alsoIcons);
-
-const steps = [
-  {
-    n: "01",
-    title: "Scope",
-    body: "One conversation about how the work really gets done today. You get a written quote with everything itemised before anybody starts.",
-  },
-  {
-    n: "02",
-    title: "Build",
-    body: "We build it around your business, on the phones and computers you already have. New to us? You see yours working before you pay.",
-  },
-  {
-    n: "03",
-    title: "Run",
-    body: "We keep it secure, backed up and online and somebody local answers when you call. The build gets you started. The care keeps you there.",
-  },
-];
 
 const ownSystems = [
   {
@@ -95,43 +87,56 @@ const Index = () => {
     <PageTransition>
       <Seo {...pageSeo["/"]} path="/" />
 
-      {/* Hero */}
+      {/* Hero: a real room, a real conversation handled end to end. */}
       <section className="relative overflow-hidden bg-ink text-white">
-        <div className="absolute inset-0 bg-grid" />
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="aurora animate-aurora-1 -top-40 left-[12%] w-[40rem] h-[40rem] bg-[hsl(173_80%_32%/0.55)]" />
-          <div className="aurora animate-aurora-2 top-[20%] -right-32 w-[34rem] h-[34rem] bg-[hsl(41_95%_55%/0.22)]" />
-          <div className="aurora animate-aurora-1 -bottom-48 left-[40%] w-[36rem] h-[36rem] bg-[hsl(205_95%_55%/0.22)]" />
+        <div className="absolute inset-0">
+          <img
+            src={heroPhoto}
+            alt=""
+            className="w-full h-full object-cover object-[60%_35%] opacity-[0.42] animate-kenburns"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-ink/70" />
         </div>
+        <div className="absolute inset-0 bg-grid opacity-40" />
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="aurora animate-aurora-1 -top-40 left-[8%] w-[40rem] h-[40rem] bg-[hsl(173_80%_32%/0.45)]" />
+          <div className="aurora animate-aurora-2 top-[30%] -right-32 w-[34rem] h-[34rem] bg-[hsl(41_95%_55%/0.18)]" />
+        </div>
+        <CursorGlow />
+        <div className="grain absolute inset-0 pointer-events-none" />
 
-        <div className="relative z-10 px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 lg:pt-24 pb-14 sm:pb-16">
-          <div className="container-wide mx-auto grid lg:grid-cols-[1.1fr_0.9fr] gap-12 lg:gap-14 items-center">
+        <div className="relative z-10 px-4 sm:px-6 lg:px-8 pt-14 sm:pt-20 lg:pt-24 pb-14 sm:pb-16">
+          <div className="container-wide mx-auto grid lg:grid-cols-[1.15fr_0.85fr] gap-12 lg:gap-10 items-center">
             <motion.div variants={stagger} initial="hidden" animate="visible">
-              <motion.p variants={fadeUp} className="eyebrow text-accent mb-6">
+              <motion.div variants={fadeUp} className="mb-7">
+                <LiveClock className="rounded-full border border-white/15 bg-white/5 backdrop-blur px-3 py-1.5 text-white/60" />
+              </motion.div>
+              <motion.p variants={fadeUp} className="eyebrow text-accent mb-5">
                 <span className="inline-block w-8 h-px bg-accent" />
-                Business systems, automation and software
+                Business systems, automation and software, Zambia
               </motion.p>
               <motion.h1
                 variants={fadeUp}
-                className="text-4xl sm:text-5xl lg:text-6xl xl:text-[4.25rem] font-display font-extrabold leading-[1.04] mb-6"
+                className="text-5xl sm:text-6xl lg:text-7xl xl:text-[5.25rem] font-display font-extrabold leading-[0.98] tracking-[-0.03em] mb-7"
               >
-                We build the systems that{" "}
-                <span className="text-gold-gradient">run your business.</span>
+                We build the systems that run your{" "}
+                <RotatingWord words={["bookings.", "replies.", "invoices.", "posting.", "business."]} />
               </motion.h1>
               <motion.p variants={fadeUp} className="text-lg sm:text-xl text-white/70 leading-relaxed mb-9 max-w-xl">
-                Diyama Solutions designs, builds and runs the software behind your bookings,
-                quotes, invoices, customer replies and daily posting. Built in Zambia, live in
-                days and kept running by the people who built it.
+                Software for your bookings, quotes, invoices, customer replies and daily posting.
+                Plus the social media, websites and design that get a business noticed. Built in
+                Zambia, live in days, kept running by the people who built it.
               </motion.p>
               <motion.div variants={fadeUp} className="flex flex-wrap gap-3 sm:gap-4">
-                <Link to="/consultations" className="btn-accent inline-flex items-center gap-2 font-semibold">
-                  Book a consultation <ArrowRight size={16} />
+                <Link to="/consultations" className="btn-accent group inline-flex items-center gap-2 font-semibold">
+                  Book a consultation <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
                 </Link>
                 <Link
                   to="/services"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-medium border border-white/20 text-white hover:bg-white/10 transition-colors duration-200"
+                  className="group inline-flex items-center gap-2 px-6 py-3 rounded-lg font-medium border border-white/20 text-white hover:bg-white/10 hover:border-white/35 transition-colors duration-200"
                 >
-                  See what we build
+                  See what we do <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
                 </Link>
               </motion.div>
               <motion.ul variants={fadeUp} className="mt-9 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/55">
@@ -146,22 +151,20 @@ const Index = () => {
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.25, ease: "easeOut" }}
-              className="relative w-full max-w-lg mx-auto lg:max-w-none [perspective:1600px]"
+              transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
+              className="relative"
             >
-              <div className="lg:[transform:rotateY(-9deg)_rotateX(4deg)] lg:hover:[transform:rotateY(-3deg)_rotateX(1deg)] transition-transform duration-700 ease-out">
-                <SystemConsole />
-              </div>
-              <div className="hidden sm:flex glass absolute -left-4 lg:-left-10 -top-7 items-center gap-2.5 rounded-xl px-3.5 py-2.5 shadow-2xl shadow-black/40 animate-float">
+              <HeroChat />
+              <div className="hidden sm:flex glass absolute -left-2 lg:-left-8 top-6 items-center gap-2.5 rounded-xl px-3.5 py-2.5 shadow-2xl shadow-black/40 animate-float">
                 <span className="w-8 h-8 rounded-lg bg-emerald-400/20 text-emerald-300 flex items-center justify-center">
                   <Check size={16} />
                 </span>
                 <span className="text-left">
-                  <span className="block text-xs font-semibold text-white">Booking confirmed</span>
+                  <span className="block text-xs font-semibold text-white">Booked direct</span>
                   <span className="block text-[11px] text-white/55">No one retyped it</span>
                 </span>
               </div>
-              <div className="hidden sm:flex glass absolute -right-2 lg:-right-4 -bottom-7 items-center gap-2.5 rounded-xl px-3.5 py-2.5 shadow-2xl shadow-black/40 animate-float [animation-delay:2.5s]">
+              <div className="hidden sm:flex glass absolute -right-2 lg:-right-6 bottom-10 items-center gap-2.5 rounded-xl px-3.5 py-2.5 shadow-2xl shadow-black/40 animate-float [animation-delay:2.5s]">
                 <span className="w-8 h-8 rounded-lg bg-accent/25 text-accent flex items-center justify-center">
                   <ShieldCheck size={16} />
                 </span>
@@ -198,12 +201,13 @@ const Index = () => {
         <div className="container-wide mx-auto">
           <motion.div variants={stagger} {...inView}>
             <motion.div variants={fadeUp} className="max-w-2xl mb-12">
-              <p className="eyebrow text-primary mb-4">What we build</p>
+              <p className="eyebrow text-primary mb-4">What we do</p>
               <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-display font-bold leading-tight mb-4">
-                Four systems that take the repetitive work off your team.
+                Everything a business needs to run and grow.
               </h2>
               <p className="text-muted-foreground text-lg leading-relaxed">
-                Each one grows out of software we already build and run ourselves.
+                Business systems and automation. Social media, websites, design and campaigns.
+                One team, every price in the open, a written quote before any work starts.
               </p>
             </motion.div>
 
@@ -239,41 +243,87 @@ const Index = () => {
               ))}
             </div>
 
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-5">
+              {alsoDo.map((c) => {
+                const Icon = alsoIcons[c.id];
+                return (
+                  <motion.article key={c.id} variants={fadeUp} className="card-glow p-7 flex flex-col overflow-hidden">
+                    <div className="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-gradient-to-br from-primary/15 to-transparent blur-2xl pointer-events-none" />
+                    <div className="relative flex items-start justify-between gap-4 mb-5">
+                      <span className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-[hsl(173_70%_32%)] text-primary-foreground flex items-center justify-center shrink-0 shadow-lg">
+                        <Icon size={22} />
+                      </span>
+                      <span className="text-xs font-semibold text-foreground bg-accent/15 border border-accent/30 rounded-full px-3 py-1 text-right leading-snug">
+                        from {c.from} {c.unit}
+                      </span>
+                    </div>
+                    <h3 className="relative font-display text-xl font-bold mb-2">{c.title}</h3>
+                    <p className="relative text-muted-foreground text-sm leading-relaxed mb-6 flex-grow">{c.blurb}</p>
+                    <Link to="/services" className="relative inline-flex items-center gap-1 text-primary font-medium text-sm hover:underline mt-auto">
+                      See the service <ArrowRight size={14} />
+                    </Link>
+                  </motion.article>
+                );
+              })}
+            </div>
+
             <motion.div variants={fadeUp} className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
               <Link to="/consultations" className="btn-primary inline-flex items-center gap-2">
-                Talk to us about a system <ArrowRight size={16} />
+                Talk to us about your business <ArrowRight size={16} />
               </Link>
               <Link to="/pricing" className="inline-flex items-center gap-1 text-primary font-medium text-sm hover:underline">
-                See our prices <ArrowRight size={14} />
+                Full price guide <ArrowRight size={14} />
               </Link>
             </motion.div>
           </motion.div>
         </div>
       </section>
 
-      {/* How it works */}
-      <section className="section-padding bg-surface border-y">
+      {/* Real people, real room. Photographs from Diyama's own events only. */}
+      <section className="section-padding bg-background overflow-hidden">
         <div className="container-wide mx-auto">
           <motion.div variants={stagger} {...inView}>
-            <motion.div variants={fadeUp} className="max-w-2xl mb-12">
-              <p className="eyebrow text-primary mb-4">How we work</p>
-              <h2 className="text-3xl sm:text-4xl font-display font-bold leading-tight">
-                We build it, we run it. You stay focused on your customers.
-              </h2>
+            <motion.div variants={fadeUp} className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
+              <div className="max-w-2xl">
+                <p className="eyebrow text-primary mb-4">In the room</p>
+                <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-display font-bold leading-tight mb-4">
+                  Real people. We sit with the businesses we build for.
+                </h2>
+                <p className="text-muted-foreground text-lg leading-relaxed">
+                  We host, train and work in the same rooms as our clients, across Zambia.
+                  Nothing here is stock. These are our own events.
+                </p>
+              </div>
+              <Link to="/about" className="inline-flex items-center gap-1 text-primary font-medium text-sm hover:underline whitespace-nowrap">
+                About Diyama <ArrowRight size={14} />
+              </Link>
             </motion.div>
-            <div className="grid md:grid-cols-3 gap-px bg-border rounded-xl overflow-hidden border">
-              {steps.map((s) => (
-                <motion.div key={s.n} variants={fadeUp} className="bg-card p-7 sm:p-8 relative overflow-hidden group">
-                  <span className="absolute -right-3 -top-6 font-display text-[7rem] font-extrabold leading-none text-primary/[0.06] group-hover:text-accent/20 transition-colors duration-500 select-none">{s.n}</span>
-                  <span className="relative inline-flex w-11 h-11 rounded-full bg-gradient-to-br from-accent to-[hsl(30_95%_55%)] text-accent-foreground items-center justify-center font-display text-sm font-extrabold shadow-lg shadow-accent/30">{s.n}</span>
-                  <h3 className="font-display text-2xl font-bold mt-3 mb-3">{s.title}</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">{s.body}</p>
-                </motion.div>
+            <div className="grid grid-cols-2 md:grid-cols-4 md:grid-rows-2 gap-3 sm:gap-4">
+              {peoplePhotos.slice(0, 5).map((ph, i) => (
+                <motion.figure
+                  key={ph.src}
+                  variants={fadeUp}
+                  className={`group relative overflow-hidden rounded-2xl bg-ink ring-1 ring-foreground/10 ${
+                    i === 0 ? "col-span-2 row-span-2 aspect-[4/3] md:aspect-auto" : "aspect-[4/3]"
+                  }`}
+                >
+                  <img
+                    src={ph.src}
+                    alt={ph.alt}
+                    loading="lazy"
+                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent opacity-80" />
+                </motion.figure>
               ))}
             </div>
+            <motion.p variants={fadeUp} className="text-xs text-muted-foreground mt-4">{peopleCaption}</motion.p>
           </motion.div>
         </div>
       </section>
+
+      {/* How we work, as a scroll story */}
+      <ScrollStory />
 
       {/* We run on our own systems */}
       <section className="relative overflow-hidden bg-ink text-white section-padding">
@@ -363,48 +413,47 @@ const Index = () => {
       {/* BeOn Tech, coming soon */}
       <BeOnTeaser />
 
-      {/* Everything else we still do */}
-      <section className="section-padding bg-surface border-b">
-        <div className="container-wide mx-auto">
-          <motion.div variants={stagger} {...inView}>
-            <motion.div variants={fadeUp} className="max-w-2xl mb-10">
-              <p className="eyebrow text-primary mb-4">Also from Diyama</p>
-              <h2 className="text-3xl sm:text-4xl font-display font-bold leading-tight mb-3">
-                The work that got us here, still done properly.
-              </h2>
-              <p className="text-muted-foreground">
-                Starting prices in Zambian Kwacha. The final figure comes in a written quote.
-              </p>
-            </motion.div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-border rounded-xl overflow-hidden border">
-              {alsoDo.map((c) => {
-                const Icon = alsoIcons[c.id];
-                return (
-                  <motion.div key={c.id} variants={fadeUp} className="bg-card p-6 sm:p-7 flex flex-col">
-                    <Icon size={20} className="text-primary mb-4" />
-                    <h3 className="font-display text-lg font-bold mb-2">{c.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed mb-5 flex-grow">{c.blurb}</p>
-                    <p className="text-sm">
-                      <span className="text-muted-foreground">from </span>
-                      <span className="font-display font-bold text-foreground">{c.from}</span>
-                      <span className="text-muted-foreground"> {c.unit}</span>
-                    </p>
-                  </motion.div>
-                );
-              })}
-            </div>
-            <motion.div variants={fadeUp} className="mt-8">
-              <Link to="/pricing" className="inline-flex items-center gap-1 text-primary font-medium text-sm hover:underline">
-                Full price guide <ArrowRight size={14} />
-              </Link>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Free tools */}
+      {/* Design your own site, then the free tools */}
       <section className="section-padding bg-background">
         <div className="container-wide mx-auto">
+          <motion.div variants={fadeUp} {...inView} className="relative overflow-hidden rounded-2xl bg-ink text-white p-7 sm:p-10 mb-5 grid lg:grid-cols-[1.2fr_0.8fr] gap-8 items-center">
+            <div className="absolute inset-0 bg-grid opacity-50" />
+            <div className="absolute -top-24 -right-16 w-[26rem] h-[26rem] rounded-full bg-accent/20 blur-3xl pointer-events-none" />
+            <div className="relative">
+              <p className="eyebrow text-accent mb-4">New: design it yourself</p>
+              <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-display font-bold leading-[1.05] tracking-[-0.02em] mb-4">
+                Design your own website, watch it take shape, then order it from us.
+              </h2>
+              <p className="text-white/65 text-lg leading-relaxed mb-7 max-w-xl">
+                Pick a style, your colour, your pages and what the site must do. The mock-up updates
+                as you go and the starting price comes straight from our price list.
+              </p>
+              <Link to="/build" className="btn-accent group inline-flex items-center gap-2 font-semibold">
+                Start designing <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+              </Link>
+            </div>
+            <div className="relative hidden lg:block">
+              <div className="glass rounded-xl p-4 space-y-2.5 rotate-[-3deg] hover:rotate-0 transition-transform duration-500">
+                <div className="flex items-center justify-between text-[11px] text-white/60">
+                  <span className="font-semibold text-white">Your Business</span>
+                  <span className="flex gap-2"><span>Home</span><span>Menu</span><span>Contact</span></span>
+                </div>
+                <div className="h-14 rounded-lg bg-gradient-to-r from-accent/40 to-transparent flex items-center px-3">
+                  <span className="h-2 w-2/3 rounded bg-white/70" />
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {[0, 1, 2].map((i) => (
+                    <span key={i} className="h-12 rounded-lg bg-white/10 border border-white/10 block" />
+                  ))}
+                </div>
+                <div className="flex gap-1.5">
+                  {["#F2B134", "#0F9B8E", "#E0343C", "#2F6FED", "#8B5CF6"].map((c) => (
+                    <span key={c} className="w-5 h-5 rounded-full border border-white/30" style={{ background: c }} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.div>
           <motion.div variants={stagger} {...inView} className="grid md:grid-cols-2 gap-5">
             <motion.div variants={fadeUp} className="card-elevated p-7 sm:p-9 flex flex-col">
               <div className="flex items-center gap-4 mb-5">
@@ -453,7 +502,7 @@ const Index = () => {
             <div>
               <p className="eyebrow text-primary mb-3">Who we work with</p>
               <h2 className="text-2xl sm:text-3xl font-display font-bold">
-                Food brands, lodges, artists, offices and DAOs.
+                Food brands, radio, artists, designers, transport, offices and DAOs.
               </h2>
             </div>
             <Link to="/clients" className="inline-flex items-center gap-1 text-primary font-medium text-sm hover:underline whitespace-nowrap">

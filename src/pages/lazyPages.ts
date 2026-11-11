@@ -30,6 +30,7 @@ export const About = page(() => import("./About"));
 export const Contact = page(() => import("./Contact"));
 export const Privacy = page(() => import("./Privacy"));
 export const Terms = page(() => import("./Terms"));
+export const SiteBuilder = page(() => import("./SiteBuilder"));
 
 const byPath: Record<string, { preload: Loader }> = {
   "/services": Services,
@@ -46,6 +47,7 @@ const byPath: Record<string, { preload: Loader }> = {
   "/contact": Contact,
   "/privacy": Privacy,
   "/terms": Terms,
+  "/build": SiteBuilder,
 };
 
 export function preloadForPath(pathname: string): Promise<unknown> {

@@ -11,7 +11,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import {
   Services, Pricing, Clients, Apps, Partners, DiyamaAI, BusinessFit, Consultations,
-  Learn, Article, Affiliate, About, Contact, Privacy, Terms,
+  Learn, Article, Affiliate, About, Contact, Privacy, Terms, SiteBuilder
 } from "./pages/lazyPages";
 
 const queryClient = new QueryClient();
@@ -44,6 +44,7 @@ const AnimatedRoutes = () => {
         <Route path="/contact" element={lazyPage(Contact)} />
         <Route path="/privacy" element={lazyPage(Privacy)} />
         <Route path="/terms" element={lazyPage(Terms)} />
+        <Route path="/build" element={lazyPage(SiteBuilder)} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AnimatePresence>

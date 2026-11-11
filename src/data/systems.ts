@@ -1,4 +1,4 @@
-import { MessageCircle, BedDouble, Workflow, Building2, type LucideIcon } from "lucide-react";
+import { MessageCircle, CalendarCheck, Workflow, Building2, type LucideIcon } from "lucide-react";
 import { systemPrices } from "@/data/pricing";
 
 /**
@@ -38,12 +38,12 @@ export const systems: SystemOffer[] = [
   },
   {
     id: "lodge-desk",
-    icon: BedDouble,
-    name: "Lodge Desk",
-    line: "Direct bookings, on your own page.",
+    icon: CalendarCheck,
+    name: "Booking Desk",
+    line: "Direct bookings, on your own page, no commission.",
     description:
-      "A booking site, your Google Business Profile set up properly and a review engine, built as one sprint so guests can find you and book with you directly.",
-    whoFor: "Lodges and guest houses that rely on online travel agents.",
+      "A booking site, your Google Business Profile set up properly and a review engine, built as one sprint so customers can find you and book with you directly.",
+    whoFor: "Any business that takes bookings: salons, clinics, car hire, tour operators, venues, lodges and guest houses, anywhere in Zambia or abroad.",
     includes: ["Booking site with WhatsApp booking", "Google Business Profile, done properly", "Review engine with QR cards"],
     price: `Direct Booking Sprint, ${systemPrices.lodgeSprint}`,
   },

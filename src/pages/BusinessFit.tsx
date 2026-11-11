@@ -7,6 +7,7 @@ import DiyamaAvatar from "@/components/DiyamaAvatar";
 import Seo from "@/components/Seo";
 import { pageSeo } from "@/seo/pageSeo";
 import WhatsAppFallback from "@/components/WhatsAppFallback";
+import KitReader from "@/components/KitReader";
 import { formToMessage } from "@/lib/whatsapp";
 import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY as SUPABASE_KEY } from "@/lib/supabaseEnv";
 
@@ -23,6 +24,13 @@ const fitJsonLd = {
 };
 
 const stages = ["Idea stage", "Just started", "Growing", "Established", "Scaling"];
+
+/* Ernest, 11 November 2026: some owners do not know who their customers are. The
+ * question must let them say so, and the kit then works it out with them rather
+ * than leaving the box blank or forcing a guess. This is the answer sent to the
+ * kit builder when they tap the button. */
+const NOT_SURE_CUSTOMERS =
+  "Not sure yet. I do not know who my best customers are, please help me work out who they are and how to find them.";
 const businessTypes = [
   "Restaurant / Food", "Tourism / Hospitality", "Retail / E-commerce",
   "Professional Services", "Tech / SaaS", "Creative / Content", "Web3 / DAO", "Non-profit / NGO", "Other",
@@ -41,7 +49,7 @@ const encouragements = [
   "Great start. Every big brand began with a name.",
   "Nice. This helps me understand your world.",
   "Good. Your stage shapes the advice you need.",
-  "Knowing your customers is half the battle won.",
+  "Knowing your customers is half the battle won. Not sure yet? Many owners are not. Say so and the kit helps you work it out.",
   "Honesty here gets you the sharpest advice.",
   "Last question, then your kit gets built.",
 ];
@@ -167,10 +175,10 @@ const BusinessFit = () => {
   };
 
   const fields = [
-    { key: "businessName", label: "What's your business called?", placeholder: "e.g. Sunshine Lodge" },
+    { key: "businessName", label: "What's your business called?", placeholder: "e.g. Kalulu Hardware" },
     { key: "businessType", label: "What type of business is it?", type: "select", options: businessTypes },
     { key: "stage", label: "What stage are you at?", type: "select", options: stages },
-    { key: "targetCustomers", label: "Who are your target customers?", placeholder: "e.g. Tourists visiting Livingstone" },
+    { key: "targetCustomers", label: "Who are your target customers?", placeholder: "e.g. Small businesses in Lusaka", unsure: NOT_SURE_CUSTOMERS },
     { key: "challenge", label: "What's your biggest challenge right now?", placeholder: "e.g. Not enough bookings" },
     { key: "goal", label: "What's your main goal this quarter?", placeholder: "e.g. Double our monthly revenue" },
   ];
@@ -244,6 +252,9 @@ const BusinessFit = () => {
                 <p className="text-xs text-muted-foreground mt-3">
                   A copy of practical growth tips will also land in your inbox from the Diyama mailing list.
                 </p>
+                <div className="mt-5">
+                  <KitReader kit={result} businessName={form.businessName} />
+                </div>
               </div>
               <div className="space-y-6">
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="card-elevated p-6">
@@ -447,15 +458,32 @@ const BusinessFit = () => {
                     ))}
                   </motion.div>
                 ) : (
-                  <input
-                    type="text"
-                    value={form[fields[step].key as keyof typeof form]}
-                    onChange={(e) => setForm({ ...form, [fields[step].key]: e.target.value })}
-                    onKeyDown={(e) => e.key === "Enter" && form[fields[step].key as keyof typeof form] && setStep(step + 1)}
-                    placeholder={fields[step].placeholder}
-                    className="w-full bg-surface border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-                    autoFocus
-                  />
+                  <>
+                    <input
+                      type="text"
+                      value={form[fields[step].key as keyof typeof form]}
+                      onChange={(e) => setForm({ ...form, [fields[step].key]: e.target.value })}
+                      onKeyDown={(e) => e.key === "Enter" && form[fields[step].key as keyof typeof form] && setStep(step + 1)}
+                      placeholder={fields[step].placeholder}
+                      className="w-full bg-surface border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                      autoFocus
+                    />
+                    {fields[step].unsure && (
+                      <motion.button
+                        type="button"
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => { setForm({ ...form, [fields[step].key]: fields[step].unsure! }); setStep(step + 1); }}
+                        className="mt-3 w-full text-left text-sm rounded-xl border border-dashed border-accent/50 bg-accent/5 px-4 py-3 hover:bg-accent/10 transition-colors"
+                      >
+                        <span className="font-medium text-accent">I am not sure yet.</span>{" "}
+                        <span className="text-muted-foreground">Help me work out who my customers are.</span>
+                      </motion.button>
+                    )}
+                  </>
                 )}
                 <div className="flex justify-between mt-6">
                   {step > 0 && <button onClick={() => setStep(step - 1)} className="text-sm text-muted-foreground hover:text-foreground">← Back</button>}
