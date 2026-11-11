@@ -5,10 +5,9 @@ import { systemPrices } from "@/data/pricing";
  * The four systems Diyama leads with since the pivot of 5 November 2026:
  * tech solutions, automations and business systems.
  *
- * PRICES. Only two of these have a listed price in `Growth Plan/CARE-PLANS-OFFER.md`,
- * and both come from the generated `pricing.ts`, never typed here. The other two
- * say "Quoted after a scoping session" until Ernest sets a price in the price list.
- * Do not put a recommended or draft figure on this page.
+ * PRICES. All four are in `Growth Plan/CARE-PLANS-OFFER.md` (sections 3, 3b and 9;
+ * Ernest set Front Desk and the Automation Sprint on 11 November 2026). Every figure
+ * comes from the generated `pricing.ts`, never typed here.
  *
  * WORDING. Say "assistant", and "AI" only where a model actually answers. Never
  * promise bookings, revenue or hours saved. Promise what is delivered.
@@ -34,8 +33,8 @@ export const systems: SystemOffer[] = [
     description:
       "An assistant that answers your customers from an answer book you approve, keeps every enquiry in one list, and hands anything it does not know to a person.",
     whoFor: "Service businesses that take their bookings and orders on WhatsApp.",
-    includes: ["Your prices, hours and common questions answered", "Every enquiry logged in one place", "Unknown questions passed to you, never guessed"],
-    price: "Quoted after a scoping session",
+    includes: ["Your prices, hours and common questions answered", "Every enquiry logged in one place", "Unknown questions passed to you, never guessed", "WhatsApp message fees passed on at cost"],
+    price: `${systemPrices.frontDeskSetup} set up, then ${systemPrices.frontDeskMonthly} a month`,
   },
   {
     id: "lodge-desk",
@@ -57,7 +56,7 @@ export const systems: SystemOffer[] = [
       "We connect the tools you already use so an enquiry becomes a quote, a quote becomes an invoice, and a reminder goes out, without anybody retyping it.",
     whoFor: "Teams with admin work that repeats every day, in Zambia or abroad.",
     includes: ["Your process mapped first", "Workflows built and tested with you", "Handover notes your staff can follow"],
-    price: "Quoted after a scoping session",
+    price: `${systemPrices.automationSprint}, up to three workflows`,
   },
   {
     id: "office-system",

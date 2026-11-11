@@ -115,11 +115,16 @@ const fmt = n => 'K' + n.toLocaleString('en-US');
 const CUSTOM_SYSTEM = lowest('3. Websites and apps, one-off build', { expect: 13200, pattern: /From K([\d,]+), quoted after a scoping session/ });
 const LODGE_SPRINT = lowest('9. For lodges and guest houses', { expect: 3850, pattern: /Direct Booking Sprint\*\*[^|]*\| \*\*K([\d,]+)\*\*/ });
 
+/* Section 3b, added 11 November 2026 when Ernest set these three figures. */
+const FRONT_DESK_SETUP = lowest('3b. Systems and automation', { expect: 2750, pattern: /\*\*K([\d,]+) set up, then K[\d,]+\/month\*\*/ });
+const FRONT_DESK_MONTHLY = lowest('3b. Systems and automation', { expect: 1100, pattern: /\*\*K[\d,]+ set up, then K([\d,]+)\/month\*\*/ });
+const AUTOMATION_SPRINT = lowest('3b. Systems and automation', { expect: 5500, pattern: /Automation Sprint\*\*[^|]*\|[^|]*\| \*\*K([\d,]+)\*\*/ });
+
 const CARDS = [
   {
     id: 'systems', title: 'Business systems and automation',
     blurb: 'Software built around how your business actually runs: bookings, stock, approvals, reports, and the back office that ties them together.',
-    from: CUSTOM_SYSTEM, unit: 'once',
+    from: FRONT_DESK_SETUP, unit: 'to set up',
     points: ['Scoped with you first, quoted in writing', 'Works on the phones and computers you already have', 'Kept running by the people who built it'],
   },
   {
@@ -198,6 +203,9 @@ export const priceUpdated = "${new Date().toISOString().slice(0, 10)}";
 export const systemPrices = {
   customSystem: "${fmt(CUSTOM_SYSTEM)}",
   lodgeSprint: "${fmt(LODGE_SPRINT)}",
+  frontDeskSetup: "${fmt(FRONT_DESK_SETUP)}",
+  frontDeskMonthly: "${fmt(FRONT_DESK_MONTHLY)}",
+  automationSprint: "${fmt(AUTOMATION_SPRINT)}",
 };
 `;
 

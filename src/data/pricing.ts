@@ -17,8 +17,8 @@ export const priceCards: PriceCard[] = [
     "id": "systems",
     "title": "Business systems and automation",
     "blurb": "Software built around how your business actually runs: bookings, stock, approvals, reports, and the back office that ties them together.",
-    "from": "K13,200",
-    "unit": "once",
+    "from": "K2,750",
+    "unit": "to set up",
     "points": [
       "Scoped with you first, quoted in writing",
       "Works on the phones and computers you already have",
@@ -123,4 +123,7 @@ export const priceUpdated = "2026-11-11";
 export const systemPrices = {
   customSystem: "K13,200",
   lodgeSprint: "K3,850",
+  frontDeskSetup: "K2,750",
+  frontDeskMonthly: "K1,100",
+  automationSprint: "K5,500",
 };
