@@ -1,198 +1,413 @@
 import { Link } from "react-router-dom";
-import { motion, useScroll, useTransform, type Variants } from "framer-motion";
-import { useRef } from "react";
-import { ArrowRight, Sparkles, Users, BookOpen, MessageSquare, TrendingUp, Lightbulb } from "lucide-react";
+import { motion, type Variants } from "framer-motion";
+import {
+  ArrowRight, ArrowUpRight, Check, MessageSquare, Sparkles, Send, MessagesSquare,
+  LayoutDashboard, PenTool, Megaphone, MapPin, Globe, ShieldCheck, type LucideIcon,
+} from "lucide-react";
 import { clients } from "@/data/clients";
 import { apps } from "@/data/apps";
-import heroImg from "@/assets/hero-consultant.webp";
-import strategyImg from "@/assets/services-strategy.webp";
-import teamImg from "@/assets/about-team.webp";
-import workspaceImg from "@/assets/learn-workspace.webp";
-import advisorImg from "@/assets/contact-advisor.webp";
-import meetingImg from "@/assets/consultation-meeting.webp";
+import { systems } from "@/data/systems";
+import { priceCards } from "@/data/pricing";
+import { proofStats, proofAsAt } from "@/data/proof";
 import PageTransition from "@/components/PageTransition";
-import AnimatedBg from "@/components/AnimatedBg";
-import DiyamaAvatar from "@/components/DiyamaAvatar";
+import SystemConsole from "@/components/SystemConsole";
+import BeOnTeaser from "@/components/BeOnTeaser";
 import AppOfTheDay from "@/components/AppOfTheDay";
+import DiyamaAvatar from "@/components/DiyamaAvatar";
 import Seo from "@/components/Seo";
 import { pageSeo } from "@/seo/pageSeo";
 
+/* Homepage, rebuilt November 2026 around the pivot to systems and automation.
+ *
+ * Three rules it is built on:
+ *   1. No photograph of a person who does not exist. Visuals are drawn product
+ *      panels and real screenshots of real apps.
+ *   2. No number typed by hand. Prices come from the generated pricing file and
+ *      proof figures from `data/proof.ts`, which records where each came from.
+ *   3. Promise delivery, never an outcome. No bookings, revenue or hours saved.
+ */
+
 const stagger: Variants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.09 } },
+  visible: { transition: { staggerChildren: 0.08 } },
 };
 
 const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 28 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" } },
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
 };
 
-const fadeIn: Variants = {
-  hidden: { opacity: 0, scale: 0.96 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.45, ease: "easeOut" } },
+const inView = { initial: "hidden", whileInView: "visible", viewport: { once: true, margin: "-70px" } } as const;
+
+/* The work Diyama has always done and still does. Prices are looked up by card id. */
+const alsoIcons: Record<string, LucideIcon> = {
+  social: Send,
+  web: Globe,
+  care: ShieldCheck,
+  found: MapPin,
+  design: PenTool,
+  campaign: Megaphone,
 };
+const alsoDo = priceCards.filter((c) => c.id in alsoIcons);
+
+const steps = [
+  {
+    n: "01",
+    title: "Scope",
+    body: "One conversation about how the work really gets done today. You get a written quote with everything itemised before anybody starts.",
+  },
+  {
+    n: "02",
+    title: "Build",
+    body: "We build it around your business, on the phones and computers you already have. New to us? You see yours working before you pay.",
+  },
+  {
+    n: "03",
+    title: "Run",
+    body: "We keep it secure, backed up and online, and somebody local answers when you call. The build gets you started. The care keeps you there.",
+  },
+];
+
+const ownSystems = [
+  {
+    icon: Send,
+    title: "The publishing engine",
+    body: "Plans, draws and publishes every post for twelve pages across Facebook, Instagram and X. Nothing goes out until it has passed its checks twice.",
+  },
+  {
+    icon: MessagesSquare,
+    title: "The comment desk",
+    body: "Reads new comments every hour and answers from an approved answer book. Anything it does not know goes to a person, never a guess.",
+  },
+  {
+    icon: LayoutDashboard,
+    title: "Diyama OS",
+    body: "Our own operations app. The day's work, the client commitments and the records, on a phone, so nothing depends on memory.",
+  },
+];
 
 const Index = () => {
-  // The four apps most likely to convert, curated via the `featured` flag in the data.
   const topApps = apps.filter((a) => a.featured).slice(0, 4);
-
-  const heroRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const heroY = useTransform(scrollYProgress, [0, 1], ["0%", "25%"]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   return (
     <PageTransition>
       <Seo {...pageSeo["/"]} path="/" />
-      {/* Hero — parallax */}
-      <section ref={heroRef} className="relative overflow-hidden min-h-[90vh] flex items-center">
-        <motion.div className="absolute inset-0 z-0" style={{ y: heroY }}>
-          <img src={heroImg} alt="" className="w-full h-full object-cover scale-110" />
-          {/* Strong uniform dark overlay so all text is always readable */}
-          <div className="absolute inset-0 bg-foreground/80" />
-          {/* Subtle directional fade for visual depth — doesn't compromise contrast */}
-          <div className="absolute inset-0 bg-gradient-to-r from-foreground/15 via-transparent to-foreground/5" />
-        </motion.div>
 
-        {/* Subtle floating orbs — kept well below text contrast threshold */}
-        <div className="absolute inset-0 z-1 pointer-events-none overflow-hidden">
-          <div className="absolute top-20 right-[15%] w-64 h-64 rounded-full bg-accent/8 blur-3xl animate-orb-1" />
-          <div className="absolute bottom-10 left-[10%] w-80 h-80 rounded-full bg-primary/8 blur-3xl animate-orb-2" />
+      {/* Hero */}
+      <section className="relative overflow-hidden bg-ink text-white">
+        <div className="absolute inset-0 bg-grid" />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute -top-40 left-1/4 w-[38rem] h-[38rem] rounded-full bg-primary/25 blur-[120px]" />
+          <div className="absolute top-1/3 -right-40 w-[30rem] h-[30rem] rounded-full bg-accent/10 blur-[120px]" />
         </div>
 
-        <motion.div className="relative z-10 section-padding w-full" style={{ opacity: heroOpacity }}>
-          <div className="container-wide mx-auto">
-            <motion.div
-              variants={stagger}
-              initial="hidden"
-              animate="visible"
-              className="max-w-3xl text-primary-foreground"
-            >
-              <motion.p
-                variants={fadeUp}
-                className="text-accent font-semibold text-sm uppercase tracking-widest mb-5 flex items-center gap-2"
-              >
+        <div className="relative z-10 px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 lg:pt-24 pb-14 sm:pb-16">
+          <div className="container-wide mx-auto grid lg:grid-cols-[1.1fr_0.9fr] gap-12 lg:gap-14 items-center">
+            <motion.div variants={stagger} initial="hidden" animate="visible">
+              <motion.p variants={fadeUp} className="eyebrow text-accent mb-6">
                 <span className="inline-block w-8 h-px bg-accent" />
-                Welcome to Diyama Solutions
+                Business systems, automation and software
               </motion.p>
               <motion.h1
                 variants={fadeUp}
-                className="text-5xl sm:text-6xl lg:text-7xl font-display font-bold leading-[1.05] mb-6"
+                className="text-4xl sm:text-5xl lg:text-6xl xl:text-[4.25rem] font-display font-extrabold leading-[1.04] mb-6"
               >
-                Bring the challenge.{" "}
-                <span className="text-accent italic">We'll help you move.</span>
+                We build the systems that{" "}
+                <span className="text-gold-gradient">run your business.</span>
               </motion.h1>
-              <motion.p
-                variants={fadeUp}
-                className="text-lg sm:text-xl text-white/90 leading-relaxed mb-10 max-w-2xl"
-              >
-                Whether you're building, fixing, growing, or figuring things out, you're welcome here.
-                We help turn business confusion into clarity and traction.
+              <motion.p variants={fadeUp} className="text-lg sm:text-xl text-white/70 leading-relaxed mb-9 max-w-xl">
+                Diyama Solutions designs, builds and runs the software behind your bookings,
+                quotes, invoices, customer replies and daily posting. Built in Zambia, live in
+                days, and kept running by the people who built it.
               </motion.p>
-              <motion.div variants={fadeUp} className="flex flex-wrap gap-4">
-                <Link to="/ai" className="btn-accent inline-flex items-center gap-2">
-                  <MessageSquare size={18} /> Talk to Diyama
+              <motion.div variants={fadeUp} className="flex flex-wrap gap-3 sm:gap-4">
+                <Link to="/consultations" className="btn-accent inline-flex items-center gap-2 font-semibold">
+                  Book a consultation <ArrowRight size={16} />
                 </Link>
                 <Link
-                  to="/consultations"
-                  className="border-2 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 px-6 py-3 rounded-lg font-medium transition-all duration-200 inline-flex items-center gap-2"
+                  to="/services"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-medium border border-white/20 text-white hover:bg-white/10 transition-colors duration-200"
                 >
-                  Book Consultation <ArrowRight size={16} />
+                  See what we build
                 </Link>
               </motion.div>
+              <motion.ul variants={fadeUp} className="mt-9 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/55">
+                {["Prices in the open", "Written quote before any work", "Local team, answers the phone"].map((t) => (
+                  <li key={t} className="inline-flex items-center gap-2">
+                    <Check size={14} className="text-accent" /> {t}
+                  </li>
+                ))}
+              </motion.ul>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.25, ease: "easeOut" }}
+              className="w-full max-w-lg mx-auto lg:max-w-none"
+            >
+              <SystemConsole />
             </motion.div>
           </div>
-        </motion.div>
+        </div>
 
-        {/* Scroll hint */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
-        >
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
-            className="w-6 h-10 rounded-full border-2 border-primary-foreground/30 flex items-start justify-center pt-2"
-          >
-            <div className="w-1 h-2 rounded-full bg-primary-foreground/50" />
-          </motion.div>
-        </motion.div>
+        {/* Proof strip, our own systems, our own records */}
+        <div className="relative z-10 border-t border-white/10">
+          <div className="container-wide mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <motion.dl variants={stagger} {...inView} className="grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-7">
+              {proofStats.map((s) => (
+                <motion.div key={s.label} variants={fadeUp}>
+                  <dt className="sr-only">{s.label}</dt>
+                  <dd>
+                    <span className="block font-display text-3xl sm:text-4xl font-extrabold text-white">{s.value}</span>
+                    <span className="block text-sm text-white/55 mt-1.5 leading-snug max-w-[15rem]">{s.label}</span>
+                  </dd>
+                </motion.div>
+              ))}
+            </motion.dl>
+            <p className="text-[11px] text-white/35 mt-6">Counted from our own records, {proofAsAt}.</p>
+          </div>
+        </div>
       </section>
 
-      {/* Interactive prompt */}
-      <section className="section-padding relative overflow-hidden bg-gradient-to-b from-surface to-background">
-        <AnimatedBg variant="subtle" />
-        <div className="container-narrow mx-auto text-center relative z-10">
-          <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }}>
-            <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-display font-bold mb-4">
-              What are you trying to <span className="text-gradient-primary">move</span> right now?
-            </motion.h2>
-            <motion.p variants={fadeUp} className="text-muted-foreground mb-10 max-w-xl mx-auto">
-              Pick what resonates, and we'll point you in the right direction.
-            </motion.p>
-            <motion.div variants={stagger} className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 max-w-3xl mx-auto">
-              {[
-                { label: "Get more customers", icon: TrendingUp, path: "/services?intent=get-customers", img: strategyImg },
-                { label: "Build my brand", icon: Sparkles, path: "/services?intent=build-brand", img: teamImg },
-                { label: "Launch something new", icon: Lightbulb, path: "/business-fit", img: heroImg },
-                { label: "Grow online visibility", icon: Users, path: "/services?intent=grow-visibility", img: workspaceImg },
-                { label: "Talk to an advisor", icon: MessageSquare, path: "/ai", img: advisorImg },
-                { label: "Learn something useful", icon: BookOpen, path: "/learn", img: meetingImg },
-              ].map((item) => (
-                <motion.div key={item.label} variants={fadeIn}>
-                  <motion.div whileHover={{ y: -5 }} transition={{ type: "spring", stiffness: 300, damping: 18 }}>
-                    <Link
-                      to={item.path}
-                      className="relative block rounded-xl overflow-hidden group h-36 sm:h-44 shadow-sm hover:shadow-xl transition-shadow duration-300"
-                    >
+      {/* What we build */}
+      <section className="section-padding bg-background">
+        <div className="container-wide mx-auto">
+          <motion.div variants={stagger} {...inView}>
+            <motion.div variants={fadeUp} className="max-w-2xl mb-12">
+              <p className="eyebrow text-primary mb-4">What we build</p>
+              <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-display font-bold leading-tight mb-4">
+                Four systems that take the repetitive work off your team.
+              </h2>
+              <p className="text-muted-foreground text-lg leading-relaxed">
+                Each one grows out of software we already build and run ourselves.
+              </p>
+            </motion.div>
+
+            <div className="grid md:grid-cols-2 gap-5">
+              {systems.map((s) => (
+                <motion.article key={s.id} variants={fadeUp} className="card-elevated p-7 sm:p-8 flex flex-col">
+                  <div className="flex items-start justify-between gap-4 mb-5">
+                    <span className="w-12 h-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0">
+                      <s.icon size={22} />
+                    </span>
+                    <span className="text-xs font-medium text-muted-foreground text-right leading-snug max-w-[13rem] pt-1">
+                      {s.price}
+                    </span>
+                  </div>
+                  <h3 className="font-display text-xl sm:text-2xl font-bold mb-1.5">{s.name}</h3>
+                  <p className="text-primary font-medium mb-3">{s.line}</p>
+                  <p className="text-muted-foreground text-sm leading-relaxed mb-5">{s.description}</p>
+                  <ul className="space-y-2 mb-6">
+                    {s.includes.map((i) => (
+                      <li key={i} className="flex items-start gap-2.5 text-sm">
+                        <Check size={16} className="text-accent shrink-0 mt-0.5" />
+                        <span>{i}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="text-xs text-muted-foreground mt-auto pt-4 border-t">
+                    <span className="font-semibold text-foreground">For:</span> {s.whoFor}
+                  </p>
+                </motion.article>
+              ))}
+            </div>
+
+            <motion.div variants={fadeUp} className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+              <Link to="/consultations" className="btn-primary inline-flex items-center gap-2">
+                Talk to us about a system <ArrowRight size={16} />
+              </Link>
+              <Link to="/pricing" className="inline-flex items-center gap-1 text-primary font-medium text-sm hover:underline">
+                See our prices <ArrowRight size={14} />
+              </Link>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section className="section-padding bg-surface border-y">
+        <div className="container-wide mx-auto">
+          <motion.div variants={stagger} {...inView}>
+            <motion.div variants={fadeUp} className="max-w-2xl mb-12">
+              <p className="eyebrow text-primary mb-4">How we work</p>
+              <h2 className="text-3xl sm:text-4xl font-display font-bold leading-tight">
+                We build it, we run it. You stay focused on your customers.
+              </h2>
+            </motion.div>
+            <div className="grid md:grid-cols-3 gap-px bg-border rounded-xl overflow-hidden border">
+              {steps.map((s) => (
+                <motion.div key={s.n} variants={fadeUp} className="bg-card p-7 sm:p-8">
+                  <span className="font-display text-sm font-bold text-accent tracking-widest">{s.n}</span>
+                  <h3 className="font-display text-2xl font-bold mt-3 mb-3">{s.title}</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">{s.body}</p>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* We run on our own systems */}
+      <section className="relative overflow-hidden bg-ink text-white section-padding">
+        <div className="absolute inset-0 bg-grid opacity-60" />
+        <div className="container-wide mx-auto relative z-10">
+          <motion.div variants={stagger} {...inView}>
+            <motion.div variants={fadeUp} className="max-w-2xl mb-12">
+              <p className="eyebrow text-accent mb-4">Proof, not promises</p>
+              <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-display font-bold leading-tight mb-4">
+                We run our own company on the systems we sell.
+              </h2>
+              <p className="text-white/65 text-lg leading-relaxed">
+                Diyama is a small team doing the work of a much larger one, because software
+                carries the routine. These three run every day.
+              </p>
+            </motion.div>
+            <div className="grid md:grid-cols-3 gap-5">
+              {ownSystems.map((o) => (
+                <motion.div key={o.title} variants={fadeUp} className="panel-dark p-7">
+                  <span className="w-11 h-11 rounded-lg bg-accent/15 text-accent border border-accent/25 flex items-center justify-center mb-5">
+                    <o.icon size={20} />
+                  </span>
+                  <h3 className="font-display text-xl font-bold mb-2.5">{o.title}</h3>
+                  <p className="text-sm text-white/60 leading-relaxed">{o.body}</p>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Apps, real screenshots of real products */}
+      <section className="section-padding bg-background">
+        <div className="container-wide mx-auto">
+          <motion.div variants={stagger} {...inView}>
+            <div className="flex items-end justify-between gap-6 mb-10">
+              <motion.div variants={fadeUp} className="max-w-2xl">
+                <p className="eyebrow text-primary mb-4">Try our software now</p>
+                <h2 className="text-3xl sm:text-4xl font-display font-bold leading-tight">
+                  Free business apps, built by Diyama.
+                </h2>
+                <p className="text-muted-foreground mt-3">
+                  Invoices, quotes, bookings, payslips and more. Open one and use it, no signup.
+                </p>
+              </motion.div>
+              <motion.div variants={fadeUp}>
+                <Link to="/apps" className="hidden sm:inline-flex items-center gap-1 text-primary font-medium text-sm hover:underline whitespace-nowrap">
+                  All apps <ArrowRight size={14} />
+                </Link>
+              </motion.div>
+            </div>
+            <AppOfTheDay />
+            <motion.div variants={stagger} className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+              {topApps.map((app) => (
+                <motion.div key={app.id} variants={fadeUp}>
+                  <Link to="/apps" className="card-elevated block h-full overflow-hidden group">
+                    <div className="relative h-28 sm:h-36 overflow-hidden bg-muted">
                       <img
-                        src={item.img}
-                        alt=""
+                        src={app.image}
+                        alt={app.name}
                         loading="lazy"
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                        className="w-full h-full object-cover object-top transition-transform duration-500 ease-out group-hover:scale-105"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-foreground/85 via-foreground/35 to-foreground/10 group-hover:from-primary/85 transition-colors duration-300" />
-                      <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4 flex items-center gap-2.5 text-left">
-                        <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-white/15 backdrop-blur-sm border border-white/20 flex items-center justify-center shrink-0 group-hover:bg-accent group-hover:border-accent transition-colors duration-300">
-                          <item.icon size={16} className="text-white" />
-                        </span>
-                        <span className="text-xs sm:text-sm font-semibold text-white leading-tight">{item.label}</span>
-                      </div>
-                    </Link>
-                  </motion.div>
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-display text-sm sm:text-base font-semibold leading-tight">{app.name}</h3>
+                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{app.tagline}</p>
+                      <span className="mt-3 text-primary text-xs font-medium inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+                        Open it <ArrowUpRight size={12} />
+                      </span>
+                    </div>
+                  </Link>
                 </motion.div>
               ))}
             </motion.div>
+            <Link to="/apps" className="sm:hidden mt-6 btn-outline-primary inline-flex items-center gap-1 text-sm">
+              All apps <ArrowRight size={14} />
+            </Link>
           </motion.div>
         </div>
       </section>
 
-      {/* Business Fit feature — the hook: a personalized kit in under a minute */}
-      <section className="section-padding bg-primary text-primary-foreground relative overflow-hidden">
-        <AnimatedBg variant="dark" />
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_60%_40%,hsl(var(--accent)/0.12),transparent_60%)]" />
+      {/* BeOn Tech, coming soon */}
+      <BeOnTeaser />
+
+      {/* Everything else we still do */}
+      <section className="section-padding bg-surface border-b">
+        <div className="container-wide mx-auto">
+          <motion.div variants={stagger} {...inView}>
+            <motion.div variants={fadeUp} className="max-w-2xl mb-10">
+              <p className="eyebrow text-primary mb-4">Also from Diyama</p>
+              <h2 className="text-3xl sm:text-4xl font-display font-bold leading-tight mb-3">
+                The work that got us here, still done properly.
+              </h2>
+              <p className="text-muted-foreground">
+                Starting prices in Zambian Kwacha. The final figure comes in a written quote.
+              </p>
+            </motion.div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-border rounded-xl overflow-hidden border">
+              {alsoDo.map((c) => {
+                const Icon = alsoIcons[c.id];
+                return (
+                  <motion.div key={c.id} variants={fadeUp} className="bg-card p-6 sm:p-7 flex flex-col">
+                    <Icon size={20} className="text-primary mb-4" />
+                    <h3 className="font-display text-lg font-bold mb-2">{c.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed mb-5 flex-grow">{c.blurb}</p>
+                    <p className="text-sm">
+                      <span className="text-muted-foreground">from </span>
+                      <span className="font-display font-bold text-foreground">{c.from}</span>
+                      <span className="text-muted-foreground"> {c.unit}</span>
+                    </p>
+                  </motion.div>
+                );
+              })}
+            </div>
+            <motion.div variants={fadeUp} className="mt-8">
+              <Link to="/pricing" className="inline-flex items-center gap-1 text-primary font-medium text-sm hover:underline">
+                Full price guide <ArrowRight size={14} />
+              </Link>
+            </motion.div>
+          </motion.div>
         </div>
-        <div className="container-narrow mx-auto text-center relative z-10">
-          <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }}>
-            <motion.div variants={fadeIn} className="animate-float inline-block mb-4">
-              <div className="w-16 h-16 rounded-2xl bg-accent/20 border border-accent/30 flex items-center justify-center mx-auto animate-pulse-glow">
-                <Sparkles className="text-accent" size={28} />
+      </section>
+
+      {/* Free tools */}
+      <section className="section-padding bg-background">
+        <div className="container-wide mx-auto">
+          <motion.div variants={stagger} {...inView} className="grid md:grid-cols-2 gap-5">
+            <motion.div variants={fadeUp} className="card-elevated p-7 sm:p-9 flex flex-col">
+              <div className="flex items-center gap-4 mb-5">
+                <DiyamaAvatar size={52} mood="idle" />
+                <span className="text-xs font-semibold bg-primary/8 text-primary border border-primary/15 rounded-full px-3 py-1">
+                  Free, no signup
+                </span>
               </div>
+              <h3 className="font-display text-2xl font-bold mb-2.5">Ask Diyama AI</h3>
+              <p className="text-muted-foreground leading-relaxed mb-6 flex-grow">
+                A practical AI business advisor. Ask about pricing, marketing, operations or what
+                to fix first, and get a straight answer.
+              </p>
+              <Link to="/ai" className="btn-primary inline-flex items-center gap-2 self-start">
+                <MessageSquare size={17} /> Start a conversation
+              </Link>
             </motion.div>
-            <motion.div variants={fadeUp} className="inline-flex items-center gap-2 text-xs font-semibold bg-accent/15 text-accent border border-accent/25 rounded-full px-4 py-1.5 mb-5">
-              Free, in under a minute
-            </motion.div>
-            <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-display font-bold mb-4">
-              Not sure what your business needs? <span className="text-accent italic">Find your fit.</span>
-            </motion.h2>
-            <motion.p variants={fadeUp} className="text-lg opacity-80 mb-8 max-w-xl mx-auto">
-              Answer a few quick questions and our AI builds you a personalized kit: what to prioritize, quick wins you can act on this week, and the exact services that fit where you are.
-            </motion.p>
-            <motion.div variants={fadeUp}>
-              <Link to="/business-fit" className="btn-accent inline-flex items-center gap-2">
+
+            <motion.div variants={fadeUp} className="rounded-xl bg-primary text-primary-foreground p-7 sm:p-9 flex flex-col relative overflow-hidden">
+              <div className="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-accent/20 blur-3xl pointer-events-none" />
+              <div className="relative flex items-center gap-4 mb-5">
+                <span className="w-[52px] h-[52px] rounded-xl bg-white/10 border border-white/15 flex items-center justify-center">
+                  <Sparkles size={24} className="text-accent" />
+                </span>
+                <span className="text-xs font-semibold bg-accent/15 text-accent border border-accent/30 rounded-full px-3 py-1">
+                  Free, in under a minute
+                </span>
+              </div>
+              <h3 className="relative font-display text-2xl font-bold mb-2.5">Find your Business Fit</h3>
+              <p className="relative text-white/75 leading-relaxed mb-6 flex-grow">
+                Answer a few questions and get a personal kit: what to prioritise, quick wins for
+                this week, and the services that fit where you are.
+              </p>
+              <Link to="/business-fit" className="relative btn-accent inline-flex items-center gap-2 self-start font-semibold">
                 Build my free Business Kit <ArrowRight size={16} />
               </Link>
             </motion.div>
@@ -200,228 +415,60 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Apps showcase, four apps most likely to convert, plus See more */}
-      <section className="relative overflow-hidden bg-surface">
-        <AnimatedBg variant="subtle" />
-        <div className="relative z-10 section-padding">
-          <div className="container-wide mx-auto">
-            <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }}>
-              <div className="flex items-end justify-between mb-10">
-                <motion.div variants={fadeUp}>
-                  <h2 className="text-3xl sm:text-4xl font-display font-bold">Apps that <span className="text-gradient-primary">run your business</span></h2>
-                  <p className="text-muted-foreground mt-2">Ready-to-use tools built by Diyama. Try them free, subscribe when you're ready.</p>
-                </motion.div>
-                <motion.div variants={fadeUp}>
-                  <Link to="/apps" className="hidden sm:inline-flex items-center gap-1 text-primary font-medium text-sm hover:underline">
-                    See more apps <ArrowRight size={14} />
-                  </Link>
-                </motion.div>
+      {/* Who we work with */}
+      <section className="py-14 sm:py-16 bg-surface border-y overflow-hidden">
+        <div className="container-wide mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+            <div>
+              <p className="eyebrow text-primary mb-3">Who we work with</p>
+              <h2 className="text-2xl sm:text-3xl font-display font-bold">
+                Food brands, lodges, artists, offices and DAOs.
+              </h2>
+            </div>
+            <Link to="/clients" className="inline-flex items-center gap-1 text-primary font-medium text-sm hover:underline whitespace-nowrap">
+              See our clients <ArrowRight size={14} />
+            </Link>
+          </div>
+        </div>
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-surface to-transparent z-10 pointer-events-none" />
+          <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-surface to-transparent z-10 pointer-events-none" />
+          <div className="flex gap-3 w-max animate-marquee">
+            {[...clients, ...clients].map((c, i) => (
+              <div key={`${c.id}-${i}`} className="bg-card border rounded-lg px-6 py-4 shrink-0">
+                <p className="font-display font-semibold text-sm whitespace-nowrap">{c.name}</p>
+                <p className="text-xs text-muted-foreground mt-0.5 whitespace-nowrap">{c.category}</p>
               </div>
-              <AppOfTheDay />
-              <motion.div variants={stagger} className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-                {topApps.map((app) => (
-                  <motion.div key={app.id} variants={fadeIn}>
-                    <motion.div whileHover={{ y: -6 }} transition={{ type: "spring", stiffness: 280, damping: 18 }} className="h-full">
-                      <Link to="/apps" className="card-elevated block h-full overflow-hidden group">
-                        <div className="relative h-28 sm:h-36 overflow-hidden">
-                          <img
-                            src={app.image}
-                            alt={app.name}
-                            loading="lazy"
-                            className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-foreground/50 to-transparent" />
-                          <span className="absolute top-2 right-2 text-[10px] font-semibold uppercase tracking-wide bg-accent text-white px-2 py-0.5 rounded-full">
-                            {app.status === "live" ? "Live" : app.status === "coming-soon" ? "Soon" : "Demo"}
-                          </span>
-                        </div>
-                        <div className="p-4">
-                          <h3 className="font-display text-sm sm:text-base font-semibold leading-tight">{app.name}</h3>
-                          <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{app.tagline}</p>
-                          <span className="mt-3 text-primary text-xs font-medium inline-flex items-center gap-1 group-hover:gap-2 transition-all">
-                            Try it free <ArrowRight size={12} />
-                          </span>
-                        </div>
-                      </Link>
-                    </motion.div>
-                  </motion.div>
-                ))}
-              </motion.div>
-              <Link to="/apps" className="sm:hidden mt-6 btn-outline-primary inline-flex items-center gap-1 text-sm">
-                See more apps <ArrowRight size={14} />
-              </Link>
-            </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Client Trust Strip */}
-      <section className="section-padding relative overflow-hidden bg-gradient-to-b from-background to-surface">
-        <AnimatedBg variant="accent" />
-        <div className="container-wide mx-auto text-center relative z-10">
-          <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }}>
-            <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-display font-bold mb-3">
-              Trusted by <span className="text-gradient-primary">real businesses</span>
-            </motion.h2>
-            <motion.p variants={fadeUp} className="text-muted-foreground mb-10 max-w-lg mx-auto">
-              From food brands to DAOs, transport companies to music artists. We've helped businesses across industries.
-            </motion.p>
-            <motion.div variants={fadeIn} className="relative overflow-hidden">
-              <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
-              <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
-              <div className="flex gap-4 w-max animate-marquee">
-                {[...clients, ...clients].map((c, i) => (
-                  <div key={`${c.id}-${i}`} className="card-elevated px-6 py-4 text-center shrink-0 min-w-[180px]">
-                    <p className="font-semibold text-sm text-foreground whitespace-nowrap">{c.name}</p>
-                    <p className="text-xs text-muted-foreground mt-1 whitespace-nowrap">{c.category}</p>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-            <motion.div variants={fadeUp}>
-              <Link to="/clients" className="mt-8 inline-flex items-center gap-1 text-primary font-medium text-sm hover:underline">
-                See all clients <ArrowRight size={14} />
-              </Link>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Diyama AI Teaser */}
-      <section className="section-padding relative overflow-hidden bg-gradient-to-br from-background via-surface to-background">
-        <AnimatedBg variant="subtle" />
-        <div className="container-narrow mx-auto text-center relative z-10">
-          <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }}>
-            <motion.div variants={fadeIn} className="mb-6 flex flex-col items-center gap-4">
-              <DiyamaAvatar size={72} mood="idle" />
-              <div className="inline-flex items-center gap-2 text-xs font-semibold bg-primary/8 text-primary border border-primary/15 rounded-full px-4 py-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                Available 24/7, no signup needed
-              </div>
-            </motion.div>
-            <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-display font-bold mb-4">
-              Meet <span className="text-gradient-primary">Diyama AI</span>
-            </motion.h2>
-            <motion.p variants={fadeUp} className="text-muted-foreground mb-8 max-w-xl mx-auto">
-              A warm, practical AI business advisor. Ask anything about marketing, growth, operations, or pricing.
-            </motion.p>
-            <motion.div variants={fadeUp}>
-              <Link to="/ai" className="btn-primary inline-flex items-center gap-2">
-                <MessageSquare size={18} /> Start a conversation
-              </Link>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Learn Preview */}
-      <section className="section-padding relative overflow-hidden bg-surface">
-        <AnimatedBg variant="subtle" />
-        <div className="container-wide mx-auto relative z-10">
-          <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }}>
-            <div className="flex items-end justify-between mb-10">
-              <motion.div variants={fadeUp}>
-                <h2 className="text-3xl sm:text-4xl font-display font-bold">Learn with Diyama</h2>
-                <p className="text-muted-foreground mt-2">Free guides and insights to help your business grow.</p>
-              </motion.div>
-              <motion.div variants={fadeUp}>
-                <Link to="/learn" className="hidden sm:inline-flex items-center gap-1 text-primary font-medium text-sm hover:underline">
-                  Browse all <ArrowRight size={14} />
-                </Link>
-              </motion.div>
-            </div>
-            <motion.div variants={stagger} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {[
-                { title: "How to Get Your First 100 Customers", time: "7 min", cat: "Customer Growth", slug: "first-100-customers", img: strategyImg },
-                { title: "Google Maps Optimization Guide", time: "8 min", cat: "Local Marketing", slug: "google-maps-guide", img: workspaceImg },
-                { title: "The Restaurant Growth Playbook", time: "6 min", cat: "Restaurant Growth", slug: "restaurant-growth-playbook", img: meetingImg },
-              ].map((a) => (
-                <motion.div key={a.title} variants={fadeIn}>
-                  <motion.div whileHover={{ y: -5 }} transition={{ type: "spring", stiffness: 280 }}>
-                    <Link to={`/learn/${a.slug}`} className="card-elevated block hover:border-primary/30 group overflow-hidden">
-                      <div className="relative h-36 overflow-hidden">
-                        <img
-                          src={a.img}
-                          alt=""
-                          loading="lazy"
-                          className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-foreground/40 to-transparent" />
-                        <span className="absolute bottom-3 left-4 text-xs font-semibold text-white uppercase tracking-wider drop-shadow">{a.cat}</span>
-                      </div>
-                      <div className="p-5">
-                        <h3 className="font-display text-lg font-semibold mb-2">{a.title}</h3>
-                        <p className="text-xs text-muted-foreground">{a.time} read</p>
-                      </div>
-                    </Link>
-                  </motion.div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Affiliate Teaser */}
-      <section className="section-padding relative overflow-hidden bg-gradient-to-b from-background to-surface">
-        <AnimatedBg variant="accent" />
-        <div className="container-narrow mx-auto relative z-10">
-          <motion.div
-            variants={stagger}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-60px" }}
-            className="flex flex-col md:flex-row items-center gap-10"
-          >
-            <motion.div variants={fadeUp} className="flex-1">
-              <h2 className="text-3xl font-display font-bold mb-4">Partner with Diyama</h2>
-              <p className="text-muted-foreground mb-6">
-                Know someone who needs help growing their business? Join our affiliate program and earn commission for every client you refer.
-              </p>
-              <Link to="/affiliate" className="btn-outline-primary inline-flex items-center gap-2 text-sm">
-                Learn about the program <ArrowRight size={14} />
-              </Link>
-            </motion.div>
-            <motion.div variants={fadeIn} className="flex-1">
-              <motion.div
-                whileHover={{ scale: 1.03, rotate: 1 }}
-                transition={{ type: "spring", stiffness: 200 }}
-              >
-                <div className="card-elevated p-8 text-center bg-gradient-to-br from-card to-surface">
-                  <motion.p
-                    className="text-5xl font-display font-bold"
-                    animate={{ rotate: [0, 8, -5, 0] }}
-                    transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                  >
-                    🤝
-                  </motion.p>
-                  <p className="font-semibold mt-4 text-lg">Refer. Earn. Grow together.</p>
-                  <p className="text-sm text-muted-foreground mt-2">Simple, transparent, commission-based.</p>
-                </div>
-              </motion.div>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
       {/* Final CTA */}
-      <section className="section-padding relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-surface via-background to-surface" />
-        <AnimatedBg variant="primary" />
+      <section className="relative overflow-hidden bg-ink text-white section-padding">
+        <div className="absolute inset-0 bg-grid opacity-70" />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[40rem] h-[22rem] rounded-full bg-primary/30 blur-[120px]" />
+        </div>
         <div className="container-narrow mx-auto text-center relative z-10">
-          <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }}>
-            <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-display font-bold mb-4">
-              Ready to move forward?
+          <motion.div variants={stagger} {...inView}>
+            <motion.p variants={fadeUp} className="eyebrow text-accent mb-5 justify-center">Clarity in Action.</motion.p>
+            <motion.h2 variants={fadeUp} className="text-3xl sm:text-5xl font-display font-extrabold leading-tight mb-5">
+              Tell us what slows your business down.
             </motion.h2>
-            <motion.p variants={fadeUp} className="text-muted-foreground mb-8 max-w-lg mx-auto">
-              You don't need to have everything figured out. Bring the challenge, we'll help you structure the next move.
+            <motion.p variants={fadeUp} className="text-white/65 text-lg mb-9 max-w-xl mx-auto">
+              You do not need a brief. Tell us how the work gets done today and we will show you
+              what a system would take off your hands.
             </motion.p>
             <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-4">
-              <Link to="/consultations" className="btn-primary inline-flex items-center gap-2">
-                Book a Consultation <ArrowRight size={16} />
+              <Link to="/consultations" className="btn-accent inline-flex items-center gap-2 font-semibold">
+                Book a consultation <ArrowRight size={16} />
               </Link>
-              <Link to="/ai" className="btn-outline-primary inline-flex items-center gap-2">
-                Talk to Diyama AI
+              <Link
+                to="/contact"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-medium border border-white/20 text-white hover:bg-white/10 transition-colors duration-200"
+              >
+                Contact us
               </Link>
             </motion.div>
           </motion.div>

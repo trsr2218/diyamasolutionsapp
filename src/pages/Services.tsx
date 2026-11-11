@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import {
+  ArrowRight, Check, TrendingUp, Smartphone, Rocket, Target, Gem, Code2, PenLine, Clapperboard,
+  Magnet, Lightbulb, Mountain, UtensilsCrossed, MapPin, Mic, Link2, Users, Globe, Sprout,
+  Handshake, Hotel, Briefcase, type LucideIcon,
+} from "lucide-react";
+import { systems } from "@/data/systems";
 import { services, serviceCategories } from "@/data/services";
 
 // Home page quick actions deep-link here with ?intent=... so a visitor lands on
@@ -23,7 +28,31 @@ const intents: Record<string, { heading: string; blurb: string; serviceIds: stri
     serviceIds: ["digital-marketing", "social-media", "google-maps-reviews", "web-development", "lodge-hospitality"],
   },
 };
-import servicesImg from "@/assets/services-strategy.webp";
+import servicesImg from "@/assets/backdrop-c.svg";
+
+/* Line icons keyed by service id. The emoji in the data file are no longer drawn. */
+const serviceIcons: Record<string, LucideIcon> = {
+  "digital-marketing": TrendingUp,
+  "social-media": Smartphone,
+  "growth-strategy": Rocket,
+  "customer-acquisition": Target,
+  branding: Gem,
+  "web-development": Code2,
+  "content-creation": PenLine,
+  "short-form-video": Clapperboard,
+  "lead-generation": Magnet,
+  "business-consulting": Lightbulb,
+  "tourism-consulting": Mountain,
+  "restaurant-growth": UtensilsCrossed,
+  "google-maps-reviews": MapPin,
+  "creator-support": Mic,
+  "web3-support": Link2,
+  "community-management": Users,
+  "remote-work": Globe,
+  "startup-support": Sprout,
+  "partnership-strategy": Handshake,
+  "lodge-hospitality": Hotel,
+};
 import PageTransition from "@/components/PageTransition";
 import Seo from "@/components/Seo";
 import { pageSeo } from "@/seo/pageSeo";
@@ -66,17 +95,60 @@ const Services = () => {
         <div className="relative z-10 section-padding">
           <div className="container-wide mx-auto">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-2xl text-primary-foreground">
-              <h1 className="text-4xl sm:text-5xl font-display font-bold mb-4">Our Services</h1>
+              <p className="eyebrow text-accent mb-5">What we do</p>
+              <h1 className="text-4xl sm:text-5xl font-display font-extrabold mb-4">Systems first. Everything else, still done properly.</h1>
               <p className="text-lg opacity-80">
-                Practical, results-focused services designed to help your business grow. Whether you need marketing, strategy, creative, or tech, we're here to move with you.
+                We build and run business systems and automation. We also still do the marketing, design and web work our clients rely on.
               </p>
             </motion.div>
           </div>
         </div>
       </section>
 
+      {/* The four systems we lead with */}
+      <section className="section-padding bg-background border-b">
+        <div className="container-wide mx-auto">
+          <div className="max-w-2xl mb-10">
+            <p className="eyebrow text-primary mb-4">Systems and automation</p>
+            <h2 className="text-3xl sm:text-4xl font-display font-bold leading-tight">Software that takes the repetitive work off your team.</h2>
+          </div>
+          <div className="grid md:grid-cols-2 gap-5">
+            {systems.map((sys) => (
+              <motion.article key={sys.id} id={sys.id} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="card-elevated p-7 flex flex-col scroll-mt-24">
+                <div className="flex items-start justify-between gap-4 mb-5">
+                  <span className="w-12 h-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0">
+                    <sys.icon size={22} />
+                  </span>
+                  <span className="text-xs font-medium text-muted-foreground text-right leading-snug max-w-[13rem] pt-1">{sys.price}</span>
+                </div>
+                <h3 className="font-display text-xl font-bold mb-1.5">{sys.name}</h3>
+                <p className="text-primary font-medium mb-3">{sys.line}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-5">{sys.description}</p>
+                <ul className="space-y-2 mb-6">
+                  {sys.includes.map((i) => (
+                    <li key={i} className="flex items-start gap-2.5 text-sm">
+                      <Check size={16} className="text-accent shrink-0 mt-0.5" /> <span>{i}</span>
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-xs text-muted-foreground mt-auto pt-4 border-t">
+                  <span className="font-semibold text-foreground">For:</span> {sys.whoFor}
+                </p>
+              </motion.article>
+            ))}
+          </div>
+          <Link to="/consultations" className="btn-primary inline-flex items-center gap-2 mt-8">
+            Talk to us about a system <ArrowRight size={16} />
+          </Link>
+        </div>
+      </section>
+
       <section className="section-padding bg-gradient-to-b from-surface to-background">
         <div className="container-wide mx-auto">
+          <div className="max-w-2xl mb-8">
+            <p className="eyebrow text-primary mb-4">Growth, creative and web</p>
+            <h2 className="text-3xl sm:text-4xl font-display font-bold leading-tight">Every other service we offer.</h2>
+          </div>
           {/* Intent banner: shown when arriving from a home page quick action */}
           {useIntent && (
             <motion.div
@@ -131,7 +203,14 @@ const Services = () => {
                     onClick={() => setExpandedService(expandedService === service.id ? null : service.id)}
                   >
                     <div className="flex items-start justify-between mb-3">
-                      <span className="text-2xl">{service.icon}</span>
+                      {(() => {
+                        const Icon = serviceIcons[service.id] ?? Briefcase;
+                        return (
+                          <span className="w-10 h-10 rounded-lg bg-primary/8 text-primary flex items-center justify-center">
+                            <Icon size={20} />
+                          </span>
+                        );
+                      })()}
                       <span className="text-xs font-medium text-accent bg-accent/10 px-2 py-1 rounded-full">
                         {service.category}
                       </span>
@@ -174,7 +253,7 @@ const Services = () => {
                     )}
 
                     {expandedService !== service.id && (
-                      <p className="text-xs text-primary mt-auto pt-2 font-medium">Click to expand →</p>
+                      <p className="text-xs text-primary mt-auto pt-2 font-medium inline-flex items-center gap-1">More detail <ArrowRight size={12} /></p>
                     )}
                   </div>
                 </motion.div>

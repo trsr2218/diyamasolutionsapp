@@ -1,7 +1,7 @@
 /* GENERATED FILE. Do not edit by hand.
    Written by scripts/build-pricing.mjs from Growth Plan/CARE-PLANS-OFFER.md, which is
    the company's only price list. Edit the price there, run the script, commit the diff.
-   Generated 2026-08-23. */
+   Generated 2026-11-11. */
 
 export type PriceCard = {
   id: string;
@@ -14,10 +14,34 @@ export type PriceCard = {
 
 export const priceCards: PriceCard[] = [
   {
+    "id": "systems",
+    "title": "Business systems and automation",
+    "blurb": "Software built around how your business actually runs: bookings, stock, approvals, reports, and the back office that ties them together.",
+    "from": "K13,200",
+    "unit": "once",
+    "points": [
+      "Scoped with you first, quoted in writing",
+      "Works on the phones and computers you already have",
+      "Kept running by the people who built it"
+    ]
+  },
+  {
+    "id": "lodges",
+    "title": "Direct bookings for lodges",
+    "blurb": "A booking site, your Google profile set up properly, and a review engine, delivered together as one sprint.",
+    "from": "K3,850",
+    "unit": "once",
+    "points": [
+      "Guests book with you, not through an agent",
+      "Found on Google Maps in your area",
+      "Reviews asked for, not hoped for"
+    ]
+  },
+  {
     "id": "social",
     "title": "Social media, run for you",
     "blurb": "Posts written, graphics designed, and somebody watching the replies. You stop being the one who has to think of something to post.",
-    "from": "K750",
+    "from": "K825",
     "unit": "a month",
     "points": [
       "Facebook, Instagram or both",
@@ -29,7 +53,7 @@ export const priceCards: PriceCard[] = [
     "id": "web",
     "title": "A website or web app",
     "blurb": "Built so a customer can see what you do, what it costs, and how to reach you, on a phone, in seconds.",
-    "from": "K1,000",
+    "from": "K1,100",
     "unit": "once",
     "points": [
       "Live in days, not months",
@@ -41,7 +65,7 @@ export const priceCards: PriceCard[] = [
     "id": "care",
     "title": "Keeping it alive",
     "blurb": "The part most people skip. Security, backups, uptime, and somebody local to call when it breaks.",
-    "from": "K150",
+    "from": "K165",
     "unit": "a month",
     "points": [
       "Security patched and backed up weekly",
@@ -53,7 +77,7 @@ export const priceCards: PriceCard[] = [
     "id": "found",
     "title": "Getting found, and reviews",
     "blurb": "Google Business Profile set up properly, and a system that actually asks your happy customers to say so.",
-    "from": "K350",
+    "from": "K880",
     "unit": "once",
     "points": [
       "Show up on the map, in your area",
@@ -65,7 +89,7 @@ export const priceCards: PriceCard[] = [
     "id": "design",
     "title": "Design and brand",
     "blurb": "Logo, brand kit, menus, profiles, flyers. Priced per piece and per page, so a short job costs less than a long one.",
-    "from": "K250",
+    "from": "K275",
     "unit": "a piece",
     "points": [
       "Per page on documents, never one flat guess",
@@ -77,7 +101,7 @@ export const priceCards: PriceCard[] = [
     "id": "campaign",
     "title": "A campaign, for one month",
     "blurb": "A launch, an event, an award. Daily presence, ads managed, and a promotion run properly and legally.",
-    "from": "K4,000",
+    "from": "K4,400",
     "unit": "once",
     "points": [
       "Two weeks or a full month",
@@ -93,4 +117,10 @@ export const priceCards: PriceCard[] = [
 export const priceNote =
   "Every figure here is a starting price in Zambian Kwacha. What you pay depends on the size of the job, and you get it in writing before any work begins. No deposit, no surprise line on the invoice.";
 
-export const priceUpdated = "2026-08-23";
+export const priceUpdated = "2026-11-11";
+
+/* Named figures for pages that mention one offer by name, so no page types a price. */
+export const systemPrices = {
+  customSystem: "K13,200",
+  lodgeSprint: "K3,850",
+};

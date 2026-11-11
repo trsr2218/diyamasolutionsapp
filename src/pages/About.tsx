@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Heart, Target, Lightbulb, Users } from "lucide-react";
-import aboutImg from "@/assets/about-team.webp";
-import heroImg from "@/assets/hero-consultant.webp";
+import aboutImg from "@/assets/backdrop-b.svg";
+import heroImg from "@/assets/backdrop-a.svg";
 import PageTransition from "@/components/PageTransition";
 import Seo from "@/components/Seo";
 import { pageSeo } from "@/seo/pageSeo";
@@ -40,7 +40,7 @@ const About = () => {
       <section className="section-padding bg-gradient-to-b from-surface to-background">
         <div className="container-narrow mx-auto">
           <p className="text-lg text-muted-foreground leading-relaxed mb-8">
-            We're a business growth partner based in Zambia, serving clients across industries: from food brands and music artists to DAOs and tourism operators. We bring marketing, strategy, creative, and consulting under one roof so our clients can focus on what they do best: building.
+            We're a Zambian company that builds and runs business systems, automation and software, serving clients across industries: from food brands and music artists to DAOs and tourism operators. Marketing, design and strategy sit under the same roof, so our clients can focus on what they do best: building.
           </p>
         </div>
       </section>

@@ -1,51 +1,58 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,500;0,600;0,700;0,800;1,600;1,700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 40 20% 98%;
-    --foreground: 200 25% 15%;
+    /* Corporate refresh, November 2026: ink navy, deep teal, the gold from the logo.
+       Cool neutrals replace the warm cream, and the display face is a grotesk. */
+    --background: 210 25% 98%;
+    --foreground: 218 45% 9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 200 25% 15%;
+    --card-foreground: 218 45% 9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 200 25% 15%;
+    --popover-foreground: 218 45% 9%;
 
-    --primary: 168 45% 25%;
+    --primary: 173 64% 20%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 40 15% 94%;
-    --secondary-foreground: 200 25% 20%;
+    --secondary: 214 22% 94%;
+    --secondary-foreground: 218 40% 14%;
 
-    --muted: 40 10% 93%;
-    --muted-foreground: 200 10% 45%;
+    --muted: 214 20% 93%;
+    --muted-foreground: 216 12% 38%;
 
-    --accent: 38 80% 55%;
-    --accent-foreground: 200 25% 12%;
+    --accent: 41 88% 52%;
+    --accent-foreground: 218 45% 9%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 40 15% 89%;
-    --input: 40 15% 89%;
-    --ring: 168 45% 25%;
+    --border: 214 20% 89%;
+    --input: 214 20% 89%;
+    --ring: 173 64% 20%;
 
-    --radius: 0.75rem;
+    --radius: 0.625rem;
 
     --warm: 15 70% 60%;
     --warm-foreground: 0 0% 100%;
 
-    --gold: 38 80% 55%;
-    --gold-foreground: 200 25% 12%;
+    --gold: 41 88% 52%;
+    --gold-foreground: 218 45% 9%;
 
-    --surface: 40 20% 96%;
+    --surface: 214 25% 96%;
     --surface-elevated: 0 0% 100%;
 
-    --font-display: 'Playfair Display', serif;
-    --font-body: 'DM Sans', sans-serif;
+    /* The darkest ground, for the hero and the proof and product bands. */
+    --ink: 220 48% 6%;
+    --ink-soft: 219 40% 11%;
+    --ink-line: 216 30% 20%;
+
+    --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
+    --font-body: 'Inter', system-ui, sans-serif;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -93,6 +100,7 @@
 
   h1, h2, h3, h4, h5 {
     font-family: var(--font-display);
+    letter-spacing: -0.02em;
   }
 }
 
@@ -159,7 +167,39 @@
   .btn-outline-primary:hover { transform: translateY(-1px); }
 }
 
+@layer components {
+  /* Small capital label above a heading. */
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-xs font-semibold uppercase;
+    letter-spacing: 0.16em;
+  }
+
+  /* Fine engineering grid for dark bands, faded out toward the edges. */
+  .bg-grid {
+    background-image:
+      linear-gradient(hsl(var(--ink-line) / 0.55) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--ink-line) / 0.55) 1px, transparent 1px);
+    background-size: 56px 56px;
+    -webkit-mask-image: radial-gradient(ellipse 85% 75% at 50% 35%, #000 30%, transparent 100%);
+    mask-image: radial-gradient(ellipse 85% 75% at 50% 35%, #000 30%, transparent 100%);
+  }
+
+  .panel-dark {
+    @apply rounded-xl border;
+    background: hsl(var(--ink-soft) / 0.85);
+    border-color: hsl(var(--ink-line));
+  }
+
+  .text-gold-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(120deg, hsl(41 92% 62%), hsl(36 85% 48%));
+  }
+}
+
 @layer utilities {
+  .animate-breathe {
+    animation: breathe 4.5s ease-in-out infinite;
+  }
   .animate-orb-1 {
     animation: orb-float-1 9s ease-in-out infinite;
   }
@@ -216,4 +256,13 @@
 @keyframes marquee {
   0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
+}
+@keyframes breathe {
+  0%, 100% { opacity: 0.55; transform: scale(0.96); }
+  50%       { opacity: 1; transform: scale(1.04); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-breathe, .animate-marquee, .animate-orb-1, .animate-orb-2, .animate-orb-3, .animate-float, .animate-pulse-glow {
+    animation: none;
+  }
 }

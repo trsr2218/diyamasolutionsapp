@@ -6,11 +6,12 @@ const footerLinks = [
   {
     title: "Services",
     links: [
-      { label: "Digital Marketing", path: "/services" },
-      { label: "Growth Strategy", path: "/services" },
-      { label: "Branding", path: "/services" },
-      { label: "Web Development", path: "/services" },
-      { label: "Consulting", path: "/services" },
+      { label: "Business Systems", path: "/services" },
+      { label: "Automation", path: "/services" },
+      { label: "Websites and Apps", path: "/services" },
+      { label: "Social Media", path: "/services" },
+      { label: "Design and Brand", path: "/services" },
+      { label: "Prices", path: "/pricing" },
     ],
   },
   {
@@ -44,7 +45,7 @@ const footerLinks = [
 
 const Footer = () => {
   return (
-    <footer className="bg-foreground text-primary-foreground">
+    <footer className="bg-ink text-primary-foreground">
       <div className="container-wide mx-auto section-padding">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 lg:gap-12">
           {/* Brand */}
@@ -53,9 +54,9 @@ const Footer = () => {
               <img src={diyamaLogo} alt="Diyama Solutions" width={48} height={48} loading="lazy" className="h-12 w-12" />
             </Link>
             <p className="mt-3 text-sm opacity-70 leading-relaxed max-w-xs">
-              Helping businesses move from confusion to clarity, from stalling to growing.
+              Business systems, automation and software, built and run in Zambia.
             </p>
-            <p className="mt-2 text-xs opacity-50 italic">Clarity in Action.</p>
+            <p className="mt-2 text-xs opacity-50">Clarity in Action.</p>
             <div className="mt-5 space-y-2 text-sm opacity-70">
               <a href="tel:0966138238" className="flex items-center gap-2 hover:opacity-100 transition-opacity">
                 <Phone size={14} /> 0966138238
@@ -87,9 +88,11 @@ const Footer = () => {
 
         <div className="mt-16 pt-8 border-t border-primary-foreground/10 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs opacity-50">
-            © {new Date().getFullYear()} Diyama Solutions. TPIN: 2001340367. All rights reserved.
+            © {new Date().getFullYear()} Diyama Solutions Ltd. TPIN: 2001340367. All rights reserved.
           </p>
           <p className="text-xs opacity-50">
+            <Link to="/#beon" className="hover:opacity-100 transition-opacity">BeOn Tech, coming soon</Link>
+            <span className="mx-2">|</span>
             www.diyama.online
           </p>
         </div>

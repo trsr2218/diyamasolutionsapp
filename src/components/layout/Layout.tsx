@@ -2,6 +2,7 @@ import { ReactNode, useEffect } from "react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import FloatingCTA from "../FloatingCTA";
+import AnnouncementBar from "../AnnouncementBar";
 
 interface LayoutProps {
   children: ReactNode;
@@ -34,6 +35,7 @@ const Layout = ({ children }: LayoutProps) => {
             "radial-gradient(ellipse 60% 40% at 90% 100%, hsl(var(--accent)/0.03) 0%, transparent 50%)",
         }}
       />
+      <AnnouncementBar />
       <Navbar />
       <main className="flex-1 relative z-10">{children}</main>
       <Footer />

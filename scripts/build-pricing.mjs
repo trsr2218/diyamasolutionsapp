@@ -109,41 +109,61 @@ function lowest(sectionName, opts = {}) {
 const fmt = n => 'K' + n.toLocaleString('en-US');
 
 /* Each card names the section it draws from, so a wrong number is traceable. */
+/* The pivot of 5 November 2026 puts systems first. Only two systems lines carry a
+   listed price, the custom system and the lodge sprint, so those are the only two
+   figures shown. Anything else in that range is quoted, never guessed at here. */
+const CUSTOM_SYSTEM = lowest('3. Websites and apps, one-off build', { expect: 13200, pattern: /From K([\d,]+), quoted after a scoping session/ });
+const LODGE_SPRINT = lowest('9. For lodges and guest houses', { expect: 3850, pattern: /Direct Booking Sprint\*\*[^|]*\| \*\*K([\d,]+)\*\*/ });
+
 const CARDS = [
+  {
+    id: 'systems', title: 'Business systems and automation',
+    blurb: 'Software built around how your business actually runs: bookings, stock, approvals, reports, and the back office that ties them together.',
+    from: CUSTOM_SYSTEM, unit: 'once',
+    points: ['Scoped with you first, quoted in writing', 'Works on the phones and computers you already have', 'Kept running by the people who built it'],
+  },
+  {
+    id: 'lodges', title: 'Direct bookings for lodges',
+    blurb: 'A booking site, your Google profile set up properly, and a review engine, delivered together as one sprint.',
+    from: LODGE_SPRINT, unit: 'once',
+    points: ['Guests book with you, not through an agent', 'Found on Google Maps in your area', 'Reviews asked for, not hoped for'],
+  },
   {
     id: 'social', title: 'Social media, run for you',
     blurb: 'Posts written, graphics designed, and somebody watching the replies. You stop being the one who has to think of something to post.',
-    from: lowest('1. Social media management, monthly', { expect: 750 }), unit: 'a month',
+    from: lowest('1. Social media management, monthly', { expect: 825 }), unit: 'a month',
     points: ['Facebook, Instagram or both', 'Custom graphics, not stock', 'A monthly report you can actually read'],
   },
   {
     id: 'web', title: 'A website or web app',
     blurb: 'Built so a customer can see what you do, what it costs, and how to reach you, on a phone, in seconds.',
-    from: lowest('3. Websites and apps, one-off build', { expect: 1000 }), unit: 'once',
+    from: lowest('3. Websites and apps, one-off build', { expect: 1100 }), unit: 'once',
     points: ['Live in days, not months', 'Hosting, domain and SSL free for the first year', 'You see yours working before you pay'],
   },
   {
     id: 'care', title: 'Keeping it alive',
     blurb: 'The part most people skip. Security, backups, uptime, and somebody local to call when it breaks.',
-    from: lowest('4. Keeping it live', { expect: 150, pattern: /Site Care, K([\d,]+) a month/ }), unit: 'a month',
+    from: lowest('4. Keeping it live', { expect: 165, pattern: /Site Care, K([\d,]+) a month/ }), unit: 'a month',
     points: ['Security patched and backed up weekly', 'We know it is down before you do', 'Content updates included on the higher plan'],
   },
   {
     id: 'found', title: 'Getting found, and reviews',
     blurb: 'Google Business Profile set up properly, and a system that actually asks your happy customers to say so.',
-    from: lowest('6. Getting found, and reviews', { expect: 350 }), unit: 'once',
+    /* min 700 skips the K385 monthly review collection and the K660 extra location:
+       neither is a one-off entry price, and this card's unit is "once". */
+    from: lowest('6. Getting found, and reviews', { expect: 880, min: 700 }), unit: 'once',
     points: ['Show up on the map, in your area', 'A review engine, not a hope', 'Business email on your own domain'],
   },
   {
     id: 'design', title: 'Design and brand',
     blurb: 'Logo, brand kit, menus, profiles, flyers. Priced per piece and per page, so a short job costs less than a long one.',
-    from: lowest('7. Design and brand', { expect: 250 }), unit: 'a piece',
+    from: lowest('7. Design and brand', { expect: 275 }), unit: 'a piece',
     points: ['Per page on documents, never one flat guess', 'Print ready export included', 'One round of changes included'],
   },
   {
     id: 'campaign', title: 'A campaign, for one month',
     blurb: 'A launch, an event, an award. Daily presence, ads managed, and a promotion run properly and legally.',
-    from: lowest('8. Campaigns, for an event, a launch or an award', { expect: 4000 }), unit: 'once',
+    from: lowest('8. Campaigns, for an event, a launch or an award', { expect: 4400 }), unit: 'once',
     points: ['Two weeks or a full month', 'Your ad money stays on your own account', 'Every giveaway free to enter, with written rules'],
   },
 ];
@@ -173,6 +193,12 @@ export const priceNote =
   "Every figure here is a starting price in Zambian Kwacha. What you pay depends on the size of the job, and you get it in writing before any work begins. No deposit, no surprise line on the invoice.";
 
 export const priceUpdated = "${new Date().toISOString().slice(0, 10)}";
+
+/* Named figures for pages that mention one offer by name, so no page types a price. */
+export const systemPrices = {
+  customSystem: "${fmt(CUSTOM_SYSTEM)}",
+  lodgeSprint: "${fmt(LODGE_SPRINT)}",
+};
 `;
 
 fs.writeFileSync(OUT, banner + body);

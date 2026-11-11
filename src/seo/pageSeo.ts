@@ -11,18 +11,18 @@ export interface PageSeoEntry {
 
 export const pageSeo: Record<string, PageSeoEntry> = {
   "/": {
-    title: "Business Growth, Marketing & Free Apps in Zambia | Diyama Solutions",
+    title: "Business Systems, Automation and Software in Zambia | Diyama Solutions",
     description:
-      "Diyama Solutions helps businesses in Zambia and across Africa grow through marketing, strategy, branding, web development, and free business apps.",
+      "Diyama Solutions builds and runs business systems, automation and software in Zambia: bookings, quotes, invoices, customer replies and daily posting.",
   },
   "/pricing": {
     title: "Prices | Diyama Solutions",
-    description: "What our work costs, in the open. Social media from K750 a month, websites from K1,000, site care from K150 a month. Starting prices in kwacha, full quote in writing before any work starts.",
+    description: "What our work costs, in the open. Custom systems from K13,200, websites from K1,100, social media from K825 a month. Starting prices in kwacha, full quote in writing before any work starts.",
   },
   "/services": {
     title: "Our Services | Diyama Solutions",
     description:
-      "Marketing, growth strategy, branding, web development, and consulting services built to move African businesses forward, one practical step at a time.",
+      "Business systems and automation first: WhatsApp front desk, lodge bookings, workflow automation and office systems. Plus marketing, design and web.",
   },
   "/apps": {
     title: "Free Business Apps for African Businesses | Diyama Solutions",
@@ -67,7 +67,7 @@ export const pageSeo: Record<string, PageSeoEntry> = {
   "/about": {
     title: "About Us | Diyama Solutions",
     description:
-      "Diyama Solutions is a business growth partner in Lusaka, Zambia, bringing marketing, strategy, creative, and consulting together under one roof.",
+      "Diyama Solutions Ltd builds and runs business systems, automation and software from Lusaka and Livingstone, Zambia, alongside marketing and design.",
   },
   "/contact": {
     title: "Contact Us | Diyama Solutions",

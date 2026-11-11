@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { motion, type Variants } from "framer-motion";
 import { ExternalLink, Megaphone, Handshake } from "lucide-react";
 import { partners } from "@/data/partners";
-import learnImg from "@/assets/learn-workspace.webp";
+import learnImg from "@/assets/backdrop-a.svg";
 import PageTransition from "@/components/PageTransition";
 import AnimatedBg from "@/components/AnimatedBg";
 import SitePreview from "@/components/SitePreview";

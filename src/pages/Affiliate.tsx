@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Users, Send as SendIcon, DollarSign, Shield, CheckCircle, Loader2 } from "lucide-react";
-import aboutImg from "@/assets/about-team.webp";
+import aboutImg from "@/assets/backdrop-b.svg";
 import PageTransition from "@/components/PageTransition";
 import Seo from "@/components/Seo";
 import { pageSeo } from "@/seo/pageSeo";

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import { clients } from "@/data/clients";
-import aboutImg from "@/assets/about-team.webp";
+import aboutImg from "@/assets/backdrop-b.svg";
 import PageTransition from "@/components/PageTransition";
 import SitePreview from "@/components/SitePreview";
 import Seo from "@/components/Seo";
