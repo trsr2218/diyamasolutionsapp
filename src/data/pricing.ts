@@ -115,7 +115,7 @@ export const priceCards: PriceCard[] = [
    published figure could later be read as inclusive. A floor plus a written quote
    is both honest and safe. */
 export const priceNote =
-  "Every figure here is a starting price in Zambian Kwacha. What you pay depends on the size of the job, and you get it in writing before any work begins. No deposit, no surprise line on the invoice.";
+  "Every figure here is a starting price in Zambian Kwacha. What you pay depends on the size of the job, and you get it in writing before any work begins. A build is paid half to start and half when it goes live, and nothing appears on the invoice that was not on the quote.";
 
 export const priceUpdated = "2026-11-11";
 
