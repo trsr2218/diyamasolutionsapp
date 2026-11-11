@@ -75,10 +75,10 @@ const ScrollStory = () => {
           </h2>
         </div>
 
-        <div ref={ref} className="grid lg:grid-cols-[1fr_1.1fr] gap-10 lg:gap-16 items-start">
+        <div ref={ref} className="grid lg:grid-cols-[1fr_1.1fr] gap-10 lg:gap-16 items-stretch">
           <ol className="space-y-6 lg:space-y-0">
             {steps.map((s, i) => (
-              <li key={s.n} className="lg:min-h-[60vh] lg:flex lg:items-center">
+              <li key={s.n} className="lg:min-h-[52vh] lg:flex lg:items-center">
                 <motion.div
                   initial={{ opacity: 0, y: 24 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -99,8 +99,10 @@ const ScrollStory = () => {
             ))}
           </ol>
 
-          <div className="hidden lg:block lg:sticky lg:top-28 self-start">
-            <div className="relative aspect-[4/5] max-h-[70vh] w-full">
+          {/* The column stretches to the full height of the three steps, so the
+              sticky picture inside it stays pinned until the last step is read. */}
+          <div className="hidden lg:block">
+            <div className="lg:sticky lg:top-28 relative aspect-[4/5] max-h-[70vh] w-full">
               <AnimatePresence mode="sync" initial={false}>
                 <motion.div
                   key={active}
