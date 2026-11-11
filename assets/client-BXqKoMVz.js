@@ -1,4 +1,4 @@
-import{c as St}from"./index-C7FXomy7.js";import{a as Wt,S as Kt}from"./supabaseEnv-2un-2RAE.js";/**
+import{c as St}from"./index-BxIoXrrC.js";import{a as Wt,S as Kt}from"./supabaseEnv-2un-2RAE.js";/**
  * @license lucide-react v0.462.0 - ISC
  *
  * This source code is licensed under the ISC license.
