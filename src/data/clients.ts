@@ -138,8 +138,7 @@ export const clients: Client[] = [
     reviewStatus: "sample",
   },
   {
-    // Added 11 November 2026, same engagement as above. Ernest typed "BigBoz"; the name
-    // here follows the one on file for this client. Confirm the spelling with him.
+    // Added 11 November 2026, same engagement as above. Name confirmed by Ernest that day.
     id: "bigboyz-nation",
     name: "BigBoyz Nation",
     year: "",
