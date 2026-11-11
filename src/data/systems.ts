@@ -32,7 +32,7 @@ export const systems: SystemOffer[] = [
     line: "Your WhatsApp answered properly, even when you are busy.",
     description:
       "An assistant that answers your customers from an answer book you approve, keeps every enquiry in one list and hands anything it does not know to a person.",
-    whoFor: "Service businesses that take their bookings and orders on WhatsApp.",
+    whoFor: "Lodges, car hire, clinics, salons, takeaways, tour operators: any business that takes bookings or orders on WhatsApp.",
     includes: ["Your prices, hours and common questions answered", "Every enquiry logged in one place", "Unknown questions passed to you, never guessed", "WhatsApp message fees passed on at cost"],
     price: `${systemPrices.frontDeskSetup} set up, then ${systemPrices.frontDeskMonthly} a month`,
   },
