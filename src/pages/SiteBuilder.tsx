@@ -1,10 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion, Reorder, useDragControls } from "framer-motion";
 import {
   ArrowRight, Check, CheckCircle, Loader2, MessageCircle, Monitor, Smartphone, Send, Star, MapPin, Calendar, ShoppingBag, Sparkles,
-  GripVertical, X, Plus, Globe, Link2, LayoutTemplate, Clock, Users, Wand2, type LucideIcon,
+  GripVertical, X, Plus, Globe, Link2, LayoutTemplate, Clock, Users, Wand2, ImagePlus, Camera, Trash2, Eye,
+  Utensils, Scissors, Stethoscope, Car, BedDouble, GraduationCap, HeartHandshake, Briefcase, Mic, type LucideIcon,
 } from "lucide-react";
+import { MAX_REFS, loadRefs, paletteFrom, saveRefs, shrink, uploadRefs, type Palette, type SiteRef } from "@/lib/siteRefs";
 import PageTransition from "@/components/PageTransition";
 import Seo from "@/components/Seo";
 import WhatsAppFallback from "@/components/WhatsAppFallback";
@@ -49,12 +51,52 @@ const kinds = [
   { id: "other", label: "Something else", cards: ["What we offer", "Why us", "Get in touch"], hero: "Welcome. Here is what we do." },
 ];
 
-const styles = [
+/* Ernest, 12 November 2026, on the first version: "has one style, wtf". So: eight
+   looks instead of four, five page layouts that change the shape of the site and not
+   only its colours, a picture in the hero, and a ninth look, "From your screenshot",
+   that takes its colours from pictures the visitor uploads. */
+interface Look {
+  id: string;
+  label: string;
+  blurb: string;
+  bg: string;
+  fg: string;
+  card: string;
+  muted: string;
+  radius: string;
+  serif: boolean;
+}
+
+const styles: Look[] = [
   { id: "bold", label: "Bold", blurb: "Dark hero, big type, confident", bg: "#0b1020", fg: "#ffffff", card: "#141a2e", muted: "#aab2c8", radius: "14px", serif: false },
   { id: "clean", label: "Clean", blurb: "White space, calm, modern", bg: "#ffffff", fg: "#0f172a", card: "#f6f7fb", muted: "#5b6478", radius: "12px", serif: false },
   { id: "warm", label: "Warm", blurb: "Cream, rounded, friendly", bg: "#fbf6ee", fg: "#2a1f14", card: "#ffffff", muted: "#7a6a58", radius: "22px", serif: true },
   { id: "night", label: "Night", blurb: "Black with a glow", bg: "#000000", fg: "#f5f5f5", card: "#111111", muted: "#9a9a9a", radius: "8px", serif: false },
+  { id: "luxury", label: "Luxury", blurb: "Black, gold, serif", bg: "#0a0a0a", fg: "#f7f1e3", card: "#171410", muted: "#b5aa90", radius: "2px", serif: true },
+  { id: "fresh", label: "Fresh", blurb: "Mint, light, lively", bg: "#eefaf3", fg: "#0f2e1f", card: "#ffffff", muted: "#4f7a63", radius: "18px", serif: false },
+  { id: "corporate", label: "Corporate", blurb: "Navy and white, trusted", bg: "#f3f5f9", fg: "#0b1f3a", card: "#ffffff", muted: "#4e5d75", radius: "6px", serif: false },
+  { id: "earth", label: "Earth", blurb: "Olive, sand, grounded", bg: "#e9e2d2", fg: "#2b2a1f", card: "#f6f2e8", muted: "#6f6a52", radius: "10px", serif: true },
 ];
+
+const MATCH = "match";
+const lookFromPalette = (p: Palette): Look => ({
+  id: MATCH, label: "From your screenshot", blurb: "The colours of the site you like", bg: p.bg, fg: p.fg, card: p.card, muted: p.muted, radius: "12px", serif: p.serif === true,
+});
+
+/* How the page is shaped. The layout decides the nav, the hero and how the blocks sit. */
+const layouts = [
+  { id: "split", label: "Split", blurb: "Words left, picture right" },
+  { id: "cover", label: "Cover", blurb: "Full picture, words on top" },
+  { id: "centred", label: "Centred", blurb: "Everything in the middle" },
+  { id: "editorial", label: "Editorial", blurb: "Big headline, thin lines" },
+  { id: "stack", label: "Simple", blurb: "Headline, button, go" },
+];
+
+/* The picture in the hero, one icon per kind of business until their own photo goes in. */
+const kindIcons: Record<string, LucideIcon> = {
+  restaurant: Utensils, salon: Scissors, shop: ShoppingBag, clinic: Stethoscope, transport: Car, lodge: BedDouble,
+  school: GraduationCap, church: HeartHandshake, pro: Briefcase, creator: Mic, other: Sparkles,
+};
 
 const accents = [
   { id: "gold", hex: "#F2B134" }, { id: "teal", hex: "#0F9B8E" }, { id: "red", hex: "#E0343C" }, { id: "blue", hex: "#2F6FED" },
@@ -135,6 +177,13 @@ interface Design {
   features: string[];
   live: string;
   byAi: boolean;
+  layout: string;
+  /** Colours read from the visitor's screenshots, when they uploaded any. */
+  palette: Palette | null;
+  /** A website they like, typed as an address. */
+  refUrl: string;
+  /** What Diyama AI saw in the screenshots, in one line, for the person building the demo. */
+  lookNotes: string;
 }
 
 const defaultDesign: Design = {
@@ -150,6 +199,10 @@ const defaultDesign: Design = {
   features: ["whatsapp"],
   live: "own",
   byAi: false,
+  layout: "split",
+  palette: null,
+  refUrl: "",
+  lookNotes: "",
 };
 
 const STORAGE = "diyama-site-design";
@@ -176,6 +229,15 @@ const migrate = (raw: Partial<Design> & { features?: string[]; pages?: string[] 
   d.features = only(d.features, ids(featureOptions));
   d.pages = only(d.pages, ids(pageOptions));
   if (!ids(liveOptions).includes(d.live)) d.live = "own";
+  if (!ids(layouts).includes(d.layout)) d.layout = "split";
+  const p = d.palette as Partial<Palette> | null;
+  if (!p || typeof p.bg !== "string" || typeof p.fg !== "string" || typeof p.card !== "string" || typeof p.muted !== "string" || typeof p.accent !== "string") d.palette = null;
+  if (!d.palette && (d.style === MATCH || d.accent === MATCH)) {
+    if (d.style === MATCH) d.style = "bold";
+    if (d.accent === MATCH) d.accent = "gold";
+  }
+  if (typeof d.refUrl !== "string") d.refUrl = "";
+  if (typeof d.lookNotes !== "string") d.lookNotes = "";
   return d;
 };
 
@@ -225,6 +287,7 @@ const aiPrompt = (text: string) =>
     `tagline: one line for the top of the site, under 70 characters, no dashes.`,
     `kind: one of ${ids(kinds).join(", ")}.`,
     `style: one of ${ids(styles).join(", ")}.`,
+    `layout: one of ${layouts.map((l) => `${l.id} (${l.blurb.toLowerCase()})`).join(", ")}.`,
     `accent: one of ${ids(accents).join(", ")}.`,
     `pages: an array from ${ids(pageOptions).join(", ")}.`,
     `sections: an array in display order from ${ids(sectionOptions).join(", ")}, starting with offer, four to seven items.`,
@@ -236,11 +299,13 @@ const aiPrompt = (text: string) =>
     text,
   ].join("\n");
 
-async function askDiyamaAi(text: string): Promise<Partial<Design>> {
+/* One question to the chat function, the streamed answer gathered into a JSON object.
+   Pictures ride along as data URLs; the function passes them to the model inline. */
+async function askJson(prompt: string, images: string[] = []): Promise<Record<string, unknown>> {
   const resp = await fetch(`${SUPABASE_URL}/functions/v1/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}` },
-    body: JSON.stringify({ messages: [{ role: "user", content: aiPrompt(text) }] }),
+    body: JSON.stringify({ messages: [{ role: "user", content: prompt, ...(images.length ? { images } : {}) }] }),
   });
   if (!resp.ok || !resp.body) throw new Error("no answer");
   const reader = resp.body.getReader();
@@ -268,9 +333,14 @@ async function askDiyamaAi(text: string): Promise<Partial<Design>> {
   const start = out.indexOf("{");
   const end = out.lastIndexOf("}");
   if (start < 0 || end < start) throw new Error("no json");
-  const j = JSON.parse(out.slice(start, end + 1)) as Record<string, unknown>;
-  const str = (v: unknown, max: number) => (typeof v === "string" ? v.replace(/[—–]/g, ",").trim().slice(0, max) : "");
-  const pick = (v: unknown, list: { id: string }[]) => (typeof v === "string" && ids(list).includes(v) ? v : undefined);
+  return JSON.parse(out.slice(start, end + 1)) as Record<string, unknown>;
+}
+
+const str = (v: unknown, max: number) => (typeof v === "string" ? v.replace(/[—–]/g, ",").trim().slice(0, max) : "");
+const pick = (v: unknown, list: { id: string }[]) => (typeof v === "string" && ids(list).includes(v) ? v : undefined);
+
+async function askDiyamaAi(text: string): Promise<Partial<Design>> {
+  const j = await askJson(aiPrompt(text));
   const sections = only(j.sections, ids(sectionOptions)).slice(0, 8);
   if (sections[0] !== "offer") sections.unshift("offer");
   const cards = Array.isArray(j.cards) ? j.cards.filter((c): c is string => typeof c === "string").map((c) => c.trim().slice(0, 22)).filter(Boolean).slice(0, 3) : [];
@@ -281,12 +351,32 @@ async function askDiyamaAi(text: string): Promise<Partial<Design>> {
     cards: cards.length === 3 ? cards : [],
     kind: pick(j.kind, kinds),
     style: pick(j.style, styles),
+    layout: pick(j.layout, layouts),
     accent: pick(j.accent, accents),
     pages: only(j.pages, ids(pageOptions)),
     sections: sections.filter((s, i, a) => a.indexOf(s) === i),
     features: only(j.features, ["whatsapp", "calendar", "logins", "payments", "language"]),
     byAi: true,
   };
+}
+
+/* Diyama AI looks at the screenshots and says which layout and look are closest, and
+   writes one line about the look for whoever builds the demo. The colours themselves
+   are read in the browser, so this only adds shape and words. */
+const lookPrompt = [
+  "These are screenshots of websites a visitor on diyama.online/build likes. They want their own site to look similar.",
+  "If no picture is attached to this message, reply with exactly {\"none\": true} and nothing else.",
+  "Otherwise reply with ONLY a JSON object, no prose, no markdown fences, with exactly these keys:",
+  `layout: the closest of ${layouts.map((l) => `${l.id} (${l.blurb.toLowerCase()})`).join(", ")}.`,
+  `style: the closest of ${styles.map((s) => `${s.id} (${s.blurb.toLowerCase()})`).join(", ")}.`,
+  "serif: true if the headings use a serif typeface, else false.",
+  "look: one sentence under 160 characters describing the look to copy (type, spacing, imagery, mood), no dashes.",
+].join("\n");
+
+async function askLook(images: string[]): Promise<{ layout?: string; style?: string; serif: boolean; look: string }> {
+  const j = await askJson(lookPrompt, images);
+  if (j.none === true || !j.look) throw new Error("did not see the pictures");
+  return { layout: pick(j.layout, layouts), style: pick(j.style, styles), serif: j.serif === true, look: str(j.look, 180) };
 }
 
 const SiteBuilder = () => {
@@ -298,6 +388,10 @@ const SiteBuilder = () => {
   const [sent, setSent] = useState(false);
   const [brief, setBrief] = useState("");
   const [ai, setAi] = useState<"idle" | "thinking" | "done" | "failed">("idle");
+  const [refs, setRefs] = useState<SiteRef[]>(loadRefs);
+  const [refState, setRefState] = useState<"idle" | "reading" | "looking" | "matched" | "colours" | "failed">(() => (loadRefs().length ? "matched" : "idle"));
+  const [sending, setSending] = useState(false);
+  const fileInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     try {
@@ -306,10 +400,64 @@ const SiteBuilder = () => {
       /* fine */
     }
   }, [d]);
+  useEffect(() => saveRefs(refs), [refs]);
 
   const kind = kinds.find((k) => k.id === d.kind) ?? kinds[0];
-  const style = styles.find((s) => s.id === d.style) ?? styles[0];
-  const accent = accents.find((a) => a.id === d.accent)?.hex ?? accents[0].hex;
+  const matchLook = d.palette ? lookFromPalette(d.palette) : null;
+  const style: Look = (d.style === MATCH && matchLook) || styles.find((s) => s.id === d.style) || styles[0];
+  const accent = d.accent === MATCH && d.palette ? d.palette.accent : (accents.find((a) => a.id === d.accent)?.hex ?? accents[0].hex);
+  const layout = layouts.find((l) => l.id === d.layout) ?? layouts[0];
+
+  /* Screenshots of sites they like: shrink, read the colours, then ask Diyama AI for the shape. */
+  const addRefs = async (files: FileList | File[]) => {
+    const room = MAX_REFS - refs.length;
+    const list = Array.from(files).filter((f) => f.type.startsWith("image/")).slice(0, Math.max(0, room));
+    if (!list.length) return;
+    setRefState("reading");
+    const added: SiteRef[] = [];
+    for (const f of list) {
+      try {
+        added.push({ data: await shrink(f) });
+      } catch {
+        /* skip a file that will not read */
+      }
+    }
+    if (!added.length) {
+      setRefState("failed");
+      return;
+    }
+    const all = [...refs, ...added];
+    setRefs(all);
+    let palette: Palette | null = d.palette;
+    try {
+      palette = await paletteFrom(all[0].data, accent);
+      setD((x) => ({ ...x, palette, style: MATCH, accent: MATCH }));
+    } catch {
+      /* a picture the canvas will not read: keep the chosen look */
+    }
+    setRefState("looking");
+    try {
+      const seen = await askLook(all.map((r) => r.data));
+      setD((x) => ({
+        ...x,
+        layout: seen.layout ?? x.layout,
+        lookNotes: seen.look || x.lookNotes,
+        palette: x.palette ? { ...x.palette, serif: seen.serif } : null,
+        style: x.palette ? MATCH : (seen.style ?? x.style),
+      }));
+      setRefState("matched");
+    } catch {
+      setRefState(palette ? "colours" : "failed");
+    }
+  };
+  const removeRef = (i: number) => {
+    const left = refs.filter((_, k) => k !== i);
+    setRefs(left);
+    if (!left.length) {
+      setRefState("idle");
+      setD((x) => ({ ...x, palette: null, lookNotes: "", style: x.style === MATCH ? "bold" : x.style, accent: x.accent === MATCH ? "gold" : x.accent }));
+    }
+  };
   const live = liveOptions.find((l) => l.id === d.live) ?? liveOptions[0];
   const est = useMemo(() => estimate(d), [d]);
   /* The hosted packages carry none of these; they make it a full build on the customer's own domain. */
@@ -345,13 +493,17 @@ const SiteBuilder = () => {
     }
   };
 
-  const summary = () =>
+  const summary = (refUrls: string[] = refs.map((r) => r.url ?? "").filter(Boolean)) =>
     formToMessage("Website design from diyama.online/build", {
       Business: name,
       Tagline: d.tagline,
       "Type of business": kind.label,
-      Style: style.label,
-      Colour: d.accent,
+      Layout: layout.label,
+      Style: d.style === MATCH ? `From their screenshots (ground ${style.bg}, text ${style.fg})` : style.label,
+      Colour: d.accent === MATCH ? `From their screenshots (${accent})` : d.accent,
+      "Website they like": d.refUrl,
+      "Reference screenshots": refUrls.length ? refUrls.join("  ") : refs.length ? `${refs.length} attached but not uploaded, ask for them on WhatsApp` : undefined,
+      "The look, as Diyama AI saw it": d.lookNotes,
       Pages: ["Home", ...d.pages.map((p) => pageOptions.find((o) => o.id === p)?.label ?? p)].join(", "),
       "Sections, in order": ["Hero", ...d.sections.map((s) => sectionOptions.find((o) => o.id === s)?.label ?? s)].join(", "),
       "What you offer": cards.join(", "),
@@ -367,18 +519,39 @@ const SiteBuilder = () => {
       Notes: order.notes,
     });
 
+  /* The screenshots go up with the order. If the upload fails the order still goes,
+     saying the pictures are to be asked for on WhatsApp. */
+  const sendRefs = async (): Promise<string[]> => {
+    if (!refs.length) return [];
+    try {
+      const urls = await uploadRefs(refs);
+      setRefs(refs.map((r, i) => ({ ...r, url: urls[i] })));
+      return urls;
+    } catch {
+      return [];
+    }
+  };
+
+  const openWhatsApp = async () => {
+    setSending(true);
+    const urls = await sendRefs();
+    setSending(false);
+    window.open(whatsappLink(summary(urls)), "_blank", "noopener");
+  };
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setFailed(false);
     try {
+      const urls = await sendRefs();
       const { error } = await supabase.from("consultation_requests").insert({
         full_name: order.fullName,
         company: name,
         email: order.email,
         whatsapp: order.whatsapp || null,
-        topic: `Website designed in the site builder, ${live.label.toLowerCase()}`,
-        challenge: summary(),
+        topic: `Website designed in the site builder, ${live.label.toLowerCase()}${refs.length ? ", with reference screenshots" : ""}`,
+        challenge: summary(urls),
         goal: kind.label,
         format: "WhatsApp Chat",
         budget: d.live === "own" ? `${fmtK(est.total)} starting estimate, ${est.tier.name}` : d.live === "sub" ? `${fmtK(sitePrices.diyamaAddressSetup)} set up, ${fmtK(sitePrices.diyamaAddressMonthly)} a month` : `${fmtK(sitePrices.partnerPageSetup)} set up, ${fmtK(sitePrices.partnerPageMonthly)} a month`,
@@ -394,8 +567,47 @@ const SiteBuilder = () => {
 
   const navPages = ["Home", ...d.pages.map((p) => pageOptions.find((o) => o.id === p)?.label ?? p)];
   const has = (f: string) => d.features.includes(f);
-  const font = style.serif ? "Georgia, 'Times New Roman', serif" : "'Plus Jakarta Sans', 'Inter', system-ui, sans-serif";
+  const serif = style.serif || layout.id === "editorial";
+  const font = serif ? "Georgia, 'Times New Roman', serif" : "'Plus Jakarta Sans', 'Inter', system-ui, sans-serif";
   const phone = device === "phone";
+  /* Editorial draws blocks as ruled panels on the page colour, the other layouts as cards. */
+  const cardStyle = layout.id === "editorial"
+    ? { background: style.bg, borderRadius: "0px", boxShadow: `inset 0 0 0 1px ${style.muted}44` }
+    : { background: style.card, borderRadius: style.radius };
+  const onDark = (() => {
+    const h = style.bg.replace("#", "");
+    const r = parseInt(h.slice(0, 2), 16), g = parseInt(h.slice(2, 4), 16), b = parseInt(h.slice(4, 6), 16);
+    return (0.299 * r + 0.587 * g + 0.114 * b) / 255 < 0.5;
+  })();
+  const heroArt = <HeroArt icon={kindIcons[kind.id] ?? Sparkles} accent={accent} dark={onDark} radius={layout.id === "editorial" ? "0px" : style.radius} />;
+  const primaryBtn = { background: accent, color: "#0b0b0b", borderRadius: layout.id === "editorial" ? "0px" : style.radius };
+  const ghostBtn = { border: `1px solid ${style.muted}66`, borderRadius: layout.id === "editorial" ? "0px" : style.radius };
+  const navLinks = (
+    <div className={`gap-3 ${phone ? "hidden" : "hidden sm:flex"}`} style={{ color: style.muted }}>
+      {navPages.slice(0, 5).map((p) => (
+        <span key={p} className={layout.id === "editorial" ? "uppercase tracking-[0.14em] text-[10px]" : ""}>{p}</span>
+      ))}
+    </div>
+  );
+  const navBtn = (
+    <span className="px-2.5 py-1 text-[11px] font-semibold" style={primaryBtn}>
+      {d.pages.includes("booking") || d.sections.includes("booking") ? "Book now" : "Contact us"}
+    </span>
+  );
+  const heroSub = `${name} in Zambia. Open today. Reach us in one tap.`;
+  const heroBtns = (
+    <div className={`flex gap-2 mt-4 ${layout.id === "centred" ? "justify-center" : ""}`}>
+      <span className="px-3 py-1.5 text-[11px] font-semibold" style={primaryBtn}>{has("whatsapp") ? "WhatsApp us" : "Get in touch"}</span>
+      <span className="px-3 py-1.5 text-[11px] font-medium" style={ghostBtn}>{cards[0]}</span>
+    </div>
+  );
+  const heroTitle = (big = false) => (
+    <AnimatePresence mode="wait">
+      <motion.h2 key={tagline + layout.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className={`font-extrabold leading-[1.05] tracking-tight ${big ? (phone ? "text-3xl" : "text-4xl") : phone ? "text-2xl" : "text-3xl"}`}>
+        {tagline}
+      </motion.h2>
+    </AnimatePresence>
+  );
   const notYet = sectionOptions.filter((s) => !d.sections.includes(s.id));
 
   /* One block of the mock-up, keyed by section id. */
@@ -405,7 +617,7 @@ const SiteBuilder = () => {
         return (
           <div className={`grid gap-2.5 ${phone ? "grid-cols-1" : "grid-cols-3"}`}>
             {cards.map((c, i) => (
-              <div key={c + i} className="p-3.5" style={{ background: style.card, borderRadius: style.radius }}>
+              <div key={c + i} className="p-3.5" style={{ ...cardStyle }}>
                 <span className="block w-7 h-7 mb-2.5 rounded-md" style={{ background: `${accent}33` }}>
                   <span className="block w-3 h-3 m-2 rounded-sm" style={{ background: accent }} />
                 </span>
@@ -427,7 +639,7 @@ const SiteBuilder = () => {
         );
       case "menu":
         return (
-          <div className="p-3.5 space-y-2" style={{ background: style.card, borderRadius: style.radius }}>
+          <div className="p-3.5 space-y-2" style={{ ...cardStyle }}>
             <p className="text-[10px] uppercase tracking-[0.16em]" style={{ color: style.muted }}>{d.kind === "restaurant" ? "Menu" : "Price list"}</p>
             {[["Most popular", "K85"], ["The classic", "K120"], ["The full works", "K240"]].map(([n, p]) => (
               <div key={n} className="flex items-center justify-between text-[11px] border-b last:border-0 pb-1.5 last:pb-0" style={{ borderColor: `${style.muted}33` }}>
@@ -450,14 +662,14 @@ const SiteBuilder = () => {
         );
       case "reviews":
         return (
-          <div className="p-3.5 flex items-start gap-3" style={{ background: style.card, borderRadius: style.radius }}>
+          <div className="p-3.5 flex items-start gap-3" style={{ ...cardStyle }}>
             <span className="flex gap-0.5 shrink-0" style={{ color: accent }}>{[0, 1, 2, 3, 4].map((i) => <Star key={i} size={11} fill="currentColor" />)}</span>
             <p className="text-[11px]" style={{ color: style.muted }}>"Quick, friendly and exactly as promised." A happy customer, Lusaka</p>
           </div>
         );
       case "booking":
         return (
-          <div className="p-3.5 flex items-center justify-between gap-3" style={{ background: style.card, borderRadius: style.radius }}>
+          <div className="p-3.5 flex items-center justify-between gap-3" style={{ ...cardStyle }}>
             <span className="flex items-center gap-2 text-xs font-semibold"><Calendar size={14} style={{ color: accent }} /> {has("calendar") ? "Pick a date and time" : "Book on WhatsApp"}</span>
             <span className="rounded-md px-2.5 py-1 text-[10px] font-semibold" style={{ background: accent, color: "#0b0b0b" }}>{has("payments") ? "Book and pay" : "Book"}</span>
           </div>
@@ -468,7 +680,7 @@ const SiteBuilder = () => {
             <div className="flex items-center gap-2 mb-2 text-[10px] uppercase tracking-[0.16em]" style={{ color: style.muted }}><ShoppingBag size={11} /> Shop</div>
             <div className="grid grid-cols-3 gap-2">
               {["K120", "K85", "K240"].map((p, i) => (
-                <div key={p} className="p-2.5" style={{ background: style.card, borderRadius: style.radius }}>
+                <div key={p} className="p-2.5" style={{ ...cardStyle }}>
                   <div className="aspect-[4/3] mb-2" style={{ borderRadius: style.radius, background: `${accent}${["44", "66", "33"][i]}` }} />
                   <p className="text-[10px] font-semibold">Item {i + 1}</p>
                   <p className="text-[10px]" style={{ color: accent }}>{p}</p>
@@ -483,7 +695,7 @@ const SiteBuilder = () => {
             <p className="text-[10px] uppercase tracking-[0.16em] mb-2" style={{ color: style.muted }}>The team</p>
             <div className="grid grid-cols-3 gap-2">
               {["Owner", "Manager", "Front desk"].map((r, i) => (
-                <div key={r} className="p-3 text-center" style={{ background: style.card, borderRadius: style.radius }}>
+                <div key={r} className="p-3 text-center" style={{ ...cardStyle }}>
                   <span className="block w-9 h-9 mx-auto mb-2 rounded-full" style={{ background: `linear-gradient(${120 + i * 60}deg, ${accent}, ${style.muted})` }} />
                   <p className="text-[10px] font-semibold">{r}</p>
                 </div>
@@ -493,7 +705,7 @@ const SiteBuilder = () => {
         );
       case "hours":
         return (
-          <div className="p-3.5 flex items-start gap-3" style={{ background: style.card, borderRadius: style.radius }}>
+          <div className="p-3.5 flex items-start gap-3" style={{ ...cardStyle }}>
             <Clock size={14} className="shrink-0 mt-0.5" style={{ color: accent }} />
             <div className="text-[11px] space-y-0.5" style={{ color: style.muted }}>
               <p><span className="font-medium" style={{ color: style.fg }}>Monday to Friday</span> 08:00 to 17:00</p>
@@ -516,7 +728,7 @@ const SiteBuilder = () => {
         );
       case "contact":
         return (
-          <div className="p-3.5 space-y-1.5" style={{ background: style.card, borderRadius: style.radius }}>
+          <div className="p-3.5 space-y-1.5" style={{ ...cardStyle }}>
             <p className="text-[10px] uppercase tracking-[0.16em] mb-1" style={{ color: style.muted }}>Send us a message</p>
             {["Your name", "Your phone", "How can we help?"].map((f) => (
               <div key={f} className="text-[10px] px-2.5 py-1.5" style={{ border: `1px solid ${style.muted}44`, borderRadius: style.radius, color: style.muted }}>{f}</div>
@@ -646,8 +858,119 @@ const SiteBuilder = () => {
             </Step>
 
             <Step n="2" title="Look and feel">
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
-                {styles.map((s) => (
+              {/* Show us a site you like */}
+              <div
+                className="rounded-2xl border border-dashed border-primary/40 bg-primary/5 p-4 sm:p-5 mb-5"
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  void addRefs(e.dataTransfer.files);
+                }}
+              >
+                <div className="flex items-start gap-3">
+                  <span className="w-9 h-9 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shrink-0 shadow-md"><Camera size={16} /></span>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold">Seen a website you like? Show us.</p>
+                    <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
+                      Upload up to four screenshots. The mock-up takes on their colours straight away and Diyama AI reads the shape. Your demo is built to match them.
+                    </p>
+                  </div>
+                </div>
+                <input
+                  ref={fileInput}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={(e) => {
+                    if (e.target.files) void addRefs(e.target.files);
+                    e.target.value = "";
+                  }}
+                />
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {refs.map((r, i) => (
+                    <div key={i} className="relative w-24 h-16 rounded-lg overflow-hidden border bg-muted group">
+                      <img src={r.data} alt={`Screenshot ${i + 1}`} className="w-full h-full object-cover object-top" />
+                      <button
+                        type="button"
+                        onClick={() => removeRef(i)}
+                        className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/70 text-white flex items-center justify-center"
+                        aria-label={`Remove screenshot ${i + 1}`}
+                      >
+                        <Trash2 size={10} />
+                      </button>
+                    </div>
+                  ))}
+                  {refs.length < MAX_REFS && (
+                    <button
+                      type="button"
+                      onClick={() => fileInput.current?.click()}
+                      disabled={refState === "reading"}
+                      className="w-24 h-16 rounded-lg border-2 border-dashed border-primary/50 text-primary flex flex-col items-center justify-center gap-1 text-[11px] font-semibold hover:bg-primary/10 transition-colors disabled:opacity-60"
+                    >
+                      {refState === "reading" ? <Loader2 size={16} className="animate-spin" /> : <ImagePlus size={16} />}
+                      {refs.length ? "Add more" : "Add screenshots"}
+                    </button>
+                  )}
+                </div>
+                <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs">
+                  <AnimatePresence mode="wait">
+                    {refState === "looking" && (
+                      <motion.span key="looking" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="inline-flex items-center gap-1.5 text-primary font-medium">
+                        <Loader2 size={13} className="animate-spin" /> Colours matched. Diyama AI is reading the shape of it.
+                      </motion.span>
+                    )}
+                    {refState === "matched" && refs.length > 0 && (
+                      <motion.span key="matched" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="inline-flex items-center gap-1.5 text-primary font-medium">
+                        <Eye size={13} /> Matched. {d.lookNotes || "Your colours and layout are on the mock-up."}
+                      </motion.span>
+                    )}
+                    {refState === "colours" && (
+                      <motion.span key="colours" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-muted-foreground">
+                        Colours matched. Diyama AI could not look right now, so pick the layout yourself below. Your screenshots still go with the order.
+                      </motion.span>
+                    )}
+                    {refState === "failed" && (
+                      <motion.span key="failed" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-muted-foreground">
+                        That picture would not open. Try a JPG or PNG screenshot.
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </div>
+                <label className="block mt-3">
+                  <span className="text-xs font-medium text-muted-foreground">Or the address of a site you like <span className="font-normal">(optional)</span></span>
+                  <input
+                    value={d.refUrl}
+                    onChange={(e) => setD({ ...d, refUrl: e.target.value })}
+                    placeholder="www.example.com"
+                    maxLength={120}
+                    inputMode="url"
+                    className="mt-1 w-full rounded-lg border bg-card px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  />
+                </label>
+              </div>
+
+              {/* Layout */}
+              <p className="text-sm font-medium mb-2">The shape of the page</p>
+              <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 mb-5">
+                {layouts.map((l) => (
+                  <button
+                    key={l.id}
+                    type="button"
+                    onClick={() => setD({ ...d, layout: l.id })}
+                    className={`text-left rounded-xl border p-2 transition-all hover:-translate-y-0.5 ${d.layout === l.id ? "border-primary ring-2 ring-primary/25 shadow-md" : "hover:border-primary/40"}`}
+                  >
+                    <LayoutSketch id={l.id} accent={accent} />
+                    <span className="block text-xs font-semibold mt-2">{l.label}</span>
+                    <span className="block text-[10px] text-muted-foreground leading-snug">{l.blurb}</span>
+                  </button>
+                ))}
+              </div>
+
+              {/* Style */}
+              <p className="text-sm font-medium mb-2">The look</p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5">
+                {[...(matchLook ? [matchLook] : []), ...styles].map((s) => (
                   <button
                     key={s.id}
                     type="button"
@@ -655,16 +978,26 @@ const SiteBuilder = () => {
                     className={`text-left rounded-xl border p-3 transition-all hover:-translate-y-0.5 ${d.style === s.id ? "border-primary ring-2 ring-primary/25 shadow-md" : "hover:border-primary/40"}`}
                   >
                     <span className="block h-10 rounded-lg mb-2.5 overflow-hidden" style={{ background: s.bg }}>
-                      <span className="block h-2 w-1/2 mt-3 ml-2 rounded-sm" style={{ background: accent }} />
+                      <span className="block h-2 w-1/2 mt-3 ml-2 rounded-sm" style={{ background: s.id === MATCH && d.palette ? d.palette.accent : accent, fontFamily: s.serif ? "Georgia, serif" : undefined }} />
                       <span className="block h-1.5 w-2/3 mt-1.5 ml-2 rounded-sm" style={{ background: s.muted, opacity: 0.6 }} />
                     </span>
-                    <span className="block text-sm font-semibold">{s.label}</span>
+                    <span className="block text-sm font-semibold" style={{ fontFamily: s.serif ? "Georgia, 'Times New Roman', serif" : undefined }}>{s.label}</span>
                     <span className="block text-[11px] text-muted-foreground leading-snug">{s.blurb}</span>
                   </button>
                 ))}
               </div>
               <div className="flex flex-wrap items-center gap-2.5">
                 <span className="text-sm font-medium mr-1">Your colour</span>
+                {d.palette && (
+                  <button
+                    type="button"
+                    aria-label="The colour from your screenshot"
+                    title="From your screenshot"
+                    onClick={() => setD({ ...d, accent: MATCH })}
+                    className={`w-8 h-8 rounded-full transition-transform hover:scale-110 ring-1 ring-foreground/20 ${d.accent === MATCH ? "ring-2 ring-offset-2 ring-foreground scale-110" : ""}`}
+                    style={{ background: d.palette.accent }}
+                  />
+                )}
                 {accents.map((a) => (
                   <button
                     key={a.id}
@@ -874,9 +1207,9 @@ const SiteBuilder = () => {
                     <button type="submit" disabled={loading} className="btn-primary group inline-flex items-center gap-2 disabled:opacity-60">
                       {loading ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />} Send my design
                     </button>
-                    <a href={whatsappLink(summary())} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-5 py-3 rounded-lg border font-medium text-sm hover:bg-muted transition-colors">
-                      <MessageCircle size={16} /> Send on WhatsApp instead
-                    </a>
+                    <button type="button" onClick={openWhatsApp} disabled={sending} className="inline-flex items-center gap-2 px-5 py-3 rounded-lg border font-medium text-sm hover:bg-muted transition-colors disabled:opacity-60">
+                      {sending ? <Loader2 size={16} className="animate-spin" /> : <MessageCircle size={16} />} Send on WhatsApp instead
+                    </button>
                   </div>
                 </form>
               )}
@@ -915,39 +1248,97 @@ const SiteBuilder = () => {
               </div>
               <motion.div layout transition={{ type: "spring", stiffness: 220, damping: 28 }} className={`mx-auto overflow-hidden rounded-xl shadow-inner ${phone ? "max-w-[22rem]" : "w-full"}`}>
                 <div style={{ background: style.bg, color: style.fg, fontFamily: font }} className="text-left">
-                  {/* nav */}
-                  <div className="flex items-center justify-between px-5 py-3.5 text-xs" style={{ borderBottom: `1px solid ${style.muted}33` }}>
-                    <span className="font-bold text-sm truncate max-w-[45%]">{name}</span>
-                    <div className={`gap-3 ${phone ? "hidden" : "hidden sm:flex"}`} style={{ color: style.muted }}>
-                      {navPages.slice(0, 5).map((p) => (
-                        <span key={p}>{p}</span>
-                      ))}
+                  {/* nav and hero, shaped by the layout */}
+                  {layout.id === "cover" && (
+                    <div className="relative overflow-hidden" style={{ minHeight: phone ? 300 : 320 }}>
+                      <div className="absolute inset-0"><HeroArt icon={kindIcons[kind.id] ?? Sparkles} accent={accent} dark={onDark} radius="0px" aside /></div>
+                      <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.15) 40%, rgba(0,0,0,0.72) 100%)" }} />
+                      <div className="relative flex items-center justify-between px-5 py-3.5 text-xs text-white">
+                        <span className="font-bold text-sm truncate max-w-[45%]">{name}</span>
+                        <div className={`gap-3 ${phone ? "hidden" : "hidden sm:flex"} text-white/80`}>{navPages.slice(0, 5).map((p) => <span key={p}>{p}</span>)}</div>
+                        {navBtn}
+                      </div>
+                      <div className="relative px-5 pt-10 pb-7 text-white">
+                        <p className="text-[10px] uppercase tracking-[0.18em] mb-2" style={{ color: accent }}>{kind.label}</p>
+                        {heroTitle(true)}
+                        <p className="text-xs mt-2 max-w-sm text-white/80">{heroSub}</p>
+                        {heroBtns}
+                      </div>
                     </div>
-                    <span className="rounded-md px-2.5 py-1 text-[11px] font-semibold" style={{ background: accent, color: "#0b0b0b" }}>
-                      {d.pages.includes("booking") || d.sections.includes("booking") ? "Book now" : "Contact us"}
-                    </span>
-                  </div>
-                  {/* hero, always first */}
-                  <div className="relative px-5 pt-8 pb-7 overflow-hidden">
-                    <div className="absolute -top-10 -right-10 w-44 h-44 rounded-full blur-3xl opacity-40" style={{ background: accent }} />
-                    <p className="text-[10px] uppercase tracking-[0.18em] mb-2" style={{ color: accent }}>{kind.label}</p>
-                    <AnimatePresence mode="wait">
-                      <motion.h2 key={tagline} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className={`font-extrabold leading-tight tracking-tight ${phone ? "text-2xl" : "text-3xl"}`}>
-                        {tagline}
-                      </motion.h2>
-                    </AnimatePresence>
-                    <p className="text-xs mt-2 max-w-sm" style={{ color: style.muted }}>
-                      {name} in Zambia. Open today. Reach us in one tap.
-                    </p>
-                    <div className="flex gap-2 mt-4">
-                      <span className="rounded-md px-3 py-1.5 text-[11px] font-semibold" style={{ background: accent, color: "#0b0b0b", borderRadius: style.radius }}>
-                        {has("whatsapp") ? "WhatsApp us" : "Get in touch"}
-                      </span>
-                      <span className="rounded-md px-3 py-1.5 text-[11px] font-medium" style={{ border: `1px solid ${style.muted}66`, borderRadius: style.radius }}>
-                        {cards[0]}
-                      </span>
-                    </div>
-                  </div>
+                  )}
+                  {layout.id === "split" && (
+                    <>
+                      <div className="flex items-center justify-between px-5 py-3.5 text-xs" style={{ borderBottom: `1px solid ${style.muted}33` }}>
+                        <span className="font-bold text-sm truncate max-w-[45%]">{name}</span>
+                        {navLinks}
+                        {navBtn}
+                      </div>
+                      <div className={`px-5 pt-7 pb-6 grid gap-5 items-center ${phone ? "grid-cols-1" : "grid-cols-[1.1fr_0.9fr]"}`}>
+                        <div>
+                          <p className="text-[10px] uppercase tracking-[0.18em] mb-2" style={{ color: accent }}>{kind.label}</p>
+                          {heroTitle()}
+                          <p className="text-xs mt-2 max-w-sm" style={{ color: style.muted }}>{heroSub}</p>
+                          {heroBtns}
+                        </div>
+                        <div className={phone ? "h-36" : "h-44"}>{heroArt}</div>
+                      </div>
+                    </>
+                  )}
+                  {layout.id === "centred" && (
+                    <>
+                      <div className="px-5 pt-4 pb-3 text-center text-xs" style={{ borderBottom: `1px solid ${style.muted}33` }}>
+                        <span className="block font-bold text-sm">{name}</span>
+                        <div className={`justify-center gap-3 mt-1.5 ${phone ? "hidden" : "hidden sm:flex"}`} style={{ color: style.muted }}>{navPages.slice(0, 5).map((p) => <span key={p}>{p}</span>)}</div>
+                      </div>
+                      <div className="px-5 pt-8 pb-3 text-center">
+                        <p className="text-[10px] uppercase tracking-[0.18em] mb-2" style={{ color: accent }}>{kind.label}</p>
+                        <div className="max-w-md mx-auto">{heroTitle(true)}</div>
+                        <p className="text-xs mt-2 max-w-sm mx-auto" style={{ color: style.muted }}>{heroSub}</p>
+                        {heroBtns}
+                      </div>
+                      <div className="px-5 pb-6"><div className={phone ? "h-32" : "h-40"}>{heroArt}</div></div>
+                    </>
+                  )}
+                  {layout.id === "editorial" && (
+                    <>
+                      <div className="px-5 pt-4 pb-3 text-center" style={{ borderBottom: `1px solid ${style.muted}55` }}>
+                        <span className="block font-bold text-base tracking-wide">{name}</span>
+                        <div className={`justify-center gap-4 mt-2 ${phone ? "hidden" : "hidden sm:flex"} text-[10px] uppercase tracking-[0.16em]`} style={{ color: style.muted }}>{navPages.slice(0, 5).map((p) => <span key={p}>{p}</span>)}</div>
+                      </div>
+                      <div className="px-5 pt-7 pb-6">
+                        <p className="text-[10px] uppercase tracking-[0.22em] mb-3" style={{ color: style.muted }}>{kind.label} · Zambia</p>
+                        <AnimatePresence mode="wait">
+                          <motion.h2 key={tagline + "ed"} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className={`font-bold leading-[1.05] tracking-tight ${phone ? "text-3xl" : "text-[2.6rem]"}`}>
+                            {tagline}
+                          </motion.h2>
+                        </AnimatePresence>
+                        <div className="my-4 h-px" style={{ background: `${style.muted}66` }} />
+                        <div className={`grid gap-5 items-start ${phone ? "grid-cols-1" : "grid-cols-[1fr_0.8fr]"}`}>
+                          <div>
+                            <p className="text-xs leading-relaxed max-w-sm" style={{ color: style.muted }}>{heroSub} {about}</p>
+                            {heroBtns}
+                          </div>
+                          <div className={phone ? "h-28" : "h-36"}>{heroArt}</div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                  {layout.id === "stack" && (
+                    <>
+                      <div className="flex items-center justify-between px-5 py-3.5 text-xs" style={{ borderBottom: `1px solid ${style.muted}33` }}>
+                        <span className="font-bold text-sm truncate max-w-[45%]">{name}</span>
+                        {navLinks}
+                        {navBtn}
+                      </div>
+                      <div className="relative px-5 pt-8 pb-7 overflow-hidden">
+                        <div className="absolute -top-10 -right-10 w-44 h-44 rounded-full blur-3xl opacity-40" style={{ background: accent }} />
+                        <p className="text-[10px] uppercase tracking-[0.18em] mb-2" style={{ color: accent }}>{kind.label}</p>
+                        {heroTitle()}
+                        <p className="text-xs mt-2 max-w-sm" style={{ color: style.muted }}>{heroSub}</p>
+                        {heroBtns}
+                      </div>
+                    </>
+                  )}
 
                   {/* the draggable blocks */}
                   <Reorder.Group axis="y" values={d.sections} onReorder={(sections) => setD({ ...d, sections })} className="px-5 pb-2 space-y-3 list-none m-0">
@@ -1000,6 +1391,62 @@ const SiteBuilder = () => {
         </div>
       </section>
     </PageTransition>
+  );
+};
+
+/* The hero picture: a tinted panel with the business kind drawn on it, where the
+   customer's own photo goes on the real site. */
+const HeroArt = ({ icon: Icon, accent, dark, radius, aside = false }: { icon: LucideIcon; accent: string; dark: boolean; radius: string; aside?: boolean }) => (
+  <div
+    className="relative w-full h-full overflow-hidden"
+    style={{
+      borderRadius: radius,
+      background: `radial-gradient(circle at 30% 30%, ${accent} 0%, ${accent}bb 35%, ${dark ? "#1a1a1a" : "#2a2a2a"} 100%)`,
+    }}
+  >
+    <div className="absolute inset-0 opacity-25" style={{ backgroundImage: `repeating-linear-gradient(135deg, transparent 0 14px, rgba(255,255,255,0.18) 14px 15px)` }} />
+    <div className="absolute -bottom-6 -right-6 w-28 h-28 rounded-full opacity-40" style={{ background: "rgba(255,255,255,0.25)" }} />
+    <div className={`absolute inset-0 flex text-white/90 ${aside ? "items-end justify-end pb-6 pr-6 opacity-50" : "items-center justify-center"}`}>
+      <Icon size={aside ? 56 : 40} strokeWidth={1.2} />
+    </div>
+    <span className="absolute bottom-2 left-3 text-[9px] uppercase tracking-[0.16em] text-white/70">Your photo here</span>
+  </div>
+);
+
+/* A thumbnail of each page shape for the layout picker. */
+const LayoutSketch = ({ id, accent }: { id: string; accent: string }) => {
+  const line = (w: string, extra = "") => <span className={`block h-1 rounded-sm bg-foreground/50 ${extra}`} style={{ width: w }} />;
+  const pic = (cls: string) => <span className={`block rounded-sm ${cls}`} style={{ background: `${accent}99` }} />;
+  return (
+    <span className="block h-14 rounded-md bg-muted border p-1.5 overflow-hidden">
+      {id === "split" && (
+        <span className="grid grid-cols-2 gap-1 h-full">
+          <span className="space-y-1 pt-1">{line("90%")}{line("70%")}<span className="block h-1.5 w-5 rounded-sm" style={{ background: accent }} /></span>
+          {pic("h-full")}
+        </span>
+      )}
+      {id === "cover" && (
+        <span className="relative block h-full rounded-sm overflow-hidden" style={{ background: `${accent}99` }}>
+          <span className="absolute left-1 bottom-1 space-y-0.5"><span className="block h-1 w-8 rounded-sm bg-white/90" /><span className="block h-0.5 w-5 rounded-sm bg-white/70" /></span>
+        </span>
+      )}
+      {id === "centred" && (
+        <span className="flex flex-col items-center gap-1 h-full pt-0.5">
+          {line("60%")}{line("40%")}
+          {pic("w-full flex-1")}
+        </span>
+      )}
+      {id === "editorial" && (
+        <span className="block h-full space-y-1">
+          <span className="block h-2 w-full rounded-sm bg-foreground/60" />
+          <span className="block h-px w-full bg-foreground/30" />
+          <span className="grid grid-cols-[1fr_0.7fr] gap-1"><span className="space-y-0.5 pt-0.5">{line("100%")}{line("80%")}</span>{pic("h-5")}</span>
+        </span>
+      )}
+      {id === "stack" && (
+        <span className="block h-full space-y-1 pt-1">{line("85%")}{line("55%")}<span className="block h-1.5 w-5 rounded-sm" style={{ background: accent }} /></span>
+      )}
+    </span>
   );
 };
 

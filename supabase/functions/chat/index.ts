@@ -41,9 +41,21 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    const contents = messages.map((m: { role: string; content: string }) => ({
+    // A message may carry pictures as data URLs (the site builder sends screenshots of
+    // websites the visitor likes). They go to Gemini inline, at most four, JPEG, PNG or
+    // WebP, each under 2 MB once decoded.
+    const inline = (src: unknown) => {
+      if (typeof src !== "string") return null;
+      const m = /^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=]+)$/.exec(src);
+      if (!m || m[2].length > 2_800_000) return null;
+      return { inline_data: { mime_type: m[1], data: m[2] } };
+    };
+    const contents = messages.map((m: { role: string; content: string; images?: unknown[] }) => ({
       role: m.role === "assistant" ? "model" : "user",
-      parts: [{ text: m.content }],
+      parts: [
+        ...(Array.isArray(m.images) ? m.images.slice(0, 4).map(inline).filter(Boolean) : []),
+        { text: m.content },
+      ],
     }));
 
     // Fallback chain: free-tier models can return 503 under load
