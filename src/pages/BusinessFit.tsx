@@ -175,7 +175,7 @@ const BusinessFit = () => {
   };
 
   const fields = [
-    { key: "businessName", label: "What's your business called?", placeholder: "e.g. Kalulu Hardware" },
+    { key: "businessName", label: "What's your business called?", placeholder: "Your business name" },
     { key: "businessType", label: "What type of business is it?", type: "select", options: businessTypes },
     { key: "stage", label: "What stage are you at?", type: "select", options: stages },
     { key: "targetCustomers", label: "Who are your target customers?", placeholder: "e.g. Small businesses in Lusaka", unsure: NOT_SURE_CUSTOMERS },

@@ -9,12 +9,13 @@ import { ArrowRight, Sparkles, MousePointer2, Globe, Link2, LayoutTemplate, Wand
  * three ways to go live. Then it loops. Ernest, 12 November 2026: the old static
  * card "sucks ... that's how we hype a new feature?" This is the hype. */
 
-const brief = "Kalulu Hardware, Kitwe. Tools and building materials, delivery in town.";
+/* No made-up business name (Ernest, 13 Nov 2026): the brief describes a kind of business. */
+const brief = "A hardware shop in Kitwe. Tools and building materials, delivery in town.";
 const accents = ["#F2B134", "#0F9B8E", "#E0343C", "#2F6FED", "#8B5CF6"];
 const addresses = [
-  { icon: Globe, text: "www.kaluluhardware.com", label: "Your own domain" },
-  { icon: Link2, text: "kaluluhardware.diyama.online", label: "A Diyama address" },
-  { icon: LayoutTemplate, text: "diyama.online/partners/kaluluhardware", label: "A page on Diyama" },
+  { icon: Globe, text: "www.yourbusiness.com", label: "Your own domain" },
+  { icon: Link2, text: "yourbusiness.diyama.online", label: "A Diyama address" },
+  { icon: LayoutTemplate, text: "diyama.online/partners/yourbusiness", label: "A page on Diyama" },
 ];
 const blocks = ["What we sell", "Delivery in town", "Find us", "Order on WhatsApp"];
 
@@ -159,7 +160,7 @@ const BuilderShowcase = () => {
               {/* the site */}
               <div className="rounded-xl overflow-hidden bg-[#0b1020] text-white">
                 <div className="flex items-center justify-between px-4 py-2.5 text-[10px] border-b border-white/10">
-                  <span className="font-bold text-xs">{phase >= 2 ? "Kalulu Hardware" : "Your Business"}</span>
+                  <span className="font-bold text-xs">Your Business</span>
                   <span className="flex gap-2.5 text-white/50"><span>Home</span><span>Shop</span><span>Contact</span></span>
                   <motion.span animate={{ background: color }} transition={{ duration: 0.6 }} className="rounded px-2 py-0.5 text-[9px] font-semibold text-black">Order</motion.span>
                 </div>

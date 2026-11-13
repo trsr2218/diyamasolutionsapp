@@ -15,6 +15,13 @@ npx tsc --noEmit -p tsconfig.app.json   # Typecheck (run this too; vite build wo
 
 There is no test suite configured.
 
+## Deploying and backend steps: use the `website-office` skill
+
+`~/.claude/skills/website-office/SKILL.md` (global, loads from any folder) is the runbook. Since 25 Oct 2026 the live site is
+the `gh-pages` branch on **GitHub Pages**, not Vercel; the Vercel notes below are history.
+Supabase SQL runs with `npx supabase db query`, never `db push`. Read the skill before
+working out any deploy or backend procedure.
+
 ## What the app is
 
 The public website for **Diyama Solutions**, a business growth consultancy based in Zambia
