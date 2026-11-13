@@ -12,6 +12,7 @@ const LiveClock = ({ className = "" }: { className?: string }) => {
   /* Blank until the page runs: the prerendered HTML would otherwise carry the build time. */
   const [now, setNow] = useState("--:--:--");
   useEffect(() => {
+    if (navigator.webdriver) return; // the prerender browser: leave --:--:-- in the static HTML
     setNow(fmt());
     const t = window.setInterval(() => setNow(fmt()), 1000);
     return () => window.clearInterval(t);

@@ -118,22 +118,17 @@ interface Sample {
 }
 
 const samples: Sample[] = [
-  { id: "grill", title: "Grill and takeaway", kind: "restaurant", style: "bold", layout: "split", accent: "red", tagline: "Hot off the grill, ready when you are.", about: "Fresh meat, real fire, fast service. Order ahead on WhatsApp and collect it hot.", cards: ["Our menu", "Combos and deals", "Order on WhatsApp"], pages: ["about", "services", "contact"], sections: ["offer", "menu", "gallery", "reviews", "hours", "map"], features: ["whatsapp"] },
-  { id: "cafe", title: "Café and bakery", kind: "restaurant", style: "warm", layout: "centred", accent: "orange", tagline: "Baked this morning. Coffee all day.", about: "Bread, cakes and coffee made in house every day. Sit in, take away or order a cake for your event.", cards: ["Fresh bakes", "Coffee menu", "Order a cake"], pages: ["about", "services", "gallery", "contact"], sections: ["offer", "about", "menu", "gallery", "hours", "map"], features: ["whatsapp"] },
-  { id: "studio", title: "Hair and beauty studio", kind: "salon", style: "luxury", layout: "editorial", accent: "pink", tagline: "Book the chair. Leave feeling new.", about: "Hair, nails and lashes by stylists who listen. Book your slot online and skip the wait.", cards: ["Hair", "Nails and lashes", "Book your slot"], pages: ["about", "services", "booking", "contact"], sections: ["offer", "gallery", "booking", "reviews", "team"], features: ["whatsapp", "calendar"] },
-  { id: "barber", title: "Barbershop", kind: "salon", style: "night", layout: "cover", accent: "gold", tagline: "Sharp cuts. No waiting.", about: "Fades, beards and kids cuts every day of the week. Walk in or book ahead.", cards: ["Cuts and fades", "Beard care", "Book a cut"], pages: ["services", "contact"], sections: ["offer", "menu", "gallery", "hours", "map"], features: ["whatsapp"] },
-  { id: "boutique", title: "Fashion boutique", kind: "shop", style: "clean", layout: "editorial", accent: "pink", tagline: "New pieces every week. Delivered to you.", about: "Clothes, shoes and bags picked for this season. Order online with delivery in town.", cards: ["New arrivals", "Best sellers", "Delivery in town"], pages: ["about", "shop", "contact"], sections: ["offer", "shop", "gallery", "reviews", "contact"], features: ["whatsapp"] },
-  { id: "hardware", title: "Hardware and building supplies", kind: "shop", style: "corporate", layout: "split", accent: "orange", tagline: "Tools and materials, delivered to site.", about: "Cement, roofing, plumbing and tools in stock. Send your list and we quote the same day.", cards: ["What we stock", "Get a quote", "Site delivery"], pages: ["about", "services", "contact"], sections: ["offer", "menu", "about", "cta", "map", "contact"], features: ["whatsapp"] },
-  { id: "clinic", title: "Family clinic", kind: "clinic", style: "clean", layout: "split", accent: "teal", tagline: "Care you can trust, close to home.", about: "Doctors, nurses and a lab under one roof. Book a visit online or walk in during opening hours.", cards: ["Our services", "Our team", "Book a visit"], pages: ["about", "services", "booking", "contact"], sections: ["offer", "team", "booking", "hours", "map", "contact"], features: ["whatsapp", "calendar"] },
-  { id: "carhire", title: "Car hire", kind: "transport", style: "bold", layout: "cover", accent: "blue", tagline: "Clean cars, honest rates, ready today.", about: "Sedans, SUVs and 4x4s by the day or the week. Airport pick up on request.", cards: ["Our fleet", "Rates", "Book a car"], pages: ["services", "booking", "contact"], sections: ["offer", "menu", "booking", "reviews", "cta", "contact"], features: ["whatsapp", "calendar"] },
-  { id: "safari", title: "Safari lodge", kind: "lodge", style: "earth", layout: "cover", accent: "green", tagline: "Wake up to the river. Book direct.", about: "Chalets on the water with game drives, sunset cruises and meals included. Book direct for the best rate.", cards: ["Rooms", "Activities", "Book direct"], pages: ["about", "gallery", "booking", "contact"], sections: ["offer", "gallery", "about", "reviews", "booking", "map"], features: ["whatsapp", "calendar"] },
-  { id: "guesthouse", title: "Guest house in town", kind: "lodge", style: "warm", layout: "split", accent: "teal", tagline: "A quiet room in the middle of town.", about: "Clean rooms, fast WiFi and breakfast every morning. Close to shops, offices and the bus station.", cards: ["Rooms", "Rates", "Book a room"], pages: ["about", "booking", "contact"], sections: ["offer", "gallery", "menu", "reviews", "map", "contact"], features: ["whatsapp"] },
-  { id: "training", title: "Training centre", kind: "school", style: "corporate", layout: "centred", accent: "blue", tagline: "Learn a skill that pays.", about: "Short courses with real certificates, taught by people who do the work. New intakes every month.", cards: ["Courses", "Fees", "Enrol now"], pages: ["about", "services", "contact"], sections: ["offer", "about", "menu", "team", "cta", "contact"], features: ["whatsapp"] },
-  { id: "ngo", title: "Church or NGO", kind: "church", style: "fresh", layout: "centred", accent: "green", tagline: "Together, we do more.", about: "We serve our community every week through programmes, outreach and events. Everyone is welcome.", cards: ["Programmes", "Events", "Get involved"], pages: ["about", "blog", "contact"], sections: ["offer", "about", "gallery", "cta", "contact"], features: ["whatsapp"] },
-  { id: "firm", title: "Consultancy or law firm", kind: "pro", style: "corporate", layout: "stack", accent: "blue", tagline: "Clear advice. Done properly, the first time.", about: "A small team with years of practice. We take the time to understand the problem before we quote.", cards: ["What we do", "Our people", "Book a meeting"], pages: ["about", "services", "contact"], sections: ["offer", "about", "team", "reviews", "cta", "contact"], features: ["whatsapp"] },
-  { id: "builder", title: "Building contractor", kind: "pro", style: "earth", layout: "stack", accent: "orange", tagline: "Built right, handed over on time.", about: "Houses, extensions and renovations from foundation to roof. See our finished work, then ask for a quote.", cards: ["Our projects", "Services", "Get a quote"], pages: ["about", "gallery", "contact"], sections: ["offer", "gallery", "reviews", "cta", "contact"], features: ["whatsapp"] },
-  { id: "artist", title: "Musician or artist", kind: "creator", style: "night", layout: "editorial", accent: "purple", tagline: "New music every week.", about: "Songs, shows and bookings in one place. Stream the latest release or book a performance.", cards: ["Latest release", "Shows", "Bookings"], pages: ["about", "blog", "contact"], sections: ["offer", "gallery", "cta", "contact"], features: ["whatsapp"] },
-  { id: "venue", title: "Event venue", kind: "other", style: "luxury", layout: "cover", accent: "gold", tagline: "Your day, in a room worth remembering.", about: "Weddings, parties and conferences for up to 300 guests. Visit the venue, then book your date.", cards: ["The venue", "Packages", "Book a date"], pages: ["about", "gallery", "booking", "contact"], sections: ["offer", "gallery", "menu", "booking", "map"], features: ["whatsapp", "calendar"] },
+  /* The eight full sample sites, public/samples/<id>/, generated by scripts/build-samples.mjs to
+     Ernest's design language. Each card opens the real page; "Start from this" loads the closest
+     look, layout and sections into the builder. */
+  { id: "restaurant", title: "Restaurant", kind: "restaurant", style: "warm", layout: "cover", accent: "red", tagline: "Food worth the trip.", about: "Fresh from the grill and the garden, plated with care. Book a table or order ahead.", cards: ["From the menu", "Private dining", "Book a table"], pages: ["about", "services", "gallery", "contact"], sections: ["offer", "menu", "gallery", "hours", "map"], features: ["whatsapp"] },
+  { id: "lodge", title: "Safari lodge", kind: "lodge", style: "earth", layout: "cover", accent: "gold", tagline: "Wake up to the wild. Book direct.", about: "Thatched chalets above the water, game drives at dawn, dinner under the stars.", cards: ["Rooms and rates", "Activities", "Book direct"], pages: ["about", "gallery", "booking", "contact"], sections: ["offer", "menu", "gallery", "reviews", "booking", "map"], features: ["whatsapp", "calendar"] },
+  { id: "salon", title: "Hair and beauty studio", kind: "salon", style: "clean", layout: "split", accent: "pink", tagline: "Leave feeling brand new.", about: "Braids, silk press, gel nails and lashes by stylists who listen first.", cards: ["Hair", "Nails and lashes", "Book your slot"], pages: ["about", "services", "booking", "contact"], sections: ["offer", "menu", "gallery", "booking", "team"], features: ["whatsapp", "calendar"] },
+  { id: "clinic", title: "Dental or family clinic", kind: "clinic", style: "clean", layout: "centred", accent: "blue", tagline: "Care you can trust, close to home.", about: "Check-ups, cleaning, fillings and family visits, booked online and seen on time.", cards: ["Our services", "Our team", "Book a visit"], pages: ["about", "services", "booking", "contact"], sections: ["offer", "team", "booking", "hours", "map", "contact"], features: ["whatsapp", "calendar"] },
+  { id: "carhire", title: "Car hire", kind: "transport", style: "bold", layout: "split", accent: "gold", tagline: "Clean cars, honest rates, ready today.", about: "Sedans, SUVs and 4x4s by the day or the week. Delivered to your door or the airport.", cards: ["The fleet", "Rates", "Get a quote"], pages: ["services", "booking", "contact"], sections: ["offer", "menu", "booking", "cta", "contact"], features: ["whatsapp", "calendar"] },
+  { id: "training", title: "Training centre", kind: "school", style: "warm", layout: "centred", accent: "gold", tagline: "Learn a skill that pays.", about: "Short practical courses with a certificate, taught by people who do the work every day.", cards: ["Courses", "Fees", "Enrol now"], pages: ["about", "services", "contact"], sections: ["offer", "about", "menu", "team", "cta", "contact"], features: ["whatsapp"] },
+  { id: "boutique", title: "Fashion boutique", kind: "shop", style: "luxury", layout: "editorial", accent: "gold", tagline: "Dressed for the moment.", about: "Dresses, suits, shoes and bags picked for this season. Order online, delivered in town.", cards: ["New arrivals", "This week's edit", "Delivery in town"], pages: ["about", "shop", "contact"], sections: ["offer", "shop", "gallery", "contact"], features: ["whatsapp"] },
+  { id: "builder", title: "Building contractor", kind: "pro", style: "bold", layout: "stack", accent: "orange", tagline: "Built right, handed over on time.", about: "From foundation to roof, one team, one price agreed up front, weekly photo updates.", cards: ["What we build", "Our projects", "Get a quote"], pages: ["about", "gallery", "contact"], sections: ["offer", "gallery", "about", "cta", "contact"], features: ["whatsapp"] },
 ];
 
 const accents = [
@@ -522,6 +517,12 @@ const SiteBuilder = () => {
     setPicked(s.id);
     document.getElementById("designer")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+  /* Arriving from a sample page ("Start from this design") loads that sample. */
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get("sample");
+    const sm = id && samples.find((x) => x.id === id);
+    if (sm) applySample(sm);
+  }, []);
   const sampleKinds = kinds.filter((k) => samples.some((s) => s.kind === k.id));
   const shownSamples = sampleFilter === "all" ? samples : samples.filter((s) => s.kind === sampleFilter);
   const live = liveOptions.find((l) => l.id === d.live) ?? liveOptions[0];
@@ -1566,74 +1567,6 @@ const Block = ({ id, label, muted, onRemove, children }: { id: string; label: st
   );
 };
 
-/* A sample, drawn in its own colours, type and layout. Built from the same pieces as
-   the mock-up, so what the visitor taps is what loads. No picture of a site that does
-   not exist. */
-const SampleThumb = ({ s }: { s: Sample }) => {
-  const look = styles.find((x) => x.id === s.style) ?? styles[0];
-  const acc = accents.find((a) => a.id === s.accent)?.hex ?? accents[0].hex;
-  const Icon = kindIcons[s.kind] ?? Sparkles;
-  const font = look.serif ? "Georgia, 'Times New Roman', serif" : undefined;
-  const r = `calc(${look.radius} / 2)`;
-  const head = (cls: string, color = look.fg) => (
-    <span className={`block font-bold leading-[1.1] ${cls}`} style={{ color, fontFamily: font }}>{s.tagline}</span>
-  );
-  const btn = <span className="inline-block mt-1.5 px-2 py-1 text-[8px] font-bold text-white" style={{ background: acc, borderRadius: r }}>{s.cards[2]}</span>;
-  const pic = (cls: string) => (
-    <span className={`flex items-center justify-center ${cls}`} style={{ background: `linear-gradient(135deg, ${acc}, ${acc}66)`, borderRadius: r }}>
-      <Icon size={22} className="text-white/90" />
-    </span>
-  );
-  return (
-    <span className="block aspect-[4/3] overflow-hidden text-left" style={{ background: look.bg, color: look.fg }}>
-      <span className="flex items-center justify-between px-2.5 py-1.5 text-[8px]" style={{ borderBottom: `1px solid ${look.muted}33` }}>
-        <span className="font-bold" style={{ fontFamily: font }}>Your Business</span>
-        <span className="flex gap-1.5" style={{ color: look.muted }}><span>About</span><span>Contact</span></span>
-      </span>
-      <span className="block p-2.5 h-[calc(100%-26px)]">
-        {s.layout === "split" && (
-          <span className="grid grid-cols-[1.1fr_1fr] gap-2 h-[62%]">
-            <span className="flex flex-col justify-center">{head("text-[11px]")}{btn}</span>
-            {pic("h-full")}
-          </span>
-        )}
-        {s.layout === "cover" && (
-          <span className="relative flex items-end h-[62%] p-2 overflow-hidden" style={{ background: `linear-gradient(160deg, ${acc}, ${look.card})`, borderRadius: r }}>
-            <Icon size={46} className="absolute right-2 top-2 text-white/25" />
-            <span className="relative">{head("text-[11px]", "#ffffff")}{btn}</span>
-          </span>
-        )}
-        {s.layout === "centred" && (
-          <span className="flex flex-col items-center text-center h-[62%] justify-center">
-            <Icon size={16} style={{ color: acc }} />
-            {head("text-[11px] mt-1 max-w-[85%]")}
-            {btn}
-          </span>
-        )}
-        {s.layout === "editorial" && (
-          <span className="block h-[62%]">
-            {head("text-[14px] tracking-tight")}
-            <span className="block h-px my-1.5" style={{ background: `${look.fg}55` }} />
-            <span className="grid grid-cols-[1fr_0.8fr] gap-2"><span className="text-[7px] leading-snug" style={{ color: look.muted }}>{s.about}</span>{pic("h-8")}</span>
-          </span>
-        )}
-        {s.layout === "stack" && (
-          <span className="flex flex-col justify-center h-[62%]">
-            {head("text-[13px] tracking-tight max-w-[90%]")}
-            <span className="block text-[7px] mt-1 max-w-[80%]" style={{ color: look.muted }}>{s.about}</span>
-            {btn}
-          </span>
-        )}
-        <span className="grid grid-cols-3 gap-1.5 mt-2">
-          {s.cards.map((c) => (
-            <span key={c} className="block px-1.5 py-1.5 text-[7px] font-semibold truncate" style={{ background: look.card, borderRadius: r, borderTop: `2px solid ${acc}` }}>{c}</span>
-          ))}
-        </span>
-      </span>
-    </span>
-  );
-};
-
 const SampleGallery = ({
   kinds: kindList, filter, setFilter, list, picked, onPick,
 }: {
@@ -1650,7 +1583,7 @@ const SampleGallery = ({
         <div className="max-w-2xl">
           <p className="eyebrow text-primary mb-2">Start from a sample</p>
           <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight">Pick a design close to yours, then make it yours.</h2>
-          <p className="text-muted-foreground mt-2">{samples.length} sample designs across every kind of business. Tap one and it loads below with its look, layout and sections. Your name and words go in next.</p>
+          <p className="text-muted-foreground mt-2">{samples.length} full sample websites, each built for its trade. Open one to scroll it like a customer would, or start from it and it loads below with its look, layout and sections. Your name, photos and prices go in next.</p>
         </div>
       </div>
       <div className="flex gap-2 overflow-x-auto pb-2 mb-5 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap [scrollbar-width:none]">
@@ -1665,29 +1598,26 @@ const SampleGallery = ({
           </button>
         ))}
       </div>
-      <div className="grid grid-cols-1 min-[420px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
         {list.map((s) => {
-          const look = styles.find((x) => x.id === s.style) ?? styles[0];
-          const lay = layouts.find((x) => x.id === s.layout) ?? layouts[0];
           const on = picked === s.id;
           return (
-            <button
-              key={s.id}
-              type="button"
-              onClick={() => onPick(s)}
-              className={`group text-left rounded-2xl border bg-card overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${on ? "ring-2 ring-primary border-primary" : ""}`}
-            >
-              <SampleThumb s={s} />
-              <span className="flex items-start justify-between gap-2 p-3.5">
-                <span>
-                  <span className="block font-semibold leading-tight">{s.title}</span>
-                  <span className="block text-xs text-muted-foreground mt-0.5">{look.label} look, {lay.label.toLowerCase()} layout</span>
-                </span>
-                <span className={`shrink-0 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${on ? "bg-primary text-primary-foreground" : "bg-muted group-hover:bg-primary group-hover:text-primary-foreground"}`}>
-                  {on ? <><Check size={12} /> Loaded</> : <>Use this</>}
-                </span>
-              </span>
-            </button>
+            <article key={s.id} className={`group rounded-2xl border bg-card overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-xl ${on ? "ring-2 ring-primary border-primary" : ""}`}>
+              <a href={`/samples/${s.id}/`} target="_blank" rel="noopener" className="block aspect-[16/11] overflow-hidden bg-muted" aria-label={`Open the ${s.title.toLowerCase()} sample website`}>
+                <img src={`/samples/${s.id}/preview.jpg`} alt={`${s.title} sample website`} loading="lazy" className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-[1.04]" />
+              </a>
+              <div className="p-4">
+                <div className="font-semibold leading-tight">{s.title}</div>
+                <div className="flex flex-wrap gap-2 mt-3">
+                  <a href={`/samples/${s.id}/`} target="_blank" rel="noopener" className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium hover:border-primary/60">
+                    <Eye size={13} /> Open the sample
+                  </a>
+                  <button type="button" onClick={() => onPick(s)} className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold ${on ? "bg-primary text-primary-foreground" : "bg-foreground text-background hover:bg-primary hover:text-primary-foreground"}`}>
+                    {on ? <><Check size={13} /> Loaded below</> : <>Start from this</>}
+                  </button>
+                </div>
+              </div>
+            </article>
           );
         })}
       </div>
