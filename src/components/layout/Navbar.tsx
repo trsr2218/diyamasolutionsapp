@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
 import diyamaLogo from "@/assets/logo-mark.webp";
+import ThemeToggle from "@/components/ThemeToggle";
 
 /* Five items and one call to action, not ten.
  *
@@ -213,6 +214,7 @@ const Navbar = () => {
         </div>
 
         <div className="hidden lg:flex items-center gap-3">
+          <ThemeToggle />
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
             <Link to="/consultations" className="btn-primary text-sm relative overflow-hidden group inline-block">
               <span className="absolute inset-0 -translate-x-full group-hover:animate-shimmer bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
@@ -221,7 +223,9 @@ const Navbar = () => {
           </motion.div>
         </div>
 
-        {/* Mobile toggle */}
+        {/* Mobile: night mode and the menu */}
+        <div className="lg:hidden flex items-center gap-1">
+        <ThemeToggle />
         <motion.button
           onClick={() => setOpen(!open)}
           whileTap={{ scale: 0.85 }}
@@ -242,6 +246,7 @@ const Navbar = () => {
             </motion.span>
           </AnimatePresence>
         </motion.button>
+        </div>
       </div>
 
       {/* Reading progress */}
