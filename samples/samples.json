@@ -1,0 +1,66 @@
+[
+  {
+    "id": "lodge",
+    "kind": "lodge",
+    "title": "Safari lodge",
+    "layout": "cover",
+    "bg": "#F6F1E7",
+    "accent": "#B5793A"
+  },
+  {
+    "id": "salon",
+    "kind": "salon",
+    "title": "Hair and beauty studio",
+    "layout": "split",
+    "bg": "#FBF4FA",
+    "accent": "#C2408A"
+  },
+  {
+    "id": "clinic",
+    "kind": "clinic",
+    "title": "Dental or family clinic",
+    "layout": "centred",
+    "bg": "#F2F8FC",
+    "accent": "#1A83C9"
+  },
+  {
+    "id": "carhire",
+    "kind": "transport",
+    "title": "Car hire",
+    "layout": "split",
+    "bg": "#0B1A2E",
+    "accent": "#FFC233"
+  },
+  {
+    "id": "training",
+    "kind": "school",
+    "title": "Training centre",
+    "layout": "centred",
+    "bg": "#FFFBEA",
+    "accent": "#F5C400"
+  },
+  {
+    "id": "boutique",
+    "kind": "shop",
+    "title": "Fashion boutique",
+    "layout": "editorial",
+    "bg": "#0D0C0A",
+    "accent": "#D4AF37"
+  },
+  {
+    "id": "builder",
+    "kind": "pro",
+    "title": "Building contractor",
+    "layout": "diagonal",
+    "bg": "#EDEDEB",
+    "accent": "#F26B1D"
+  },
+  {
+    "id": "restaurant",
+    "kind": "restaurant",
+    "title": "Restaurant",
+    "layout": "cover",
+    "bg": "#FFF8F2",
+    "accent": "#E4572E"
+  }
+]
