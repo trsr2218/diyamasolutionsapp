@@ -9,8 +9,10 @@ const fmt = () =>
   new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false, timeZone: "Africa/Lusaka" }).format(new Date());
 
 const LiveClock = ({ className = "" }: { className?: string }) => {
-  const [now, setNow] = useState(fmt);
+  /* Blank until the page runs: the prerendered HTML would otherwise carry the build time. */
+  const [now, setNow] = useState("--:--:--");
   useEffect(() => {
+    setNow(fmt());
     const t = window.setInterval(() => setNow(fmt()), 1000);
     return () => window.clearInterval(t);
   }, []);

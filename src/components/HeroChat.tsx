@@ -121,11 +121,22 @@ const scenes: Scene[] = [
 
 const delays = [900, 1100, 1400, 1300, 1000, 1500];
 
+/* Message times follow the real clock. Ernest, 13 Nov 2026: the times beside the live
+   Lusaka clock were "sooo wrong" (a 19:42 chat next to a clock reading 20:41). The script
+   keeps its minute gaps; the first message is stamped with the time the scene starts. */
+const mins = (at: string) => { const [h, m] = at.split(":").map(Number); return h * 60 + m; };
+const lusaka = (ms: number) =>
+  new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "Africa/Lusaka" }).format(new Date(ms));
+
 const HeroChat = () => {
   const [scene, setScene] = useState(0);
+  const [startedAt, setStartedAt] = useState(() => Date.now());
   const [shown, setShown] = useState(0);
   const [done, setDone] = useState(0);
   const { industry, script, after } = scenes[scene];
+  useEffect(() => setStartedAt(Date.now()), [scene]);
+  const firstAt = (script.find((l) => l.who !== "typing") as { at: string } | undefined)?.at ?? "00:00";
+  const stamp = (at: string) => lusaka(startedAt + Math.max(0, mins(at) - mins(firstAt)) * 60000);
 
   useEffect(() => {
     let t: number;
@@ -208,7 +219,7 @@ const HeroChat = () => {
                 >
                   {l.text}
                   <span className="block text-[10px] text-white/45 mt-1 text-right">
-                    {l.at} {l.who === "customer" ? "" : "· handled by the desk"}
+                    {stamp(l.at)} {l.who === "customer" ? "" : "· handled by the desk"}
                   </span>
                 </motion.div>
               )
