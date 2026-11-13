@@ -1,4 +1,4 @@
-import{c as p,r as n,j as e,P as f,S as g,p as y,m as i,n as b,v as j}from"./index-7TkXGAB3.js";import{c as v}from"./backdrop-b-BA3JTLUr.js";import{C as w,L as N,s as S}from"./client-C9oNakgz.js";import{W as C}from"./WhatsAppFallback-DIHNX2S8.js";import{U as P}from"./users-wxVoJvBN.js";import"./supabaseEnv-2un-2RAE.js";/**
+import{c as p,r as n,j as e,P as f,S as g,p as y,m as i,n as b,v as j}from"./index-B-jXJ-Mh.js";import{c as v}from"./backdrop-b-BA3JTLUr.js";import{C as w,L as N,s as S}from"./client-BBeixx4L.js";import{W as C}from"./WhatsAppFallback-CdJ2qUqc.js";import{U as P}from"./users-BTMHxx9Y.js";import"./supabaseEnv-2un-2RAE.js";/**
  * @license lucide-react v0.462.0 - ISC
  *
  * This source code is licensed under the ISC license.
