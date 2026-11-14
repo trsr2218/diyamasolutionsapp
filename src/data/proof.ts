@@ -17,10 +17,14 @@
 
 export const proofAsAt = "14 November 2026";
 
-export const proofStats = [
-  { value: "2,900+", label: "posts published by our own engine since August 2026" },
-  { value: "12", label: "brand pages kept running by one system" },
-  { value: "100+", label: "customer comments answered by our comment desk" },
+/* posts, pages and replies are replaced every day by /proof.json (hooks/useProof);
+ * the values here are the fallback and what the prerendered HTML carries. */
+export type ProofStat = { value: string; label: string; key?: "posts" | "pages" | "replies" };
+
+export const proofStats: ProofStat[] = [
+  { value: "2,995", label: "posts published by our own engine since August 2026", key: "posts" },
+  { value: "12", label: "brand pages kept running by one system", key: "pages" },
+  { value: "107", label: "customer comments answered by our comment desk", key: "replies" },
   { value: "10", label: "free business apps live on this site" },
   { value: "110+", label: "apps and systems built in-house since March 2026" },
   { value: "60+", label: "built for clients and partners" },

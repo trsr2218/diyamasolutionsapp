@@ -35,3 +35,6 @@ dist-ssr
 
 # Supabase CLI local link state
 supabase/.temp/
+
+# daily proof.json publisher worktree (scripts/publish-proof.mjs)
+.proof-pages/

@@ -8,7 +8,7 @@ import { clients } from "@/data/clients";
 import { apps } from "@/data/apps";
 import { systems } from "@/data/systems";
 import { priceCards } from "@/data/pricing";
-import { proofStats, proofAsAt } from "@/data/proof";
+import { useProof } from "@/hooks/useProof";
 import PageTransition from "@/components/PageTransition";
 import HeroChat from "@/components/HeroChat";
 import LiveClock from "@/components/LiveClock";
@@ -82,6 +82,7 @@ const ownSystems = [
 ];
 
 const Index = () => {
+  const proof = useProof();
   const topApps = apps.filter((a) => a.featured).slice(0, 4);
 
   return (
@@ -182,7 +183,7 @@ const Index = () => {
         <div className="relative z-10 border-t border-white/10">
           <div className="container-wide mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <motion.dl variants={stagger} {...inView} className="grid grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-7">
-              {proofStats.map((s) => (
+              {proof.stats.map((s) => (
                 <motion.div key={s.label} variants={fadeUp}>
                   <dt className="sr-only">{s.label}</dt>
                   <dd>
@@ -192,7 +193,7 @@ const Index = () => {
                 </motion.div>
               ))}
             </motion.dl>
-            <p className="text-[11px] text-white/35 mt-6">Counted from our own records, {proofAsAt}.</p>
+            <p className="text-[11px] text-white/35 mt-6">Counted from our own records, {proof.asAt}.</p>
           </div>
         </div>
       </section>

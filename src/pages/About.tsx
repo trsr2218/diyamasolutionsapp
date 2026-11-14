@@ -5,7 +5,7 @@ import PageTransition from "@/components/PageTransition";
 import CountUp from "@/components/CountUp";
 import Seo from "@/components/Seo";
 import { pageSeo } from "@/seo/pageSeo";
-import { proofStats, proofAsAt } from "@/data/proof";
+import { useProof } from "@/hooks/useProof";
 import BoardStrip from "@/components/BoardStrip";
 
 /* About, rebuilt 11 November 2026. Ernest's verdict on the old page was that it
@@ -39,7 +39,9 @@ const timeline = [
   { when: "Next", title: "BeOn Tech", body: "Coming soon." },
 ];
 
-const About = () => (
+const About = () => {
+  const proof = useProof();
+  return (
   <PageTransition>
     <Seo {...pageSeo["/about"]} path="/about" />
 
@@ -72,7 +74,7 @@ const About = () => (
       <div className="relative z-10 border-t border-white/10">
         <div className="container-wide mx-auto px-4 sm:px-6 lg:px-8 py-9">
           <motion.dl variants={stagger} {...inView} className="grid grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-7">
-            {proofStats.map((s) => (
+            {proof.stats.map((s) => (
               <motion.div key={s.label} variants={fadeUp}>
                 <dt className="sr-only">{s.label}</dt>
                 <dd>
@@ -82,7 +84,7 @@ const About = () => (
               </motion.div>
             ))}
           </motion.dl>
-          <p className="text-[11px] text-white/35 mt-6">Counted from our own records, {proofAsAt}.</p>
+          <p className="text-[11px] text-white/35 mt-6">Counted from our own records, {proof.asAt}.</p>
         </div>
       </div>
     </section>
@@ -189,6 +191,7 @@ const About = () => (
       </motion.div>
     </section>
   </PageTransition>
-);
+  );
+};
 
 export default About;

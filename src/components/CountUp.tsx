@@ -12,6 +12,11 @@ const CountUp = ({ value, className }: { value: string; className?: string }) =>
   const suffix = value.replace(/[\d,]/g, "");
   const [shown, setShown] = useState(value);
 
+  // The live figure can arrive after mount (hooks/useProof): show it at once when not animating.
+  useEffect(() => {
+    if (!inView || reduce || !target) setShown(value);
+  }, [value, inView, reduce, target]);
+
   useEffect(() => {
     if (!inView || reduce || !target) return;
     const controls = animate(0, target, {
