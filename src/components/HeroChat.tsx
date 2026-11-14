@@ -1,3 +1,4 @@
+import { syncTrueTime, trueNow } from "@/lib/trueTime";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, FileText, BellRing, ListChecks, CalendarDays, ClipboardList, Receipt, type LucideIcon } from "lucide-react";
@@ -130,11 +131,11 @@ const lusaka = (ms: number) =>
 
 const HeroChat = () => {
   const [scene, setScene] = useState(0);
-  const [startedAt, setStartedAt] = useState(() => Date.now());
+  const [startedAt, setStartedAt] = useState(() => trueNow());
   const [shown, setShown] = useState(0);
   const [done, setDone] = useState(0);
   const { industry, script, after } = scenes[scene];
-  useEffect(() => setStartedAt(Date.now()), [scene]);
+  useEffect(() => { syncTrueTime().then(() => setStartedAt(trueNow())); }, [scene]);
   const firstAt = (script.find((l) => l.who !== "typing") as { at: string } | undefined)?.at ?? "00:00";
   const stamp = (at: string) => lusaka(startedAt + Math.max(0, mins(at) - mins(firstAt)) * 60000);
 

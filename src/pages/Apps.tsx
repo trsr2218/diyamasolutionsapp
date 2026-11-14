@@ -1,3 +1,4 @@
+import { lusakaHour } from "@/lib/trueTime";
 import { motion, type Variants } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
@@ -73,7 +74,7 @@ const appIcons: Record<string, LucideIcon> = {
 };
 
 const greeting = () => {
-  const h = new Date().getHours();
+  const h = lusakaHour(); // Lusaka time on the corrected clock, not the device hour
   if (h < 12) return "Good morning";
   if (h < 17) return "Good afternoon";
   return "Good evening";

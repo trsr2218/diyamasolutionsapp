@@ -8,7 +8,9 @@ const Terms = () => {
       <div className="container-narrow mx-auto">
         <h1 className="text-4xl font-display font-bold mb-8">Terms of Service</h1>
         <div className="prose prose-sm max-w-none text-muted-foreground space-y-6">
-          <p>Last updated: {new Date().toLocaleDateString()}</p>
+          {/* A fixed date, not new Date(): a page claiming it was updated today on every visit
+              looks careless. Change it only when the terms text changes. */}
+          <p>Last updated: 11 November 2026</p>
           <h2 className="font-display text-xl font-semibold text-foreground">Acceptance of Terms</h2>
           <p>By accessing and using the Diyama Solutions platform, you agree to these terms. If you do not agree, please do not use our services.</p>
           <h2 className="font-display text-xl font-semibold text-foreground">Services</h2>

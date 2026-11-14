@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
 
 /* Night mode. Ernest, 13 Nov 2026: a dark mode toggle, easy to reach, on every site.
- * The choice is kept per device ("diyama-theme"); with no choice the phone's own setting
- * decides. index.html sets the class before the first paint, so there is no flash. */
+ * Ernest, 14 Nov 2026: every site opens light by day and dark at night. index.html picks
+ * from the visitor's clock (06:00 to 18:00 is day) before the first paint. A choice made
+ * here lasts for this visit only ("diyama-theme" in sessionStorage); the next visit
+ * follows the clock again. */
 const KEY = "diyama-theme";
 
 const ThemeToggle = ({ className = "" }: { className?: string }) => {
@@ -13,7 +15,7 @@ const ThemeToggle = ({ className = "" }: { className?: string }) => {
     const next = !dark;
     document.documentElement.classList.toggle("dark", next);
     try {
-      localStorage.setItem(KEY, next ? "dark" : "light");
+      sessionStorage.setItem(KEY, next ? "dark" : "light");
     } catch {
       /* private window: the choice lasts for this page only */
     }

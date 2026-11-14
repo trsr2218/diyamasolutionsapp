@@ -1,3 +1,4 @@
+import { syncTrueTime, trueNow } from "@/lib/trueTime";
 import { useEffect, useState } from "react";
 
 /* One true live thing above the fold: the time in Lusaka, ticking. It is read
@@ -6,7 +7,7 @@ import { useEffect, useState } from "react";
  * real clock reads as a running office. */
 
 const fmt = () =>
-  new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false, timeZone: "Africa/Lusaka" }).format(new Date());
+  new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false, timeZone: "Africa/Lusaka" }).format(new Date(trueNow()));
 
 const LiveClock = ({ className = "" }: { className?: string }) => {
   /* Blank until the page runs: the prerendered HTML would otherwise carry the build time. */
@@ -14,6 +15,7 @@ const LiveClock = ({ className = "" }: { className?: string }) => {
   useEffect(() => {
     if (navigator.webdriver) return; // the prerender browser: leave --:--:-- in the static HTML
     setNow(fmt());
+    syncTrueTime().then(() => setNow(fmt())); // corrects a wrong phone clock
     const t = window.setInterval(() => setNow(fmt()), 1000);
     return () => window.clearInterval(t);
   }, []);
