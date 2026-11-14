@@ -1,7 +1,8 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <script>try{var t=localStorage.getItem("diyama-theme");if(t==="dark"||(!t&&matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.classList.add("dark");}catch(e){}</script>
+    <!-- Light by day (06:00 to 18:00 on the visitor clock), dark at night. A toggle choice lasts for this visit only (sessionStorage). toggle(), not add(): the prerendered HTML may carry the build-time class. -->
+    <script>try{var t=sessionStorage.getItem("diyama-theme");if(!t){var h=new Date().getHours();t=h>=6&&h<18?"light":"dark"}document.documentElement.classList.toggle("dark",t==="dark");}catch(e){}</script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Per-page title, description, canonical, Open Graph and Twitter tags are
@@ -87,7 +88,7 @@
       ]
     }
     </script>
-    <script type="module" crossorigin src="/assets/index-Be6tsz7R.js"></script>
+    <script type="module" crossorigin src="/assets/index-2HpILFet.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-CDDHrocG.css">
   </head>
 
