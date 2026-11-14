@@ -71,7 +71,7 @@ const About = () => (
 
       <div className="relative z-10 border-t border-white/10">
         <div className="container-wide mx-auto px-4 sm:px-6 lg:px-8 py-9">
-          <motion.dl variants={stagger} {...inView} className="grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-7">
+          <motion.dl variants={stagger} {...inView} className="grid grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-7">
             {proofStats.map((s) => (
               <motion.div key={s.label} variants={fadeUp}>
                 <dt className="sr-only">{s.label}</dt>
