@@ -38,3 +38,4 @@ supabase/.temp/
 
 # daily proof.json publisher worktree (scripts/publish-proof.mjs)
 .proof-pages/
+scripts/publish-proof.log
