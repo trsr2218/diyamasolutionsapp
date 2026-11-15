@@ -60,21 +60,37 @@ Deno.serve(async (req: Request) => {
 
     // Fallback chain: free-tier models can return 503 under load
     const MODELS = ["gemini-3.5-flash", "gemini-3.1-flash-lite", "gemini-3-flash-preview"];
+    // A model can also hang without answering at all (keep-alive failed this way on
+    // 31 Oct and 13 Nov 2026: 90 s, 0 bytes, no fallback tried). Give each model 20 s
+    // to start answering, then move on. The timer is cleared once headers arrive, so a
+    // long streamed answer is never cut off.
+    const FIRST_BYTE_MS = 20_000;
     let geminiResp: Response | null = null;
     let lastError = "Gemini API error";
     for (const model of MODELS) {
-      const resp = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${apiKey}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
-            contents,
-            generationConfig: { maxOutputTokens: 1024 },
-          }),
-        }
-      );
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), FIRST_BYTE_MS);
+      let resp: Response;
+      try {
+        resp = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${apiKey}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+              contents,
+              generationConfig: { maxOutputTokens: 1024 },
+            }),
+            signal: ctrl.signal,
+          }
+        );
+      } catch {
+        lastError = `Gemini API error (${model}: no answer in ${FIRST_BYTE_MS / 1000} s)`;
+        continue;
+      } finally {
+        clearTimeout(timer);
+      }
       if (resp.ok) {
         geminiResp = resp;
         break;
