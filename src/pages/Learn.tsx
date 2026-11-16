@@ -8,7 +8,7 @@ import PageTransition from "@/components/PageTransition";
 import Seo from "@/components/Seo";
 import { pageSeo } from "@/seo/pageSeo";
 
-const ORIGIN = "https://www.diyama.online";
+const ORIGIN = "https://diyama.online";
 
 const learnJsonLd = {
   "@context": "https://schema.org",

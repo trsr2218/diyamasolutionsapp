@@ -16,7 +16,7 @@ const fitJsonLd = {
   "@type": "WebApplication",
   name: "Diyama Business Fit",
   description: pageSeo["/business-fit"].description,
-  url: "https://www.diyama.online/business-fit",
+  url: "https://diyama.online/business-fit",
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web",
   offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },

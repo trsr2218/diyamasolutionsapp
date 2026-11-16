@@ -6,7 +6,7 @@ import { articles } from "@/data/articles";
 import PageTransition from "@/components/PageTransition";
 import Seo from "@/components/Seo";
 
-const ORIGIN = "https://www.diyama.online";
+const ORIGIN = "https://diyama.online";
 
 const Article = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -17,7 +17,7 @@ const Article = () => {
   const related = articles.filter((a) => a.id !== article.id && a.category === article.category);
   const suggestions = related.length > 0 ? related : articles.filter((a) => a.id !== article.id).slice(0, 2);
 
-  const canonicalUrl = `${ORIGIN}/learn/${article.id}`;
+  const canonicalUrl = `${ORIGIN}/learn/${article.id}/`;
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",

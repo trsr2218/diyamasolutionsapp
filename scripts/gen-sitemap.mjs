@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
-const SITE = "https://www.diyama.online";
+const SITE = "https://diyama.online";
 const today = new Date().toISOString().slice(0, 10);
 
 const read = (p) => fs.readFileSync(path.join(root, p), "utf8");
@@ -43,7 +43,7 @@ const xml = `<?xml version="1.0" encoding="UTF-8"?>
 ${all
   .map(
     (r) =>
-      `  <url>\n    <loc>${SITE}${r.loc}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${r.freq}</changefreq>\n    <priority>${r.pri}</priority>\n  </url>`
+      `  <url>\n    <loc>${SITE}${r.loc.endsWith("/") ? r.loc : `${r.loc}/`}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${r.freq}</changefreq>\n    <priority>${r.pri}</priority>\n  </url>`
   )
   .join("\n")}
 </urlset>

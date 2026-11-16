@@ -21,7 +21,7 @@ import SitePreview from "@/components/SitePreview";
 import Seo from "@/components/Seo";
 import { pageSeo } from "@/seo/pageSeo";
 
-const ORIGIN = "https://www.diyama.online";
+const ORIGIN = "https://diyama.online";
 
 const appsJsonLd = {
   "@context": "https://schema.org",

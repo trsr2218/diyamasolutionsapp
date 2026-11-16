@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 
-const ORIGIN = "https://www.diyama.online";
+const ORIGIN = "https://diyama.online";
 const DEFAULT_IMAGE = `${ORIGIN}/logo.jpg`;
 const SITE_NAME = "Diyama Solutions";
 
@@ -27,7 +27,9 @@ const Seo = ({
   type = "website",
   jsonLd,
 }: SeoProps) => {
-  const canonical = `${ORIGIN}${path}`;
+  // GitHub Pages serves every route as a folder, so "/services" answers with a 301 to
+  // "/services/". The canonical must be the address that answers 200.
+  const canonical = `${ORIGIN}${path.endsWith("/") ? path : `${path}/`}`;
   const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 
   return (

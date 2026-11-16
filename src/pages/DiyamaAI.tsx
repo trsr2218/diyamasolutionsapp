@@ -32,7 +32,7 @@ const aiJsonLd = {
   "@type": "WebApplication",
   name: "Diyama AI",
   description: pageSeo["/ai"].description,
-  url: "https://www.diyama.online/ai",
+  url: "https://diyama.online/ai",
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web",
   offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
