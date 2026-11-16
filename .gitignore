@@ -39,3 +39,6 @@ supabase/.temp/
 # daily proof.json publisher worktree (scripts/publish-proof.mjs)
 .proof-pages/
 scripts/publish-proof.log
+
+# Hook notes written by Claude sessions, never commit
+**/.claude/LAST_MESSAGE.md
