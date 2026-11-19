@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Chudleigh House School front desk sample</title>
+<meta name="description" content="A sample WhatsApp front desk for Chudleigh House School, built by Diyama Solutions from the school's public information.">
+<meta name="theme-color" content="#0b3d2e">
+<style>
+:root{--top:#0b3d2e;--bg:#efeae2;--me:#d9fdd3;--them:#ffffff;--ink:#111b21;--muted:#667781;--chip:#ffffff;--chipink:#0b3d2e;--line:#d1d7db}
+@media (prefers-color-scheme: dark){:root{--top:#1f2c34;--bg:#0b141a;--me:#005c4b;--them:#202c33;--ink:#e9edef;--muted:#8696a0;--chip:#202c33;--chipink:#7fd1ae;--line:#2a3942}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;max-width:560px;margin:0 auto}
+header{background:var(--top);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:2}
+.av{width:40px;height:40px;border-radius:50%;background:#fff;color:#0b3d2e;display:grid;place-items:center;font-weight:700;font-size:15px;flex:none}
+header b{display:block;font-size:16px}
+header small{opacity:.8;font-size:12.5px}
+.note{background:#fff3c4;color:#5b4a00;font-size:13px;padding:8px 16px;text-align:center}
+@media (prefers-color-scheme: dark){.note{background:#3b3416;color:#f3e3a0}}
+main{flex:1;overflow-y:auto;padding:12px 12px 4px}
+.b{max-width:85%;padding:7px 10px 6px;border-radius:8px;margin:4px 0;white-space:pre-line;box-shadow:0 1px .5px rgba(0,0,0,.13);font-size:15.5px}
+.them{background:var(--them);border-top-left-radius:0}
+.me{background:var(--me);margin-left:auto;border-top-right-radius:0}
+.t{display:block;text-align:right;font-size:11px;color:var(--muted);margin-top:2px}
+.sys{text-align:center;font-size:12.5px;color:var(--muted);margin:10px auto;max-width:90%}
+.chips{display:flex;flex-wrap:wrap;gap:6px;padding:6px 12px}
+.chips button{background:var(--chip);color:var(--chipink);border:1px solid var(--line);border-radius:16px;padding:7px 12px;font:inherit;font-size:14px;cursor:pointer}
+form{display:flex;gap:8px;padding:8px 12px calc(10px + env(safe-area-inset-bottom))}
+input{flex:1;min-width:0;border:0;border-radius:22px;padding:11px 16px;font:inherit;background:var(--them);color:var(--ink)}
+form button{border:0;border-radius:50%;width:46px;height:46px;background:#00a884;color:#fff;font-size:18px;cursor:pointer;flex:none}
+footer{font-size:12px;color:var(--muted);text-align:center;padding:4px 16px 12px}
+footer a{color:inherit}
+</style>
+</head>
+<body>
+<header>
+  <div class="av" aria-hidden="true">CH</div>
+  <div><b>Chudleigh House School</b><small>Front desk sample, replies at any hour</small></div>
+</header>
+<div class="note">Sample only. Built by Diyama Solutions from the school's public information. Nothing you type is stored or sent.</div>
+<main id="chat" aria-live="polite"></main>
+<div class="chips" id="chips"></div>
+<form id="f" autocomplete="off">
+  <input id="q" placeholder="Type a question, e.g. fees or school bus" aria-label="Your message">
+  <button aria-label="Send">&#10148;</button>
+</form>
+<footer>Fixed answers the school approves, then a person for the rest. Made by <a href="https://diyama.online/">Diyama Solutions</a>.</footer>
+<script>
+(function(){
+  var HANDOVER = "Thank you. Our school office will reply to you here. The office is open Monday to Friday, 07:30 to 16:30.";
+  var GREETING = "Hello, welcome to Chudleigh House School. 31 years of creating bright futures.\nI can help with admissions, our sections, fees information and visiting the school. Which class or grade are you asking about?";
+  var A = [
+    {k:["class","section","grade","early","primary","secondary","baby","nursery","form 1","ages","how old"], c:"Classes and sections",
+     a:"We have three sections:\nEarly Learning Centre, ages 2 to 5\nPrimary, Grade 1 to Grade 7\nSecondary, co-educational\nEach section has its own front office, so your question goes straight to the right team."},
+    {k:["place","space","january","intake","admission","enrol","enroll","available","vacanc"], c:"Places for January",
+     a:"Our admissions team confirms places for the January 2027 intake. Please tell me your child's grade for January and your name, and the office will reply to you here.", ask:true},
+    {k:["fee","cost","price","how much","school fees","tuition","pta"], c:"Fees",
+     a:"Our fee schedule covers Baby Class upward and is on the school website. For the January 2027 figures, the office will send you the current schedule here."},
+    {k:["instal","installment","pay in part","payment plan","pay later"], c:"Paying in instalments",
+     a:"Our policy asks for 75% of fees on the due date. The office will explain the full payment plan for your child's section."},
+    {k:["curriculum","syllabus","ecz","cambridge","subjects","exam"], c:"Curriculum",
+     a:"We follow the Examinations Council of Zambia curriculum, in a multicultural setting."},
+    {k:["class size","how many pupils","how big","pupils per","students per"], c:"Class sizes",
+     a:"Secondary classes average 30 pupils. The office can give you the figure for Early Learning and Primary."},
+    {k:["bus","transport","pick up","pickup","drop"], c:"School bus",
+     a:"Yes, we run a school bus. The office will confirm the routes and the bus fee for your area. Which area do you live in?", ask:true},
+    {k:["meal","lunch","food","canteen","breakfast"], c:"Meals",
+     a:"We have a canteen and a lunch programme. The office will explain how lunch is paid for your child's section."},
+    {k:["visit","tour","come and see","see the school","appointment"], c:"Visit the school",
+     a:"You are welcome to visit. Tell me a weekday that suits you, and the office will confirm a time between 07:30 and 16:30.", ask:true},
+    {k:["facilit","lab","library","computer","music","art room","sport"], c:"Facilities",
+     a:"Science and computer laboratories, a library, an e-learning centre, art and music rooms, and a canteen."},
+    {k:["where","location","address","directions","find you"], c:"Where we are",
+     a:"We are on Mulombe Street, Chudleigh, Lusaka. The office can send you a map pin."},
+    {k:["my child","my son","my daughter","already at","report","result","teacher","absent","sick"], c:null, a:HANDOVER, person:true}
+  ];
+  var chat=document.getElementById('chat'), chips=document.getElementById('chips'), f=document.getElementById('f'), q=document.getElementById('q');
+  var waiting=false;
+  function now(){var d=new Date();return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)}
+  function bubble(text,who){var b=document.createElement('div');b.className='b '+who;b.textContent=text;var t=document.createElement('span');t.className='t';t.textContent=now();b.appendChild(t);chat.appendChild(b);chat.scrollTop=chat.scrollHeight}
+  function sys(text){var s=document.createElement('div');s.className='sys';s.textContent=text;chat.appendChild(s);chat.scrollTop=chat.scrollHeight}
+  function reply(text,after){setTimeout(function(){bubble(text,'them');if(after)after()},650)}
+  function match(m){
+    m=' '+m.toLowerCase()+' ';var best=null,score=0;
+    A.forEach(function(x){var s=0;x.k.forEach(function(k){if(m.indexOf(k)>-1)s+=k.length});if(s>score){score=s;best=x}});
+    return best;
+  }
+  function answer(m){
+    if(waiting){waiting=false;reply("Thank you. The office will reply to you here on the next working day.");sys("In the live desk, this goes to the right section's office with the parent's number and the class asked about. Nothing else about the child is kept.");return}
+    if(/^\s*(hi|hello|hey|good (morning|afternoon|evening)|mwabuka|muli shani)\b/i.test(m)){reply(GREETING);return}
+    var x=match(m);
+    if(!x){reply(HANDOVER);sys("Anything the desk has no approved answer for goes to a person.");return}
+    reply(x.a,function(){if(x.person)sys("Questions about a current pupil always go to a person.")});
+    if(x.ask)waiting=true;
+  }
+  function send(m){m=(m||'').trim();if(!m)return;bubble(m,'me');answer(m)}
+  A.filter(function(x){return x.c}).forEach(function(x){var b=document.createElement('button');b.type='button';b.textContent=x.c;b.onclick=function(){send(x.c)};chips.appendChild(b)});
+  f.addEventListener('submit',function(e){e.preventDefault();send(q.value);q.value=''});
+  sys('Today');
+  reply(GREETING);
+})();
+</script>
+</body>
+</html>
