@@ -11,6 +11,8 @@ import stocktrackShot from "@/assets/apps/app-stocktrack.webp";
 import expensaShot from "@/assets/apps/app-expensa.webp";
 import tapcardShot from "@/assets/apps/app-tapcard.webp";
 import loyaltyShot from "@/assets/apps/app-loyalty.webp";
+import dreadrShot from "@/assets/apps/app-dreadr.webp";
+import dreadrLogo from "@/assets/apps/dreadr-logo.png";
 
 /**
  * Apps shown publicly on the site.
@@ -51,9 +53,37 @@ export interface DiyamaApp {
    * Required, so a new app cannot be added without deciding where it belongs.
    */
   audience: "back-office" | "storefront";
+  /** The app's own logo, shown in place of the generic card icon. */
+  logo?: string;
+  /** Shows a "New" chip by the name. Keep it on the newest app only. */
+  isNew?: boolean;
+  /** Entirely free with no paid plan: hides Subscribe and labels the second line "Also free". */
+  freeOnly?: boolean;
 }
 
 export const apps: DiyamaApp[] = [
+  {
+    /* Added 20 Nov 2026 on Ernest's order, first in the list as the newest app.
+       Logo is option A "Lens" from technology/dreadr-logo/. */
+    id: "dreadr",
+    name: "DREADR",
+    tagline: "Open any document, right on your phone",
+    description:
+      "A document reader for PDF, Word, Excel, CSV, PowerPoint, LibreOffice, RTF, EPUB, email, ZIP, text files and images. Everything opens on your own device, so your files never leave it.",
+    category: "Tools",
+    url: "https://dreadr.diyama.online/",
+    status: "live",
+    image: dreadrShot,
+    domain: "dreadr.diyama.online",
+    freeOffer: "Open any file now. No account, no sign in, no upload.",
+    fullOffer: "Install it to your home screen. It works offline. On Android it opens files straight from WhatsApp or email.",
+    tags: ["Documents", "Offline", "Private", "Free"],
+    featured: true,
+    audience: "back-office",
+    logo: dreadrLogo,
+    isNew: true,
+    freeOnly: true,
+  },
   {
     id: "diyama-pos",
     name: "Diyama POS",

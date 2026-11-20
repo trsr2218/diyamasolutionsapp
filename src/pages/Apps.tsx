@@ -154,7 +154,11 @@ const Apps = () => {
                           transition={{ type: "spring", stiffness: 350, damping: 15 }}
                           className="w-11 h-11 rounded-xl bg-primary/8 flex items-center justify-center"
                         >
-                          <Icon size={22} className="text-primary" />
+                          {app.logo ? (
+                            <img src={app.logo} alt={`${app.name} logo`} width={44} height={44} className="w-11 h-11 rounded-xl" />
+                          ) : (
+                            <Icon size={22} className="text-primary" />
+                          )}
                         </motion.div>
                         <span
                           className={`text-xs font-medium px-2 py-1 rounded-full shrink-0 ml-2 inline-flex items-center gap-1.5 ${
@@ -167,7 +171,14 @@ const Apps = () => {
                           {statusLabel[app.status]}
                         </span>
                       </div>
-                      <h3 className="font-display font-semibold text-lg mb-1">{app.name}</h3>
+                      <h3 className="font-display font-semibold text-lg mb-1 flex items-center gap-2">
+                        {app.name}
+                        {app.isNew && (
+                          <span className="text-[11px] font-semibold uppercase tracking-wide bg-accent/15 text-accent px-2 py-0.5 rounded-full">
+                            New
+                          </span>
+                        )}
+                      </h3>
                       <p className="text-sm text-primary/80 font-medium mb-3">{app.tagline}</p>
                       <p className="text-sm text-muted-foreground mb-4">{app.description}</p>
 
@@ -182,7 +193,7 @@ const Apps = () => {
                         <div className="flex items-start gap-2">
                           <Sparkles size={15} className="text-accent mt-0.5 shrink-0" />
                           <p className="text-xs text-muted-foreground">
-                            <span className="font-semibold text-foreground">Full version: </span>
+                            <span className="font-semibold text-foreground">{app.freeOnly ? "Also free: " : "Full version: "}</span>
                             {app.fullOffer}
                           </p>
                         </div>
@@ -220,6 +231,7 @@ const Apps = () => {
                             Request demo <MessageCircle size={13} />
                           </motion.a>
                         )}
+                        {!app.freeOnly && (
                         <motion.a
                           whileHover={{ scale: 1.03 }}
                           whileTap={{ scale: 0.97 }}
@@ -230,6 +242,7 @@ const Apps = () => {
                         >
                           Subscribe
                         </motion.a>
+                        )}
                       </div>
                     </div>
                   </motion.div>
