@@ -11,6 +11,7 @@ Diyama helps entrepreneurs, SMEs and established companies get found online, win
 - [Business Fit generator](https://diyama.online/business-fit): Answer a few questions and get a free personalized business kit with recommendations, quick wins and next steps.
 
 ## Free business apps (try instantly, no signup)
+- [DREADR](https://dreadr.diyama.online/): Open PDF, Word, Excel, PowerPoint, EPUB, email and ZIP files on your phone. Files never leave the device, works offline.
 - [Diyama Invoicer](https://diyama.online/apps/invoicer): Create professional invoices and download branded PDFs.
 - [Diyama QR Studio](https://diyama.online/apps/qr-studio): Generate QR codes for links, WhatsApp, WiFi and contact cards.
 - [Diyama Quote Builder](https://diyama.online/apps/quotation): Build and download professional quotations.

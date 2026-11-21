@@ -28,6 +28,7 @@ Full list: https://diyama.online/services
 8. Diyama Expensa (https://diyama.online/apps/expensa): income and expense tracking with live charts.
 9. Diyama TapCard (https://diyama.online/apps/tapcard): a digital business card with a scannable QR and vCard.
 10. Diyama Loyalty (https://diyama.online/apps/loyalty): digital loyalty stamp cards for shops and cafes.
+11. DREADR (https://dreadr.diyama.online/): a private document reader for PDF, Word, Excel, PowerPoint, EPUB, email, ZIP and more. Files open on the phone and never leave it. Installable, works offline.
 
 We also build custom software: point of sale (Diyama POS), e-learning platforms and bespoke business systems.
 
