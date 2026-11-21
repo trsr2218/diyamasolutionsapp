@@ -2,8 +2,11 @@
  * The people on the site: the faces from Diyama's own service graphics.
  *
  * SOURCE. The designed posts Diyama's Facebook page is known for (the suit and
- * the golden ring, the woman in the blazer from the ZRA and NAPSA series, the two
- * men talking, the man at the desk, the staircase). Masters live in
+ * the golden ring, the woman in the blazer from the ZRA and NAPSA series, the man
+ * at the desk, the staircase).
+ *
+ * BANNED. The "two men talking" crop: half a face shows. Ernest, 21 November 2026:
+ * never use it, anywhere. Do not bring it back. Masters live in
  * `workforce/engine/art/library/diyama/` as `fa-<id>.jpg`; these are the people
  * cropped out of them, web-sized WebP.
  *
@@ -19,7 +22,6 @@ import staircase from "@/assets/people/staircase.webp";
 import cameraMan from "@/assets/people/camera-man.webp";
 import womanBlack from "@/assets/people/woman-black.webp";
 import womanYellow from "@/assets/people/woman-yellow.webp";
-import twoMen from "@/assets/people/two-men.webp";
 import deskMan from "@/assets/people/desk-man.webp";
 import smilingMan from "@/assets/people/smiling-man.webp";
 import zraWoman from "@/assets/people/zra-woman.webp";
@@ -39,7 +41,6 @@ export const peoplePhotos: PeoplePhoto[] = [
   { src: suitWoman, alt: "A smiling woman in a blazer, from a Diyama service graphic" },
   { src: suitMan, alt: "A man in a blue suit inside a golden ring, from a Diyama service graphic" },
   { src: womanYellow, alt: "A woman in a yellow jumper with her arms folded, from a Diyama service graphic" },
-  { src: twoMen, alt: "Two men in suits talking in an office, from a Diyama service graphic" },
   { src: staircase, alt: "Business people helping each other up a golden staircase, from a Diyama service graphic" },
   { src: womanBlack, alt: "A woman in black with braids, from a Diyama service graphic" },
   { src: cameraMan, alt: "A man in a suit holding a camera, from a Diyama service graphic" },
@@ -51,4 +52,4 @@ export const peoplePhotos: PeoplePhoto[] = [
 
 /* The hero backdrop and the three scroll story frames. */
 export const heroPerson = deskMan;
-export const storyPeople = [twoMen, deskMan, suitMan];
+export const storyPeople = [suitWoman, deskMan, suitMan];
